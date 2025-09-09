@@ -1,0 +1,239 @@
+/* Styles PrimeVue personnalisés pour Synkro */
+
+/* Variables CSS personnalisées pour PrimeVue */
+:root {
+  --primary-color: #42b883;
+  --primary-color-text: #ffffff;
+  --surface-0: #ffffff;
+  --surface-50: #f8f9fa;
+  --surface-100: #e9ecef;
+  --surface-200: #dee2e6;
+  --surface-300: #ced4da;
+  --surface-400: #adb5bd;
+  --surface-500: #6c757d;
+  --surface-600: #495057;
+  --surface-700: #343a40;
+  --surface-800: #212529;
+  --surface-900: #121416;
+  --gray-50: #f8f9fa;
+  --gray-100: #e9ecef;
+  --gray-200: #dee2e6;
+  --gray-300: #ced4da;
+  --gray-400: #adb5bd;
+  --gray-500: #6c757d;
+  --gray-600: #495057;
+  --gray-700: #343a40;
+  --gray-800: #212529;
+  --gray-900: #121416;
+  --content-padding: 1.125rem;
+  --inline-spacing: 0.5rem;
+  --border-radius: 6px;
+  --surface-ground: #f8f9fa;
+  --surface-section: #ffffff;
+  --surface-card: #ffffff;
+  --surface-overlay: #ffffff;
+  --surface-border: #dee2e6;
+  --surface-hover: #e9ecef;
+  --focus-ring: 0 0 0 0.2rem rgba(66, 184, 131, 0.2);
+  --maskbg: rgba(0, 0, 0, 0.4);
+}
+
+/* Styles de base PrimeVue */
+* {
+  box-sizing: border-box;
+}
+
+.p-component {
+  font-family: 'Inter', 'Segoe UI', 'Roboto', system-ui, sans-serif;
+  font-size: 1rem;
+  font-weight: normal;
+}
+
+/* Boutons */
+.p-button {
+  margin: 0;
+  display: inline-flex;
+  cursor: pointer;
+  user-select: none;
+  align-items: center;
+  vertical-align: bottom;
+  text-align: center;
+  overflow: hidden;
+  position: relative;
+  color: #ffffff;
+  background: var(--primary-color);
+  border: 1px solid var(--primary-color);
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+  border-radius: 6px;
+}
+
+.p-button:not(:disabled):hover {
+  background: #369870;
+  border-color: #369870;
+  color: #ffffff;
+}
+
+.p-button:not(:disabled):active {
+  background: #2d7a5f;
+  border-color: #2d7a5f;
+  color: #ffffff;
+}
+
+.p-button.p-button-secondary {
+  background: #6c757d;
+  border-color: #6c757d;
+}
+
+.p-button.p-button-outlined {
+  background-color: transparent;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+}
+
+.p-button.p-button-outlined:not(:disabled):hover {
+  background: var(--primary-color);
+  color: #ffffff;
+  border-color: var(--primary-color);
+}
+
+/* Cartes */
+.p-card {
+  background: #ffffff;
+  color: #495057;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+}
+
+.p-card .p-card-body {
+  padding: 1.125rem;
+}
+
+.p-card .p-card-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.p-card .p-card-subtitle {
+  font-weight: normal;
+  margin-bottom: 0.5rem;
+  color: #6c757d;
+}
+
+.p-card .p-card-content {
+  padding: 0;
+}
+
+.p-card .p-card-footer {
+  padding: 1.125rem 0 0 0;
+}
+
+/* Menubar */
+.p-menubar {
+  padding: 0.5rem;
+  background: #ffffff;
+  color: #495057;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+}
+
+.p-menubar .p-menubar-root-list {
+  outline: 0 none;
+}
+
+.p-menubar .p-menuitem > .p-menuitem-content {
+  color: #495057;
+  transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
+  border-radius: 6px;
+}
+
+.p-menubar .p-menuitem > .p-menuitem-content .p-menuitem-link {
+  color: inherit;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  transition: none;
+  user-select: none;
+}
+
+.p-menubar .p-menuitem:not(.p-highlight):not(.p-disabled) > .p-menuitem-content:hover {
+  color: #495057;
+  background: #e9ecef;
+}
+
+/* Badge */
+.p-badge {
+  display: inline-block;
+  border-radius: 10px;
+  text-align: center;
+  padding: 0 0.5rem;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  min-width: 1.5rem;
+  height: 1.5rem;
+  line-height: 1.5rem;
+}
+
+.p-badge.p-badge-info {
+  background: #0dcaf0;
+}
+
+.p-badge.p-badge-success {
+  background: #198754;
+}
+
+.p-badge.p-badge-warning {
+  background: #ffc107;
+  color: #212529;
+}
+
+/* Avatar */
+.p-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  font-size: 1rem;
+  background: #dee2e6;
+  border-radius: 6px;
+}
+
+.p-avatar.p-avatar-circle {
+  border-radius: 50%;
+}
+
+.p-avatar .p-avatar-icon {
+  font-size: 1rem;
+}
+
+.p-avatar img {
+  width: 100%;
+  height: 100%;
+}
+
+/* Responsive */
+@media screen and (max-width: 960px) {
+  .p-menubar {
+    position: relative;
+  }
+
+  .p-menubar .p-menubar-button {
+    display: flex;
+    width: 2rem;
+    height: 2rem;
+    color: #495057;
+    border-radius: 50%;
+    transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
+  }
+
+  .p-menubar .p-menubar-button:hover {
+    color: #495057;
+    background: #e9ecef;
+  }
+}
