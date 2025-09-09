@@ -1,0 +1,60 @@
+services:
+  backend:
+    build: ./backend
+    container_name: symfony_app
+    restart: unless-stopped
+    volumes:
+      - ./backend:/var/www
+    environment:
+      DATABASE_URL: postgres://admin:admin123@postgres:5432/synkro
+    depends_on:
+      - postgres
+    ports:
+      - "8000:8000"
+    networks:
+      - synkronet
+
+  frontend:
+    build: ./frontend
+    container_name: vue_frontend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    restart: unless-stopped
+    networks:
+      - synkronet
+
+  websocket:
+    build: ./server
+    container_name: websocket_server
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./server:/app
+    networks:
+      - synkronet
+
+  postgres:
+    image: postgres:16
+    container_name: postgres_db
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: synkro
+    networks:
+      - synkronet
+
+volumes:
+  postgres_data:
+
+networks:
+  synkronet:
+    driver: bridge
