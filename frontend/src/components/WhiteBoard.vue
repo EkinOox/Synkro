@@ -7,27 +7,27 @@
         <!-- Bouton retour -->
         <Button
           @click="goBack"
-          class="!p-3 !w-12 !h-12 rounded-2xl bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 shadow-xl hover:bg-white/30 dark:hover:bg-gray-800/30 transition-all duration-300"
+          class="!p-3 !w-12 !h-12 rounded-2xl bg-gray-900/40 backdrop-blur-xl border border-gray-600/50 shadow-2xl hover:bg-gray-900/60 transition-all duration-300"
           severity="secondary"
           text
         >
-          <i class="pi pi-arrow-left text-lg text-gray-700 dark:text-gray-300"></i>
+          <i class="pi pi-arrow-left text-lg text-white"></i>
         </Button>
 
         <!-- Titre -->
-        <div class="bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl rounded-2xl border border-white/30 dark:border-gray-700/30 shadow-xl px-6 py-3">
-          <h1 class="text-xl font-bold text-gray-800 dark:text-gray-200 flex items-center gap-3">
-            <i class="pi pi-palette text-blue-500"></i>
+        <div class="bg-gray-900/40 backdrop-blur-xl rounded-2xl border border-gray-600/50 shadow-2xl px-6 py-3">
+          <h1 class="text-xl font-bold text-white flex items-center gap-3">
+            <i class="pi pi-palette text-blue-400"></i>
             Tableau Blanc Collaboratif
           </h1>
         </div>
       </div>
 
       <!-- Indicateur de connexion (déplacé) -->
-      <div class="connection-status bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl rounded-2xl border border-white/30 dark:border-gray-700/30 shadow-xl p-3" :class="connectionStatusClass">
+      <div class="connection-status bg-gray-900/40 backdrop-blur-xl rounded-2xl border border-gray-600/50 shadow-2xl p-3" :class="connectionStatusClass">
         <div class="flex items-center gap-2">
           <div class="w-2 h-2 rounded-full" :class="statusDotClass"></div>
-          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ connectionStatusText }}</span>
+          <span class="text-sm font-medium text-white">{{ connectionStatusText }}</span>
           <Button
             v-if="!isConnected"
             @click="reconnect"
@@ -36,7 +36,7 @@
             text
             size="small"
           >
-            <i class="pi pi-refresh text-xs text-gray-600 dark:text-gray-400"></i>
+            <i class="pi pi-refresh text-xs text-gray-300"></i>
           </Button>
         </div>
       </div>
@@ -45,17 +45,34 @@
     <!-- Panneau de collaboration (repositionné) -->
     <div
       v-if="showCollaboration"
-      class="collaboration-panel absolute top-20 right-4 w-80 max-h-[calc(100vh-6rem)] bg-white/10 dark:bg-gray-800/10 backdrop-blur-xl rounded-2xl border border-white/30 dark:border-gray-700/30 shadow-2xl p-4 z-40 overflow-y-auto"
+      class="collaboration-panel absolute top-20 right-4 w-80 max-h-[calc(100vh-6rem)] bg-gray-900/50 backdrop-blur-xl rounded-2xl border border-gray-600/50 shadow-2xl p-4 z-40 overflow-y-auto"
     >
+      <!-- Header avec bouton fermer -->
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-semibold text-white flex items-center gap-2">
+          <i class="pi pi-users text-blue-400"></i>
+          Collaboration
+        </h3>
+        <Button
+          @click="showCollaboration = false"
+          class="!p-2 !w-8 !h-8 rounded-xl bg-gray-700/50 hover:bg-gray-700/70 transition-all duration-300 text-white"
+          severity="secondary"
+          text
+          size="small"
+        >
+          <i class="pi pi-times text-sm"></i>
+        </Button>
+      </div>
+
       <!-- Indicateur de connexion -->
-      <div class="connection-status mb-4 p-3 rounded-xl" :class="connectionStatusClass">
+      <div class="connection-status mb-4 p-3 rounded-xl bg-gray-800/40 border border-gray-600/40" :class="connectionStatusClass">
         <div class="flex items-center gap-2">
           <div class="w-2 h-2 rounded-full" :class="statusDotClass"></div>
-          <span class="text-sm font-medium">{{ connectionStatusText }}</span>
+          <span class="text-sm font-medium text-white">{{ connectionStatusText }}</span>
           <Button
             v-if="!isConnected"
             @click="reconnect"
-            class="!p-1 !w-6 !h-6 ml-auto"
+            class="!p-1 !w-6 !h-6 ml-auto bg-gray-700/50 hover:bg-gray-700/70 text-white"
             severity="secondary"
             text
             size="small"
@@ -67,8 +84,8 @@
 
       <!-- Liste des collaborateurs -->
       <div class="collaborators-list mb-4">
-        <h4 class="text-sm font-semibold text-white/90 mb-3 flex items-center gap-2">
-          <i class="pi pi-users text-blue-400"></i>
+        <h4 class="text-sm font-semibold text-white mb-3 flex items-center gap-2">
+          <i class="pi pi-user text-blue-400"></i>
           Collaborateurs ({{ collaborators.length }})
         </h4>
 
@@ -76,7 +93,7 @@
           <div
             v-for="collaborator in collaborators"
             :key="collaborator.id"
-            class="flex items-center gap-3 p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 transition-all hover:bg-white/20"
+            class="flex items-center gap-3 p-3 rounded-xl bg-gray-800/40 backdrop-blur-sm border border-gray-600/40 transition-all hover:bg-gray-800/60"
           >
             <div
               class="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-semibold shadow-lg"
@@ -86,14 +103,14 @@
             </div>
             <div class="flex-1">
               <div class="flex items-center gap-2">
-                <span class="text-sm font-medium text-white/90">
+                <span class="text-sm font-medium text-white">
                   {{ collaborator.name }}
                 </span>
-                <span v-if="collaborator.id === currentUserId" class="text-xs text-blue-400 font-medium bg-blue-500/20 px-2 py-1 rounded-full">
+                <span v-if="collaborator.id === currentUserId" class="text-xs text-blue-400 font-medium bg-blue-500/30 px-2 py-1 rounded-full">
                   Vous
                 </span>
               </div>
-              <div class="flex items-center gap-2 text-xs text-white/60 mt-1">
+              <div class="flex items-center gap-2 text-xs text-gray-300 mt-1">
                 <i :class="collaborator.isActive ? 'pi pi-circle-fill text-green-400' : 'pi pi-circle text-gray-500'"></i>
                 <span>{{ collaborator.isActive ? 'En ligne' : 'Hors ligne' }}</span>
               </div>
@@ -102,10 +119,10 @@
         </div>
 
         <!-- Partage -->
-        <div class="invite-section p-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20">
+        <div class="invite-section p-4 rounded-xl bg-gray-800/40 backdrop-blur-sm border border-gray-600/40">
           <div class="flex items-center gap-2 mb-3">
             <i class="pi pi-share-alt text-purple-400"></i>
-            <span class="text-sm font-medium text-white/90">
+            <span class="text-sm font-medium text-white">
               Partager le tableau
             </span>
           </div>
@@ -113,18 +130,18 @@
             <InputText
               v-model="shareLink"
               readonly
-              class="flex-1 !text-xs !bg-white/10 !border-white/20 !text-white/80"
+              class="flex-1 !text-xs !bg-gray-700/40 !border-gray-600/40 !text-white custom-input"
               placeholder="Lien de partage"
               size="small"
             />
             <Button
               @click="copyShareLink"
-              class="!px-3 !py-2 !bg-purple-500/20 !border-purple-400/30 hover:!bg-purple-500/30 transition-all duration-300"
+              class="!px-3 !py-2 !bg-purple-500/30 !border-purple-400/40 hover:!bg-purple-500/40 transition-all duration-300 text-white"
               severity="secondary"
               outlined
               size="small"
             >
-              <i class="pi pi-copy text-xs text-purple-400"></i>
+              <i class="pi pi-copy text-xs text-purple-300"></i>
             </Button>
           </div>
         </div>
@@ -132,14 +149,23 @@
     </div>
 
     <!-- Barre d'outils principale -->
-    <div class="toolbar fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-white/10 dark:bg-gray-800/10 backdrop-blur-xl rounded-2xl border border-white/30 dark:border-gray-700/30 shadow-2xl p-4 z-30">
+    <div class="toolbar fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-900/50 backdrop-blur-xl rounded-2xl border border-gray-600/50 shadow-2xl p-4 z-30">
       <div class="flex items-center gap-3">
         <!-- Outils de dessin -->
-        <div class="flex items-center gap-2 border-r border-white/20 dark:border-gray-600/30 pr-3">
+        <div class="flex items-center gap-2 border-r border-gray-500/40 pr-3">
+          <Button
+            @click="setTool('hand')"
+            :class="{ '!bg-gray-500/80 !text-white shadow-lg': currentTool === 'hand' }"
+            class="!p-2 !w-10 !h-10 rounded-xl transition-all duration-300 hover:bg-gray-700/50 text-white"
+            severity="secondary"
+            text
+          >
+            <i class="pi pi-arrows-alt text-lg"></i>
+          </Button>
           <Button
             @click="setTool('pen')"
             :class="{ '!bg-blue-500/80 !text-white shadow-lg': currentTool === 'pen' }"
-            class="!p-2 !w-10 !h-10 rounded-xl transition-all duration-300 hover:bg-white/20 dark:hover:bg-gray-700/30"
+            class="!p-2 !w-10 !h-10 rounded-xl transition-all duration-300 hover:bg-gray-700/50 text-white"
             severity="secondary"
             text
           >
@@ -148,7 +174,7 @@
           <Button
             @click="setTool('eraser')"
             :class="{ '!bg-red-500/80 !text-white shadow-lg': currentTool === 'eraser' }"
-            class="!p-2 !w-10 !h-10 rounded-xl transition-all duration-300 hover:bg-white/20 dark:hover:bg-gray-700/30"
+            class="!p-2 !w-10 !h-10 rounded-xl transition-all duration-300 hover:bg-gray-700/50 text-white"
             severity="secondary"
             text
           >
@@ -157,7 +183,7 @@
           <Button
             @click="setTool('rectangle')"
             :class="{ '!bg-purple-500/80 !text-white shadow-lg': currentTool === 'rectangle' }"
-            class="!p-2 !w-10 !h-10 rounded-xl transition-all duration-300 hover:bg-white/20 dark:hover:bg-gray-700/30"
+            class="!p-2 !w-10 !h-10 rounded-xl transition-all duration-300 hover:bg-gray-700/50 text-white"
             severity="secondary"
             text
           >
@@ -166,7 +192,7 @@
           <Button
             @click="setTool('circle')"
             :class="{ '!bg-green-500/80 !text-white shadow-lg': currentTool === 'circle' }"
-            class="!p-2 !w-10 !h-10 rounded-xl transition-all duration-300 hover:bg-white/20 dark:hover:bg-gray-700/30"
+            class="!p-2 !w-10 !h-10 rounded-xl transition-all duration-300 hover:bg-gray-700/50 text-white"
             severity="secondary"
             text
           >
@@ -175,7 +201,7 @@
           <Button
             @click="setTool('text')"
             :class="{ '!bg-orange-500/80 !text-white shadow-lg': currentTool === 'text' }"
-            class="!p-2 !w-10 !h-10 rounded-xl transition-all duration-300 hover:bg-white/20 dark:hover:bg-gray-700/30"
+            class="!p-2 !w-10 !h-10 rounded-xl transition-all duration-300 hover:bg-gray-700/50 text-white"
             severity="secondary"
             text
           >
@@ -184,7 +210,7 @@
         </div>
 
         <!-- Couleurs -->
-        <div class="flex items-center gap-2 border-r border-white/20 dark:border-gray-600/30 pr-3">
+        <div class="flex items-center gap-2 border-r border-gray-500/40 pr-3">
           <div class="flex gap-1">
             <div
               v-for="color in colors"
@@ -195,7 +221,7 @@
               :style="{ backgroundColor: color }"
             ></div>
           </div>
-          <div class="ml-2 bg-white/20 dark:bg-gray-700/20 rounded-xl p-1 backdrop-blur-sm">
+          <div class="ml-2 bg-gray-700/40 rounded-xl p-1 backdrop-blur-sm">
             <ColorPicker
               v-model="currentColor"
             />
@@ -203,16 +229,25 @@
         </div>
 
         <!-- Taille du pinceau -->
-        <div class="flex items-center gap-3 border-r border-white/20 dark:border-gray-600/30 pr-3">
-          <i class="pi pi-circle-fill text-sm text-gray-500 dark:text-gray-400"></i>
+        <div class="flex items-center gap-3 border-r border-gray-500/40 pr-3">
+          <div class="flex items-center gap-2">
+            <i class="pi pi-circle-fill text-xs text-gray-300"></i>
+            <div
+              class="rounded-full bg-gray-300 transition-all duration-200"
+              :style="{
+                width: Math.max(4, Math.min(brushSize, 20)) + 'px',
+                height: Math.max(4, Math.min(brushSize, 20)) + 'px'
+              }"
+            ></div>
+          </div>
           <Slider
             v-model="brushSize"
             :min="1"
             :max="50"
             :step="1"
-            class="w-20"
+            class="w-24 custom-slider"
           />
-          <span class="text-sm text-gray-700 dark:text-gray-300 w-8 font-medium">{{ brushSize }}</span>
+          <span class="text-sm text-white w-8 font-medium">{{ brushSize }}</span>
         </div>
 
         <!-- Actions -->
@@ -220,7 +255,7 @@
           <Button
             @click="undo"
             :disabled="!canUndo"
-            class="!p-2 !w-10 !h-10 rounded-xl transition-all duration-300 hover:bg-white/20 dark:hover:bg-gray-700/30 disabled:opacity-50"
+            class="!p-2 !w-10 !h-10 rounded-xl transition-all duration-300 hover:bg-gray-700/50 disabled:opacity-50 text-white"
             severity="secondary"
             text
           >
@@ -229,15 +264,15 @@
           <Button
             @click="redo"
             :disabled="!canRedo"
-            class="!p-2 !w-10 !h-10 rounded-xl transition-all duration-300 hover:bg-white/20 dark:hover:bg-gray-700/30 disabled:opacity-50"
+            class="!p-2 !w-10 !h-10 rounded-xl transition-all duration-300 hover:bg-gray-700/50 disabled:opacity-50 text-white"
             severity="secondary"
             text
           >
             <i class="pi pi-replay text-lg"></i>
           </Button>
           <Button
-            @click="clearCanvas"
-            class="!p-2 !w-10 !h-10 rounded-xl transition-all duration-300 hover:bg-red-500/20 text-red-600 dark:text-red-400"
+            @click="() => clearCanvas()"
+            class="!p-2 !w-10 !h-10 rounded-xl transition-all duration-300 hover:bg-red-500/20 text-red-400"
             severity="secondary"
             text
           >
@@ -246,21 +281,21 @@
         </div>
 
         <!-- Zoom -->
-        <div class="flex items-center gap-2 border-l border-white/20 dark:border-gray-600/30 pl-3">
+        <div class="flex items-center gap-2 border-l border-gray-500/40 pl-3">
           <Button
             @click="zoomOut"
-            class="!p-2 !w-10 !h-10 rounded-xl transition-all duration-300 hover:bg-white/20 dark:hover:bg-gray-700/30"
+            class="!p-2 !w-10 !h-10 rounded-xl transition-all duration-300 hover:bg-gray-700/50 text-white"
             severity="secondary"
             text
           >
             <i class="pi pi-search-minus text-lg"></i>
           </Button>
-          <span class="text-sm text-gray-700 dark:text-gray-300 w-12 text-center font-medium bg-white/20 dark:bg-gray-700/20 rounded-lg py-1">
+          <span class="text-sm text-white w-12 text-center font-medium bg-gray-700/40 rounded-lg py-1">
             {{ Math.round(zoom * 100) }}%
           </span>
           <Button
             @click="zoomIn"
-            class="!p-2 !w-10 !h-10 rounded-xl transition-all duration-300 hover:bg-white/20 dark:hover:bg-gray-700/30"
+            class="!p-2 !w-10 !h-10 rounded-xl transition-all duration-300 hover:bg-gray-700/50 text-white"
             severity="secondary"
             text
           >
@@ -268,7 +303,7 @@
           </Button>
           <Button
             @click="resetZoom"
-            class="!p-2 !w-10 !h-10 rounded-xl transition-all duration-300 hover:bg-white/20 dark:hover:bg-gray-700/30"
+            class="!p-2 !w-10 !h-10 rounded-xl transition-all duration-300 hover:bg-gray-700/50 text-white"
             severity="secondary"
             text
           >
@@ -281,12 +316,17 @@
     <!-- Canvas container -->
     <div
       ref="canvasContainer"
-      class="absolute inset-0 w-full h-full overflow-hidden cursor-crosshair"
+      class="absolute inset-0 w-full h-full overflow-hidden"
+      :class="{
+        'cursor-crosshair': currentTool === 'pen' || currentTool === 'eraser',
+        'cursor-grab': currentTool === 'hand' && !isPanning,
+        'cursor-grabbing': currentTool === 'hand' && isPanning,
+        'cursor-text': currentTool === 'text'
+      }"
       @mousedown="onMouseDown"
       @mousemove="onMouseMove"
       @mouseup="onMouseUp"
       @mouseleave="onMouseUp"
-      @wheel.passive="onWheel"
       @contextmenu.prevent
     >
       <!-- Grille de fond -->
@@ -304,48 +344,83 @@
 
       <canvas
         ref="canvas"
-        class="absolute top-0 left-0 w-full h-full bg-white/50 backdrop-blur-sm rounded-lg shadow-inner"
+        class="absolute top-0 left-0"
         :style="{
           transform: `translate(${panX}px, ${panY}px) scale(${zoom})`,
-          transformOrigin: '0 0'
+          transformOrigin: '0 0',
+          imageRendering: 'auto'
         }"
       ></canvas>
 
-      <!-- Curseurs des collaborateurs -->
+      <!-- Curseurs des collaborateurs - Style Miro amélioré -->
       <div class="absolute inset-0 pointer-events-none">
         <div
           v-for="(cursor, userId) in cursors"
           :key="userId"
-          class="absolute transition-all duration-100 z-50"
+          class="absolute transition-all duration-150 ease-out z-50 animate-pulse"
           :style="{
             left: (cursor.x * zoom + panX) + 'px',
             top: (cursor.y * zoom + panY) + 'px',
-            transform: 'translate(-50%, -50%)'
+            transform: 'translate(-2px, -2px)'
           }"
         >
-          <!-- Curseur -->
+          <!-- Curseur avec effet de lueur -->
           <div class="relative">
+            <!-- Halo de lueur -->
+            <div
+              class="absolute -inset-2 rounded-full opacity-30 animate-ping"
+              :style="{ backgroundColor: cursor.color }"
+            ></div>
+
+            <!-- Curseur principal -->
             <svg
-              width="20"
-              height="20"
+              width="24"
+              height="24"
               viewBox="0 0 24 24"
-              class="drop-shadow-lg"
+              class="relative z-10 drop-shadow-xl"
             >
+              <!-- Ombre du curseur -->
+              <path
+                d="M5.65 2.15a.5.5 0 0 1 .8-.4l14.5 9a.5.5 0 0 1 0 .8l-14.5 9a.5.5 0 0 1-.8-.4V2.15z"
+                fill="rgba(0,0,0,0.3)"
+                transform="translate(1,1)"
+              />
+              <!-- Curseur principal -->
               <path
                 d="M5.65 2.15a.5.5 0 0 1 .8-.4l14.5 9a.5.5 0 0 1 0 .8l-14.5 9a.5.5 0 0 1-.8-.4V2.15z"
                 :fill="cursor.color"
                 stroke="white"
-                stroke-width="1"
+                stroke-width="1.5"
               />
             </svg>
 
-            <!-- Nom du collaborateur -->
+            <!-- Badge avec nom du collaborateur -->
             <div
-              class="absolute top-6 left-2 px-2 py-1 rounded text-xs text-white font-medium whitespace-nowrap"
-              :style="{ backgroundColor: cursor.color }"
+              class="absolute top-7 left-3 px-3 py-1.5 rounded-lg text-xs text-white font-semibold whitespace-nowrap shadow-lg backdrop-blur-sm border border-white/20 animate-bounce"
+              :style="{
+                backgroundColor: cursor.color,
+                boxShadow: `0 4px 12px ${cursor.color}40`
+              }"
             >
-              {{ cursor.name }}
+              <div class="flex items-center gap-1">
+                <div
+                  class="w-1.5 h-1.5 rounded-full bg-white/80 animate-pulse"
+                ></div>
+                {{ cursor.name }}
+              </div>
+
+              <!-- Petite flèche pointant vers le curseur -->
+              <div
+                class="absolute -top-1 left-2 w-2 h-2 rotate-45 border-l border-t border-white/20"
+                :style="{ backgroundColor: cursor.color }"
+              ></div>
             </div>
+
+            <!-- Cercle d'activité -->
+            <div
+              class="absolute -top-1 -left-1 w-6 h-6 rounded-full border-2 border-white/60 opacity-60 animate-spin"
+              :style="{ borderTopColor: cursor.color }"
+            ></div>
           </div>
         </div>
       </div>
@@ -371,7 +446,7 @@
       <Button
         @click="toggleCollaboration"
         :class="{ '!bg-blue-500/80 !text-white shadow-lg': showCollaboration }"
-        class="!p-3 !w-12 !h-12 rounded-2xl bg-white/10 dark:bg-gray-800/10 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 shadow-xl hover:bg-white/20 dark:hover:bg-gray-800/20 transition-all duration-300"
+        class="!p-3 !w-12 !h-12 rounded-2xl bg-gray-900/50 backdrop-blur-xl border border-gray-600/50 shadow-2xl hover:bg-gray-900/70 transition-all duration-300 text-white"
         severity="secondary"
         text
       >
@@ -379,7 +454,7 @@
       </Button>
       <Button
         @click="saveCanvas"
-        class="!p-3 !w-12 !h-12 rounded-2xl bg-white/10 dark:bg-gray-800/10 backdrop-blur-xl border border-white/30 dark:border-gray-700/30 shadow-xl hover:bg-white/20 dark:hover:bg-gray-800/20 transition-all duration-300"
+        class="!p-3 !w-12 !h-12 rounded-2xl bg-gray-900/50 backdrop-blur-xl border border-gray-600/50 shadow-2xl hover:bg-gray-900/70 transition-all duration-300 text-white"
         severity="secondary"
         text
       >
@@ -425,7 +500,7 @@ interface Point {
 }
 
 interface DrawingElement {
-  type: 'pen' | 'rectangle' | 'circle' | 'arrow' | 'line' | 'text' | 'eraser'
+  type: 'pen' | 'rectangle' | 'circle' | 'arrow' | 'line' | 'text' | 'eraser' | 'hand'
   points: Point[]
   color: string
   size: number
@@ -542,26 +617,27 @@ const initCanvas = () => {
 
   console.log(`📐 Taille du canvas: ${width}x${height}`)
 
-  // Définir les dimensions réelles du canvas
-  canvas.value.width = width * 2  // Multiplier par 2 pour une meilleure résolution
-  canvas.value.height = height * 2
+  // Dimensions du canvas plus grandes pour créer un tableau virtuel
+  const virtualWidth = width * 3
+  const virtualHeight = height * 3
 
-  // Ajuster le style CSS pour l'affichage
-  canvas.value.style.width = width + 'px'
-  canvas.value.style.height = height + 'px'
+  canvas.value.width = virtualWidth
+  canvas.value.height = virtualHeight
+
+  // Style CSS pour l'affichage
+  canvas.value.style.width = virtualWidth + 'px'
+  canvas.value.style.height = virtualHeight + 'px'
 
   ctx.value = canvas.value.getContext('2d')
   if (ctx.value) {
     console.log('✅ Contexte 2D obtenu')
 
-    // Ajuster l'échelle pour la haute résolution
-    ctx.value.scale(2, 2)
-
     ctx.value.lineCap = 'round'
     ctx.value.lineJoin = 'round'
 
-    // Fond transparent pour laisser voir le design derrière
-    ctx.value.clearRect(0, 0, width, height)
+    // Fond blanc pour le tableau
+    ctx.value.fillStyle = '#ffffff'
+    ctx.value.fillRect(0, 0, virtualWidth, virtualHeight)
 
     console.log('🎉 Canvas initialisé avec succès et prêt à dessiner!')
   } else {
@@ -584,6 +660,8 @@ const setTool = (tool: string) => {
   currentTool.value = tool
   if (tool === 'text') {
     canvas.value?.style.setProperty('cursor', 'text')
+  } else if (tool === 'hand') {
+    canvas.value?.style.setProperty('cursor', 'grab')
   } else {
     canvas.value?.style.setProperty('cursor', 'crosshair')
   }
@@ -594,21 +672,35 @@ const setColor = (color: string) => {
 }
 
 // Drawing methods
-const getMousePos = (event: MouseEvent): Point => {
-  const rect = canvas.value?.getBoundingClientRect()
-  if (!rect) return { x: 0, y: 0 }
-
-  return {
-    x: (event.clientX - rect.left - panX.value) / zoom.value,
-    y: (event.clientY - rect.top - panY.value) / zoom.value
+// Mouse position calculation
+const getMousePos = (e: MouseEvent) => {
+  if (!canvas.value || !canvasContainer.value) {
+    console.error('❌ Canvas non disponible pour getMousePos')
+    return { x: 0, y: 0 }
   }
+
+  // Utiliser le container au lieu du canvas pour éviter les problèmes de transform
+  const rect = canvasContainer.value.getBoundingClientRect()
+
+  // Position relative au container
+  let x = e.clientX - rect.left
+  let y = e.clientY - rect.top
+
+  // Appliquer les transformations inverses
+  x = (x - panX.value) / zoom.value
+  y = (y - panY.value) / zoom.value
+
+  return { x: Math.round(x), y: Math.round(y) }
 }
 
 const onMouseDown = (event: MouseEvent) => {
-  if (event.button === 1 || (event.button === 0 && event.ctrlKey)) {
-    // Middle mouse or Ctrl+click for panning
+  // Mode navigation avec l'outil main
+  if (currentTool.value === 'hand' || event.button === 1 || (event.button === 0 && event.ctrlKey)) {
     isPanning.value = true
     lastPanPoint.value = { x: event.clientX, y: event.clientY }
+    if (currentTool.value === 'hand') {
+      canvas.value?.style.setProperty('cursor', 'grabbing')
+    }
     return
   }
 
@@ -670,6 +762,10 @@ const onMouseMove = (event: MouseEvent) => {
 const onMouseUp = () => {
   if (isPanning.value) {
     isPanning.value = false
+    // Remettre le curseur normal pour l'outil main
+    if (currentTool.value === 'hand') {
+      canvas.value?.style.setProperty('cursor', 'grab')
+    }
     return
   }
 
@@ -686,25 +782,7 @@ const onMouseUp = () => {
   }
 }
 
-const onWheel = (event: WheelEvent) => {
-  event.preventDefault()
-  const delta = event.deltaY > 0 ? 0.9 : 1.1
-  const newZoom = Math.max(0.1, Math.min(5, zoom.value * delta))
 
-  // Get mouse position relative to canvas
-  const rect = canvas.value?.getBoundingClientRect()
-  if (rect) {
-    const mouseX = event.clientX - rect.left
-    const mouseY = event.clientY - rect.top
-
-    // Adjust pan to zoom around mouse position
-    panX.value = mouseX - (mouseX - panX.value) * (newZoom / zoom.value)
-    panY.value = mouseY - (mouseY - panY.value) * (newZoom / zoom.value)
-  }
-
-  zoom.value = newZoom
-  redrawCanvas()
-}
 
 const drawPenStroke = (point: Point) => {
   if (!ctx.value || !currentElement.value) return
@@ -835,7 +913,12 @@ const drawElement = (element: DrawingElement) => {
 const redrawCanvas = () => {
   if (!ctx.value || !canvas.value) return
 
+  // Nettoyer tout le canvas
   ctx.value.clearRect(0, 0, canvas.value.width, canvas.value.height)
+
+  // Fond blanc pour le tableau
+  ctx.value.fillStyle = '#ffffff'
+  ctx.value.fillRect(0, 0, canvas.value.width, canvas.value.height)
 
   elements.value.forEach(element => {
     drawElement(element)
@@ -955,7 +1038,12 @@ onMounted(async () => {
   // Initialiser le canvas avec un délai pour s'assurer que les éléments sont visibles
   setTimeout(() => {
     initCanvas()
-    console.log('Canvas initialisé')
+
+    // Centrer la vue sur le tableau
+    panX.value = -window.innerWidth * 1.5  // Centrer horizontalement
+    panY.value = -window.innerHeight * 1.5  // Centrer verticalement
+
+    console.log('Canvas initialisé et centré')
   }, 100)
 
   initCollaboration()
@@ -1169,15 +1257,16 @@ const updateRemoteCursor = (userId: string, position: { x: number, y: number }, 
       x: position.x,
       y: position.y,
       color: user.color,
-      name: user.name
+      name: user.name,
+      lastSeen: Date.now()
     }
 
-    // Supprimer le curseur après 2 secondes d'inactivité
+    // Supprimer le curseur après 3 secondes d'inactivité pour plus de persistance
     setTimeout(() => {
-      if (cursors.value[userId]) {
+      if (cursors.value[userId] && Date.now() - cursors.value[userId].lastSeen > 2500) {
         delete cursors.value[userId]
       }
-    }, 2000)
+    }, 3000)
   }
 }
 
@@ -1188,20 +1277,22 @@ const applyRemoteDrawing = (drawingData: any) => {
   redrawCanvas()
 }
 
-// Envoyer les mouvements de curseur avec throttle
+// Envoyer les mouvements de curseur avec throttle optimisé
 let lastCursorUpdate = 0
 const sendCursorPosition = (x: number, y: number) => {
   const now = Date.now()
-  if (isConnected.value && now - lastCursorUpdate > 50) { // Limite à 20 FPS
+  if (isConnected.value && now - lastCursorUpdate > 30) { // Limite à ~33 FPS pour plus de fluidité
     lastCursorUpdate = now
+    const currentUser = collaborators.value.find(c => c.id === currentUserId.value)
     sendMessage({
       type: 'cursor_move',
       userId: currentUserId.value,
-      position: { x, y },
+      position: { x: Math.round(x), y: Math.round(y) },
       user: {
-        name: collaborators.value.find(c => c.id === currentUserId.value)?.name || 'Utilisateur',
-        color: collaborators.value.find(c => c.id === currentUserId.value)?.color || '#3B82F6'
-      }
+        name: currentUser?.name || `Utilisateur-${Math.floor(Math.random() * 1000)}`,
+        color: currentUser?.color || '#3B82F6'
+      },
+      timestamp: now
     })
   }
 }
@@ -1299,8 +1390,8 @@ saveToHistory()
 /* Canvas styles */
 canvas {
   image-rendering: auto;
-  image-rendering: crisp-edges;
-  image-rendering: pixelated;
+  box-shadow: 0 10px 50px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
 }
 
 /* Scrollbar personnalisé */
@@ -1320,5 +1411,46 @@ canvas {
 
 .collaboration-panel::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.5);
+}
+
+/* Styles personnalisés pour le slider */
+:deep(.custom-slider .p-slider) {
+  background: rgba(255, 255, 255, 0.3) !important;
+  border-radius: 10px !important;
+  height: 6px !important;
+}
+
+:deep(.custom-slider .p-slider-range) {
+  background: #3B82F6 !important;
+  border-radius: 10px !important;
+}
+
+:deep(.custom-slider .p-slider-handle) {
+  background: #ffffff !important;
+  border: 2px solid #3B82F6 !important;
+  border-radius: 50% !important;
+  width: 16px !important;
+  height: 16px !important;
+  margin-top: -5px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+  cursor: pointer !important;
+}
+
+:deep(.custom-slider .p-slider-handle:hover) {
+  transform: scale(1.1) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Styles pour l'input de partage */
+:deep(.custom-input.p-inputtext) {
+  background: rgba(55, 65, 81, 0.4) !important;
+  border: 1px solid rgba(75, 85, 99, 0.4) !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+  border-radius: 8px !important;
+}
+
+:deep(.custom-input.p-inputtext:focus) {
+  border-color: rgba(59, 130, 246, 0.5) !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2) !important;
 }
 </style>

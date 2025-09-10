@@ -155,24 +155,27 @@ window.addEventListener('storage', checkAuthStatus)
               />
 
               <!-- Boutons pour les utilisateurs non connectés -->
-              <div v-else class="flex items-center gap-2">
+              <div v-else class="flex items-center gap-3">
+                <!-- Bouton Connexion - 100% Tailwind -->
                 <Button
                   label="Connexion"
                   icon="pi pi-sign-in"
                   severity="secondary"
                   outlined
                   rounded
-                  size="small"
-                  class="!backdrop-blur-sm !bg-white/20 dark:!bg-gray-800/30 hover:!bg-white/35 dark:hover:!bg-gray-700/40 !border !border-white/40 dark:!border-gray-600/50 transform hover:scale-105 transition-all duration-300"
+                  size="large"
+                  class="group relative overflow-hidden !px-6 !py-3 !min-h-[48px] !backdrop-blur-xl !bg-white/25 dark:!bg-gray-800/25 hover:!bg-white/40 dark:hover:!bg-gray-700/40 !border-2 !border-white/50 dark:!border-gray-600/50 hover:!border-blue-400/60 !shadow-xl hover:!shadow-blue-500/25 transform hover:scale-110 hover:-translate-y-1 transition-all duration-500 !text-gray-700 dark:!text-gray-200 hover:!text-blue-600 dark:hover:!text-blue-400 !font-semibold before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-blue-400/30 before:to-transparent before:-translate-x-full hover:before:translate-x-full before:transition-transform before:duration-700"
                   @click="router.push('/login')"
                 />
+
+                <!-- Bouton Inscription - 100% Tailwind + animations CSS -->
                 <Button
                   label="Inscription"
                   icon="pi pi-user-plus"
                   severity="info"
                   rounded
-                  size="small"
-                  class="!bg-gradient-to-r !from-blue-600 !to-emerald-600 hover:!from-blue-700 hover:!to-emerald-700 !shadow-xl hover:!shadow-2xl transform hover:scale-105 transition-all duration-300"
+                  size="large"
+                  class="group relative overflow-hidden !px-6 !py-3 !min-h-[48px] !bg-gradient-to-r !from-blue-600 !via-purple-600 !to-emerald-600 hover:!from-blue-700 hover:!via-purple-700 hover:!to-emerald-700 !shadow-xl hover:!shadow-purple-500/40 !border-2 !border-white/30 hover:!border-white/50 transform hover:scale-110 hover:-translate-y-1 transition-all duration-500 !text-white !font-semibold animate-gradient-x before:absolute before:inset-0 before:bg-gradient-to-45 before:from-white/20 before:via-transparent before:to-white/20 before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-300 after:absolute after:inset-0 after:bg-radial-gradient after:from-white/20 after:to-transparent after:scale-0 hover:after:scale-100 after:transition-transform after:duration-600"
                   @click="router.push('/register')"
                 />
               </div>
@@ -677,5 +680,16 @@ window.addEventListener('storage', checkAuthStatus)
     transform: translateY(0) scale(1);
     filter: blur(0);
   }
+}
+
+/* Animation du dégradé pour le bouton inscription - Seul CSS nécessaire */
+@keyframes gradient-x {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.animate-gradient-x {
+  background-size: 200% 200% !important;
+  animation: gradient-x 3s ease infinite !important;
 }
 </style>
