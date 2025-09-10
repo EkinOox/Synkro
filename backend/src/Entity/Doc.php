@@ -19,11 +19,15 @@ class Doc
     #[ORM\Column(type: Types::TEXT)]
     private ?string $text = null;
 
-    #[ORM\Column]
-    private ?int $admin = null;
-
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $password = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'docs')]
+    #[ORM\JoinColumn(name: 'admin', referencedColumnName: 'id', nullable: false)]
+    private ?User $admin = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $name = null;
 
     public function getId(): ?int
     {
@@ -42,12 +46,12 @@ class Doc
         return $this;
     }
 
-    public function getAdmin(): ?int
+    public function getAdmin(): ?User
     {
         return $this->admin;
     }
 
-    public function setAdmin(int $admin): static
+    public function setAdmin(?User $admin): static
     {
         $this->admin = $admin;
 
@@ -62,6 +66,18 @@ class Doc
     public function setPassword(?string $password): static
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): static
+    {
+        $this->name = $name;
 
         return $this;
     }

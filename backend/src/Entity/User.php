@@ -45,10 +45,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Wlist::class, mappedBy: 'userId')]
     private Collection $wlists;
 
+    /**
+     * @var Collection<int, Doc>
+     */
+    #[ORM\OneToMany(targetEntity: Doc::class, mappedBy: 'admin')]
+    private Collection $docs;
+
     public function __construct()
     {
         $this->blists = new ArrayCollection();
         $this->wlists = new ArrayCollection();
+        $this->docs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -171,6 +178,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             }
         }
 
+        return $this;
+    }
+    
+    /**
+     * @return Collection<int, Doc>
+     */
+    public function getDocs(): Collection
+    {
+        return $this->docs;
+    }
+
+    public function addDoc(Doc $doc): static
+    {
+        if (!$this->docs->contains($doc)) {
+            $this->docs->add($doc);
+            $doc->setAdmin($this);
+        }
+        return $this;
+    }
+
+    public function removeDoc(Doc $doc): static
+    {
+        if ($this->docs->removeElement($doc)) {
+            if ($doc->getAdmin() === $this) {
+                $doc->setAdmin(null);
+            }
+        }
         return $this;
     }
 }
