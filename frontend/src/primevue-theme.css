@@ -216,6 +216,109 @@
   height: 100%;
 }
 
+/* Toast */
+.p-toast {
+  z-index: 9999;
+}
+
+.p-toast .p-toast-message {
+  margin: 0 0 1rem 0;
+  box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: #ffffff;
+  color: #495057;
+  overflow: hidden;
+}
+
+.p-toast .p-toast-message-content {
+  padding: 1rem;
+  border-width: 0 0 0 4px;
+  border-style: solid;
+}
+
+.p-toast .p-toast-message-icon {
+  font-size: 1.25rem;
+  margin-right: 0.75rem;
+}
+
+.p-toast .p-toast-message-text {
+  margin: 0;
+}
+
+.p-toast .p-toast-summary {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.p-toast .p-toast-detail {
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
+.p-toast .p-toast-icon-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  background: transparent;
+  border: 0 none;
+  color: inherit;
+  cursor: pointer;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.p-toast .p-toast-icon-close:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+/* Toast Variants */
+.p-toast .p-toast-message-success {
+  border-left-color: #198754;
+  background: #d1e7dd;
+  color: #0a3622;
+}
+
+.p-toast .p-toast-message-success .p-toast-message-icon,
+.p-toast .p-toast-message-success .p-toast-icon-close {
+  color: #198754;
+}
+
+.p-toast .p-toast-message-error {
+  border-left-color: #dc3545;
+  background: #f8d7da;
+  color: #58151c;
+}
+
+.p-toast .p-toast-message-error .p-toast-message-icon,
+.p-toast .p-toast-message-error .p-toast-icon-close {
+  color: #dc3545;
+}
+
+.p-toast .p-toast-message-warn {
+  border-left-color: #ffc107;
+  background: #fff3cd;
+  color: #664d03;
+}
+
+.p-toast .p-toast-message-warn .p-toast-message-icon,
+.p-toast .p-toast-message-warn .p-toast-icon-close {
+  color: #ffc107;
+}
+
+.p-toast .p-toast-message-info {
+  border-left-color: #0dcaf0;
+  background: #d1ecf1;
+  color: #055160;
+}
+
+.p-toast .p-toast-message-info .p-toast-message-icon,
+.p-toast .p-toast-message-info .p-toast-icon-close {
+  color: #0dcaf0;
+}
+
 /* Responsive */
 @media screen and (max-width: 960px) {
   .p-menubar {
@@ -234,5 +337,11 @@
   .p-menubar .p-menubar-button:hover {
     color: #495057;
     background: #e9ecef;
+  }
+
+  .p-toast {
+    width: 100%;
+    right: 0;
+    left: 0;
   }
 }

@@ -103,8 +103,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
-import { useAuth } from '@/composables/useAuth'
+import { ref, reactive } from 'vue'
+import { useToast } from 'primevue/usetoast'
+import router from '../router'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Button from 'primevue/button'
@@ -112,14 +113,7 @@ import Checkbox from 'primevue/checkbox'
 
 const loading = ref(false)
 const googleLoading = ref(false)
-
-// Utiliser le composable d'authentification
-const { loginWithGoogle, loginWithCredentials, initGoogleAuth } = useAuth()
-
-// Initialiser Google Auth au montage du composant
-onMounted(() => {
-  initGoogleAuth()
-})
+const toast = useToast()
 
 const form = reactive({
   email: '',
@@ -132,30 +126,113 @@ const errors = reactive({
   password: ''
 })
 
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
+
+interface ApiLoginResponse {
+  success: boolean
+  token: string
+  message: string
+}
+
+interface ApiErrorResponse {
+  title?: string
+  detail?: string
+  description?: string
+}
+
 const handleLogin = async () => {
   // Reset des erreurs
-  errors.email = ''
-  errors.password = ''
+  Object.keys(errors).forEach(key => {
+    errors[key as keyof typeof errors] = ''
+  })
 
   // Validation basique
-  if (!form.email) {
+  let hasErrors = false
+
+  if (!form.email.trim()) {
     errors.email = 'L\'email est requis'
-    return
+    hasErrors = true
   }
+
   if (!form.password) {
     errors.password = 'Le mot de passe est requis'
-    return
+    hasErrors = true
   }
+
+  if (hasErrors) return
 
   loading.value = true
 
   try {
-    await loginWithCredentials(form.email, form.password)
-    // Rediriger vers la page demandée ou l'accueil
-    window.location.href = '/'
-  } catch (error) {
-    console.error('Erreur de connexion:', error)
-    errors.email = 'Email ou mot de passe incorrect'
+    const response = await fetch(`${apiBaseUrl}/api/user_logins`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/ld+json',
+        'Accept': 'application/ld+json'
+      },
+      body: JSON.stringify({
+        email: form.email.trim(),
+        password: form.password
+      })
+    })
+
+    if (!response.ok) {
+      let data: ApiErrorResponse | null = null
+      try { data = await response.json() } catch {}
+
+      const errorMessage = data?.detail || data?.description || 'Email ou mot de passe incorrect'
+      errors.email = errorMessage
+
+      toast.add({
+        severity: 'error',
+        summary: 'Connexion échouée',
+        detail: errorMessage,
+        life: 6000
+      })
+      return
+    }
+
+    // Succès
+    const loginData: ApiLoginResponse = await response.json()
+
+    if (loginData.success && loginData.token) {
+      // Stockage du token
+      localStorage.setItem('auth_token', loginData.token)
+      localStorage.setItem('user_email', form.email)
+
+      // Toast succès
+      toast.add({
+        severity: 'success',
+        summary: 'Connexion réussie',
+        detail: loginData.message || 'Bienvenue !',
+        life: 3000
+      })
+
+      // Reset formulaire
+      form.email = ''
+      form.password = ''
+      form.remember = false
+
+      // Redirection différée
+      setTimeout(() => router.push('/'), 600)
+    } else {
+      errors.email = 'Réponse invalide du serveur'
+      toast.add({
+        severity: 'error',
+        summary: 'Erreur',
+        detail: 'Réponse invalide du serveur',
+        life: 6000
+      })
+    }
+  } catch (e) {
+    console.error('Erreur réseau connexion:', e)
+    errors.email = 'Erreur réseau – réessayez'
+    toast.add({
+      severity: 'error',
+      summary: 'Réseau',
+      detail: 'Erreur réseau – réessayez',
+      life: 6000
+    })
   } finally {
     loading.value = false
   }
@@ -165,20 +242,21 @@ const handleGoogleLogin = async () => {
   googleLoading.value = true
 
   try {
-    // La méthode loginWithGoogle gère automatiquement le fallback vers la méthode simple
-    await loginWithGoogle()
-
-    // Vérifier si c'est une connexion démo
-    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
-    if (!clientId || clientId === 'your-google-client-id' || clientId === 'your-google-client-id-here') {
-      alert('Connexion Google simulée (mode développement)\nPour une vraie connexion Google, configurez VITE_GOOGLE_CLIENT_ID dans le fichier .env')
-    }
-
-    // Rediriger après connexion réussie
-    window.location.href = '/'
+    // Simulation OAuth Google - remplacer par vraie implémentation
+    toast.add({
+      severity: 'info',
+      summary: 'Google OAuth',
+      detail: 'Fonctionnalité en développement',
+      life: 4000
+    })
   } catch (error) {
     console.error('Erreur de connexion Google:', error)
-    alert('Erreur lors de la connexion avec Google.\n\nPossibles solutions:\n- Activer les cookies tiers dans votre navigateur\n- Configurer un vrai client ID Google\n- Utiliser la connexion par email')
+    toast.add({
+      severity: 'error',
+      summary: 'Erreur Google',
+      detail: 'Erreur lors de la connexion avec Google',
+      life: 6000
+    })
   } finally {
     googleLoading.value = false
   }
