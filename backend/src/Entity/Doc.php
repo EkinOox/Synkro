@@ -3,12 +3,25 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Patch;
+use App\Dto\DocCreateOutput;
+use App\Dto\DocUpdateInput;
 use App\Repository\DocRepository;
+use App\State\DocUpdateProcessor;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: DocRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new Patch(
+            input: DocUpdateInput::class,
+            output: DocCreateOutput::class,
+            processor: DocUpdateProcessor::class,
+            security: "is_granted('IS_AUTHENTICATED_FULLY')"
+        ),
+    ]
+)]
 class Doc
 {
     #[ORM\Id]
