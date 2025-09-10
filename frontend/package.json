@@ -14,6 +14,12 @@
     "primevue": "^4.3.9",
     "vue": "^3.5.18",
     "vue-router": "^4.5.1",
+    "@tiptap/vue-3": "^2.6.6",
+    "@tiptap/starter-kit": "^2.6.6",
+    "@tiptap/extension-collaboration": "^2.6.6",
+    "@tiptap/extension-collaboration-cursor": "^2.6.6",
+    "yjs": "^13.6.14",
+    "y-websocket": "^1.5.4",
     "vue3-google-login": "^2.0.34"
   },
   "devDependencies": {

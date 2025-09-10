@@ -6,6 +6,8 @@ import router from './router'
 
 // PrimeVue
 import PrimeVue from 'primevue/config'
+import ToastService from 'primevue/toastservice'
+import Toast from 'primevue/toast'
 import './primevue-theme.css'
 import 'primeicons/primeicons.css'
 
@@ -24,6 +26,8 @@ app.use(PrimeVue, {
   ripple: true
 })
 
+app.use(ToastService)
+
 app.use(router)
 
 // Enregistrer les composants globalement
@@ -32,6 +36,7 @@ app.component('Card', Card)
 app.component('Menubar', Menubar)
 app.component('Badge', Badge)
 app.component('Avatar', Avatar)
+app.component('Toast', Toast)
 
 // Directives
 app.directive('ripple', Ripple)

@@ -14,10 +14,10 @@
       <!-- Titre et message -->
       <div class="mb-8">
         <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-          Page non trouvÃ©e
+          Page non trouvée
         </h1>
         <p class="text-gray-600 dark:text-gray-300 mb-6">
-          DÃ©solÃ©, la page que vous recherchez n'existe pas ou a Ã©tÃ© dÃ©placÃ©e.
+          Désolé, la page que vous recherchez n'existe pas ou a été déplacée.
         </p>
       </div>
 
@@ -27,7 +27,7 @@
           @click="goHome"
           class="w-full !py-3"
           icon="pi pi-home"
-          label="Retour Ã  l'accueil"
+          label="Retour à l'accueil"
         />
 
         <Button
@@ -36,7 +36,7 @@
           outlined
           class="w-full !py-3"
           icon="pi pi-arrow-left"
-          label="Retour en arriÃ¨re"
+          label="Retour en arrière"
         />
       </div>
 
@@ -80,7 +80,7 @@
             Informations techniques
           </summary>
           <div class="mt-2 text-xs text-gray-500 dark:text-gray-400 font-mono">
-            <div>URL demandÃ©e : {{ requestedUrl }}</div>
+            <div>URL demandée : {{ requestedUrl }}</div>
             <div>Code d'erreur : 404</div>
             <div>Timestamp : {{ new Date().toISOString() }}</div>
             <div>User Agent : {{ userAgent }}</div>
@@ -93,13 +93,10 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import router from '../router'
 import Button from 'primevue/button'
 
-const router = useRouter()
-const route = useRoute()
-
-const requestedUrl = computed(() => route.fullPath)
+const requestedUrl = computed(() => window.location.pathname + window.location.search)
 const userAgent = computed(() => window.navigator.userAgent.substring(0, 50) + '...')
 
 const goHome = () => {
@@ -107,7 +104,7 @@ const goHome = () => {
 }
 
 const goBack = () => {
-  // Si possible, revenir Ã  la page prÃ©cÃ©dente, sinon aller Ã  l'accueil
+  // Si possible, revenir à la page précédente, sinon aller à l'accueil
   if (window.history.length > 1) {
     router.back()
   } else {
@@ -123,12 +120,12 @@ console.warn(`404 Error: Page not found - ${requestedUrl.value}`)
 </script>
 
 <style scoped>
-/* Styles personnalisÃ©s si nÃ©cessaire */
+/* Styles personnalisés si nécessaire */
 .not-found-page {
   background-attachment: fixed;
 }
 
-/* Animation pour l'icÃ´ne */
+/* Animation pour l'icône */
 .pi-exclamation-triangle {
   animation: pulse 2s infinite;
 }

@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import router from './router'
-import { useRoute } from 'vue-router'
 import Button from 'primevue/button'
 import Avatar from 'primevue/avatar'
 import Menubar from 'primevue/menubar'
 
-const route = useRoute()
+const route = computed(() => router.currentRoute.value)
 
 // État d'authentification (à adapter selon votre système d'auth)
 const isAuthenticated = ref(!!localStorage.getItem('auth_token'))
@@ -15,18 +14,18 @@ const isAuthenticated = ref(!!localStorage.getItem('auth_token'))
 const currentRouteName = ref<string>('')
 
 // Watcher pour mettre à jour le nom de la route avec protection
-watch(() => route?.name || '', (newName) => {
+watch(() => route.value?.name || '', (newName) => {
   currentRouteName.value = String(newName)
 }, { immediate: true })
 
 onMounted(() => {
-  // Initialisation sécurisée du nom de route
-  currentRouteName.value = route?.name ? String(route.name) : ''
+  currentRouteName.value = route.value?.name ? String(route.value.name) : ''
 })
 
 // Fonction de déconnexion
 const logout = () => {
   localStorage.removeItem('auth_token')
+  localStorage.removeItem('auth_user') // suppression de l'utilisateur stocké
   isAuthenticated.value = false
   router.push('/login')
 }
@@ -70,32 +69,6 @@ const menuItems = computed(() => [
         }
       ]
     }
-  ] : []),
-  ...(isAuthenticated.value ? [
-    {
-      label: 'Mon Compte',
-      icon: 'pi pi-user',
-      items: [
-        {
-          label: 'Profil',
-          icon: 'pi pi-user-edit',
-          command: () => router.push('/compte')
-        },
-        {
-          label: 'Paramètres',
-          icon: 'pi pi-cog',
-          command: () => router.push('/compte')
-        },
-        {
-          separator: true
-        },
-        {
-          label: 'Déconnexion',
-          icon: 'pi pi-sign-out',
-          command: () => logout()
-        }
-      ]
-    }
   ] : [])
 ])
 
@@ -112,6 +85,7 @@ window.addEventListener('storage', checkAuthStatus)
 
 <template>
   <div id="app" class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-emerald-50 dark:from-gray-900 dark:via-slate-900 dark:to-gray-900 relative overflow-hidden flex flex-col">
+  <Toast position="top-right" />
     <!-- Background glassmorphism elements -->
     <div class="fixed inset-0 pointer-events-none z-0">
       <div class="absolute top-10 left-10 w-96 h-96 bg-gradient-to-r from-blue-400/10 to-emerald-400/10 rounded-full blur-3xl animate-pulse"></div>
@@ -131,17 +105,6 @@ window.addEventListener('storage', checkAuthStatus)
 
           <template #end>
             <div class="flex items-center gap-4">
-              <!-- Notifications (seulement si connecté) -->
-              <Button
-                v-if="isAuthenticated"
-                icon="pi pi-bell"
-                severity="secondary"
-                text
-                rounded
-                size="large"
-                v-tooltip="'Notifications'"
-                class="relative !p-4 !shadow-xl hover:!shadow-2xl !backdrop-blur-sm !bg-white/20 dark:!bg-gray-800/30 hover:!bg-white/35 dark:hover:!bg-gray-700/40 !border !border-white/40 dark:!border-gray-600/50 transform hover:scale-110 transition-all duration-300 !w-14 !h-14 !text-lg"
-              />
 
               <!-- Avatar utilisateur ou boutons de connexion -->
               <Avatar
@@ -153,6 +116,7 @@ window.addEventListener('storage', checkAuthStatus)
                 v-tooltip="'Mon compte'"
                 @click="router.push('/compte')"
               />
+                  <Button v-if="isAuthenticated" label="Déconnexion" icon="pi pi-sign-out" size="small" severity="secondary" @click="logout" />
 
               <!-- Boutons pour les utilisateurs non connectés -->
               <div v-else class="flex items-center gap-3">

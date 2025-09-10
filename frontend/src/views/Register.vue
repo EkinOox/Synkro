@@ -6,20 +6,21 @@
         <p class="text-gray-600 dark:text-gray-300">Créez votre compte Synkro</p>
       </div>
 
-      <form @submit.prevent="handleRegister" class="space-y-6">
+  <form @submit.prevent="handleRegister" class="space-y-6">
         <div>
-          <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Nom complet
+          <label for="pseudo" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Pseudo
           </label>
           <InputText
-            id="name"
-            v-model="form.name"
-            placeholder="Votre nom complet"
+            id="pseudo"
+            v-model="form.pseudo"
+            placeholder="Votre pseudo"
             class="w-full"
-            :class="{ 'p-invalid': errors.name }"
+            :class="{ 'p-invalid': errors.pseudo }"
             required
+            autocomplete="username"
           />
-          <small v-if="errors.name" class="p-error">{{ errors.name }}</small>
+          <small v-if="errors.pseudo" class="p-error">{{ errors.pseudo }}</small>
         </div>
 
         <div>
@@ -51,6 +52,7 @@
             toggleMask
             :feedback="true"
             required
+            autocomplete="new-password"
           />
           <small v-if="errors.password" class="p-error">{{ errors.password }}</small>
         </div>
@@ -68,24 +70,30 @@
             :feedback="false"
             toggleMask
             required
+            autocomplete="new-password"
           />
           <small v-if="errors.confirmPassword" class="p-error">{{ errors.confirmPassword }}</small>
         </div>
 
-        <div class="flex items-center">
-          <Checkbox
+        <div class="flex items-start space-x-3">
+          <input
             id="terms"
+            type="checkbox"
             v-model="form.acceptTerms"
-            binary
-            :class="{ 'p-invalid': errors.acceptTerms }"
+            :aria-invalid="!!errors.acceptTerms"
+            class="h-5 w-5 mt-0.5 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-purple-600 focus:ring-2 focus:ring-purple-500 focus:outline-none cursor-pointer transition
+              disabled:opacity-50 disabled:cursor-not-allowed
+              peer
+              "
+            :class="{ 'ring-1 ring-red-500 border-red-500': errors.acceptTerms }"
           />
-          <label for="terms" class="ml-2 text-sm text-gray-600 dark:text-gray-300">
+          <label for="terms" class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed select-none">
             J'accepte les
-            <a href="#" class="text-blue-600 hover:text-blue-500 dark:text-blue-400">
+            <a href="#" class="font-medium text-purple-600 hover:text-purple-500 dark:text-purple-400 dark:hover:text-purple-300 underline decoration-transparent hover:decoration-purple-500 transition">
               conditions d'utilisation
             </a>
             et la
-            <a href="#" class="text-blue-600 hover:text-blue-500 dark:text-blue-400">
+            <a href="#" class="font-medium text-purple-600 hover:text-purple-500 dark:text-purple-400 dark:hover:text-purple-300 underline decoration-transparent hover:decoration-purple-500 transition">
               politique de confidentialité
             </a>
           </label>
@@ -96,7 +104,7 @@
           type="submit"
           :loading="loading"
           class="w-full !py-3"
-          label="Créer mon compte"
+          :label="loading ? 'Création…' : 'Créer mon compte'"
         />
       </form>
 
@@ -135,17 +143,20 @@
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
-import { useRouter } from 'vue-router'
+import { useToast } from 'primevue/usetoast'
+// Import direct de l'instance du routeur
+import router from '../router'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Button from 'primevue/button'
-import Checkbox from 'primevue/checkbox'
 
-const router = useRouter()
+// router déjà importé
 const loading = ref(false)
+const toast = useToast()
 
+// Formulaire aligné avec l'API: pseudo, email, password
 const form = reactive({
-  name: '',
+  pseudo: '',
   email: '',
   password: '',
   confirmPassword: '',
@@ -153,12 +164,19 @@ const form = reactive({
 })
 
 const errors = reactive({
-  name: '',
+  pseudo: '',
   email: '',
   password: '',
   confirmPassword: '',
   acceptTerms: ''
 })
+
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
+
+interface ApiErrorResponse {
+  'hydra:description'?: string
+  'violations'?: { propertyPath: string; message: string }[]
+}
 
 const handleRegister = async () => {
   // Reset des erreurs
@@ -169,8 +187,8 @@ const handleRegister = async () => {
   // Validation
   let hasErrors = false
 
-  if (!form.name.trim()) {
-    errors.name = 'Le nom est requis'
+  if (!form.pseudo.trim()) {
+    errors.pseudo = 'Le pseudo est requis'
     hasErrors = true
   }
 
@@ -205,21 +223,76 @@ const handleRegister = async () => {
   loading.value = true
 
   try {
-    // Simuler une requête d'inscription
-    await new Promise(resolve => setTimeout(resolve, 1500))
+    const response = await fetch(`${apiBaseUrl}/api/user_registers`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/ld+json',
+        'Accept': 'application/ld+json'
+      },
+      body: JSON.stringify({
+        pseudo: form.pseudo.trim(),
+        email: form.email.trim(),
+        password: form.password
+      })
+    })
 
-    // Stocker le token (simulation)
-    localStorage.setItem('auth_token', 'fake-jwt-token')
-    localStorage.setItem('user_data', JSON.stringify({
-      email: form.email,
-      name: form.name
-    }))
+    if (!response.ok) {
+      let data: ApiErrorResponse | null = null
+      try { data = await response.json() } catch {}
 
-    // Rediriger vers l'accueil
-    router.push('/')
-  } catch (error) {
-    console.error('Erreur d\'inscription:', error)
-    errors.email = 'Une erreur est survenue lors de l\'inscription'
+      if (data?.violations) {
+        data.violations.forEach(v => {
+          const key = v.propertyPath as keyof typeof errors
+          if (errors[key] !== undefined) {
+            errors[key] = v.message
+          }
+        })
+      } else if (data?.['hydra:description']) {
+        errors.email = data['hydra:description']
+      } else {
+        errors.email = 'Échec de l\'inscription'
+      }
+      toast.add({
+        severity: 'error',
+        summary: 'Erreur',
+        detail: Object.values(errors).filter(Boolean)[0] || 'Impossible de créer le compte',
+        life: 6000
+      })
+      return
+    }
+
+    // Succès
+    const created = await response.json()
+    // Stockage minimal (optionnel selon logique future JWT)
+    localStorage.setItem('user_pseudo', created.pseudo || form.pseudo)
+    localStorage.setItem('user_email', created.email || form.email)
+
+    // Toast succès
+    toast.add({
+      severity: 'success',
+      summary: 'Inscription réussie',
+      detail: 'Votre compte a été créé. Vous pouvez maintenant vous connecter.',
+      life: 5000
+    })
+
+    // Reset formulaire
+    form.pseudo = ''
+    form.email = ''
+    form.password = ''
+    form.confirmPassword = ''
+    form.acceptTerms = false
+
+    // Redirection différée vers login
+    setTimeout(() => router.push('/login'), 800)
+  } catch (e) {
+    console.error('Erreur réseau inscription:', e)
+    errors.email = 'Erreur réseau – réessayez'
+    toast.add({
+      severity: 'error',
+      summary: 'Réseau',
+      detail: 'Erreur réseau – réessayez',
+      life: 6000
+    })
   } finally {
     loading.value = false
   }
