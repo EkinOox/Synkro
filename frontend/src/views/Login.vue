@@ -79,30 +79,23 @@
         </p>
       </div>
 
-      <!-- Connexion via réseaux sociaux (optionnel) -->
+      <!-- Connexion via réseaux sociaux -->
       <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-600">
         <p class="text-center text-sm text-gray-600 dark:text-gray-400 mb-4">
           Ou continuer avec
         </p>
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols gap-3">
           <Button
-            @click="loginWithGoogle"
+            @click="handleGoogleLogin"
+            :loading="googleLoading"
             severity="secondary"
             outlined
             class="!p-3"
           >
-            <i class="pi pi-google mr-2"></i>
+            <i v-if="!googleLoading" class="pi pi-google mr-2"></i>
             Google
           </Button>
-          <Button
-            @click="loginWithGithub"
-            severity="secondary"
-            outlined
-            class="!p-3"
-          >
-            <i class="pi pi-github mr-2"></i>
-            GitHub
-          </Button>
+
         </div>
       </div>
     </div>
@@ -110,15 +103,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, reactive, onMounted } from 'vue'
+import { useAuth } from '@/composables/useAuth'
 import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Button from 'primevue/button'
 import Checkbox from 'primevue/checkbox'
 
-const router = useRouter()
 const loading = ref(false)
+const googleLoading = ref(false)
+
+// Utiliser le composable d'authentification
+const { loginWithGoogle, loginWithCredentials, initGoogleAuth } = useAuth()
+
+// Initialiser Google Auth au montage du composant
+onMounted(() => {
+  initGoogleAuth()
+})
 
 const form = reactive({
   email: '',
@@ -149,19 +150,9 @@ const handleLogin = async () => {
   loading.value = true
 
   try {
-    // Simuler une requête d'authentification
-    await new Promise(resolve => setTimeout(resolve, 1000))
-
-    // Stocker le token (simulation)
-    localStorage.setItem('auth_token', 'fake-jwt-token')
-    localStorage.setItem('user_data', JSON.stringify({
-      email: form.email,
-      name: form.email.split('@')[0]
-    }))
-
+    await loginWithCredentials(form.email, form.password)
     // Rediriger vers la page demandée ou l'accueil
-    const redirect = router.currentRoute.value.query.redirect as string
-    router.push(redirect || '/')
+    window.location.href = '/'
   } catch (error) {
     console.error('Erreur de connexion:', error)
     errors.email = 'Email ou mot de passe incorrect'
@@ -170,17 +161,89 @@ const handleLogin = async () => {
   }
 }
 
-const loginWithGoogle = () => {
-  console.log('Connexion avec Google...')
-  // Implémentation OAuth Google
-}
+const handleGoogleLogin = async () => {
+  googleLoading.value = true
 
-const loginWithGithub = () => {
-  console.log('Connexion avec GitHub...')
-  // Implémentation OAuth GitHub
+  try {
+    // La méthode loginWithGoogle gère automatiquement le fallback vers la méthode simple
+    await loginWithGoogle()
+
+    // Vérifier si c'est une connexion démo
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
+    if (!clientId || clientId === 'your-google-client-id' || clientId === 'your-google-client-id-here') {
+      alert('Connexion Google simulée (mode développement)\nPour une vraie connexion Google, configurez VITE_GOOGLE_CLIENT_ID dans le fichier .env')
+    }
+
+    // Rediriger après connexion réussie
+    window.location.href = '/'
+  } catch (error) {
+    console.error('Erreur de connexion Google:', error)
+    alert('Erreur lors de la connexion avec Google.\n\nPossibles solutions:\n- Activer les cookies tiers dans votre navigateur\n- Configurer un vrai client ID Google\n- Utiliser la connexion par email')
+  } finally {
+    googleLoading.value = false
+  }
 }
 </script>
 
 <style scoped>
-/* Styles personnalis�s si n�cessaire */
+/* Correction du positionnement du toggle du mot de passe */
+:deep(.p-password) {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+:deep(.p-password .p-password-input) {
+  width: 100% !important;
+  padding-right: 3rem !important;
+  box-sizing: border-box !important;
+}
+
+:deep(.p-password .p-password-toggle) {
+  top: 50% !important;
+  right: 12px !important;
+  transform: translateY(-50%) !important;
+  z-index: 999 !important;
+  background: transparent !important;
+  border: none !important;
+  color: #6b7280 !important;
+  cursor: pointer !important;
+  padding: 4px !important;
+  margin: 0 !important;
+  width: 20px !important;
+  height: 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+}
+
+:deep(.p-password .p-password-toggle:hover) {
+  color: #374151 !important;
+  background-color: rgba(0, 0, 0, 0.05) !important;
+  border-radius: 4px !important;
+}
+
+:deep(.p-password .p-password-toggle i) {
+  font-size: 14px !important;
+}
+
+/* Masquer les éléments mal positionnés */
+:deep(.p-password .p-input-icon-right) {
+  position: relative !important;
+}
+
+:deep(.p-password .p-input-icon) {
+  position: static !important;
+}
+
+/* Mode sombre */
+:deep(.dark .p-password .p-password-toggle) {
+  color: #9ca3af !important;
+}
+
+:deep(.dark .p-password .p-password-toggle:hover) {
+  color: #d1d5db !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
 </style>

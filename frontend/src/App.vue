@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import router from './router'
+import { useRoute } from 'vue-router'
 import Button from 'primevue/button'
 import Avatar from 'primevue/avatar'
 import Menubar from 'primevue/menubar'
 
-const router = useRouter()
 const route = useRoute()
 
 // État d'authentification (à adapter selon votre système d'auth)
@@ -14,13 +14,14 @@ const isAuthenticated = ref(!!localStorage.getItem('auth_token'))
 // État réactif pour le nom de la route courante
 const currentRouteName = ref<string>('')
 
-// Watcher pour mettre à jour le nom de la route
-watch(() => route.name, (newName) => {
-  currentRouteName.value = newName ? String(newName) : ''
+// Watcher pour mettre à jour le nom de la route avec protection
+watch(() => route?.name || '', (newName) => {
+  currentRouteName.value = String(newName)
 }, { immediate: true })
 
 onMounted(() => {
-  currentRouteName.value = route.name ? String(route.name) : ''
+  // Initialisation sécurisée du nom de route
+  currentRouteName.value = route?.name ? String(route.name) : ''
 })
 
 // Fonction de déconnexion

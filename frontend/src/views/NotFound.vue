@@ -14,10 +14,10 @@
       <!-- Titre et message -->
       <div class="mb-8">
         <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-          Page non trouvée
+          Page non trouvÃ©e
         </h1>
         <p class="text-gray-600 dark:text-gray-300 mb-6">
-          Désolé, la page que vous recherchez n'existe pas ou a été déplacée.
+          DÃ©solÃ©, la page que vous recherchez n'existe pas ou a Ã©tÃ© dÃ©placÃ©e.
         </p>
       </div>
 
@@ -27,7 +27,7 @@
           @click="goHome"
           class="w-full !py-3"
           icon="pi pi-home"
-          label="Retour à l'accueil"
+          label="Retour Ã  l'accueil"
         />
 
         <Button
@@ -36,7 +36,7 @@
           outlined
           class="w-full !py-3"
           icon="pi pi-arrow-left"
-          label="Retour en arrière"
+          label="Retour en arriÃ¨re"
         />
       </div>
 
@@ -80,7 +80,7 @@
             Informations techniques
           </summary>
           <div class="mt-2 text-xs text-gray-500 dark:text-gray-400 font-mono">
-            <div>URL demandée : {{ requestedUrl }}</div>
+            <div>URL demandÃ©e : {{ requestedUrl }}</div>
             <div>Code d'erreur : 404</div>
             <div>Timestamp : {{ new Date().toISOString() }}</div>
             <div>User Agent : {{ userAgent }}</div>
@@ -107,7 +107,7 @@ const goHome = () => {
 }
 
 const goBack = () => {
-  // Si possible, revenir à la page précédente, sinon aller à l'accueil
+  // Si possible, revenir Ã  la page prÃ©cÃ©dente, sinon aller Ã  l'accueil
   if (window.history.length > 1) {
     router.back()
   } else {
@@ -118,17 +118,17 @@ const goBack = () => {
 // Optionnel : Logger l'erreur 404 pour analytics
 console.warn(`404 Error: Page not found - ${requestedUrl.value}`)
 
-// Optionnel : Envoyer l'erreur à un service de monitoring
+// Optionnel : Envoyer l'erreur Ã  un service de monitoring
 // sendErrorToMonitoring('404', requestedUrl.value)
 </script>
 
 <style scoped>
-/* Styles personnalisés si nécessaire */
+/* Styles personnalisÃ©s si nÃ©cessaire */
 .not-found-page {
   background-attachment: fixed;
 }
 
-/* Animation pour l'icône */
+/* Animation pour l'icÃ´ne */
 .pi-exclamation-triangle {
   animation: pulse 2s infinite;
 }

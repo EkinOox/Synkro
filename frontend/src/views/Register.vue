@@ -117,7 +117,7 @@
         <p class="text-center text-sm text-gray-600 dark:text-gray-400 mb-4">
           Ou s'inscrire avec
         </p>
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols gap-3">
           <Button
             @click="registerWithGoogle"
             severity="secondary"
@@ -126,15 +126,6 @@
           >
             <i class="pi pi-google mr-2"></i>
             Google
-          </Button>
-          <Button
-            @click="registerWithGithub"
-            severity="secondary"
-            outlined
-            class="!p-3"
-          >
-            <i class="pi pi-github mr-2"></i>
-            GitHub
           </Button>
         </div>
       </div>
@@ -238,13 +229,72 @@ const registerWithGoogle = () => {
   console.log('Inscription avec Google...')
   // Implémentation OAuth Google
 }
-
-const registerWithGithub = () => {
-  console.log('Inscription avec GitHub...')
-  // Implémentation OAuth GitHub
-}
 </script>
 
 <style scoped>
-/* Styles personnalis�s si n�cessaire */
+/* Correction du positionnement du toggle du mot de passe */
+:deep(.p-password) {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+:deep(.p-password .p-password-input) {
+  width: 100% !important;
+  padding-right: 3rem !important;
+  box-sizing: border-box !important;
+}
+
+:deep(.p-password .p-password-toggle) {
+  top: 50% !important;
+  right: 12px !important;
+  transform: translateY(-50%) !important;
+  z-index: 999 !important;
+  background: transparent !important;
+  border: none !important;
+  color: #6b7280 !important;
+  cursor: pointer !important;
+  padding: 4px !important;
+  margin: 0 !important;
+  width: 20px !important;
+  height: 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+}
+
+:deep(.p-password .p-password-toggle:hover) {
+  color: #374151 !important;
+  background-color: rgba(0, 0, 0, 0.05) !important;
+  border-radius: 4px !important;
+}
+
+:deep(.p-password .p-password-toggle i) {
+  font-size: 14px !important;
+}
+
+/* Masquer les éléments mal positionnés */
+:deep(.p-password .p-input-icon-right) {
+  position: relative !important;
+}
+
+:deep(.p-password .p-input-icon) {
+  position: static !important;
+}
+
+/* Mode sombre */
+:deep(.dark .p-password .p-password-toggle) {
+  color: #9ca3af !important;
+}
+
+:deep(.dark .p-password .p-password-toggle:hover) {
+  color: #d1d5db !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Styles spécifiques pour le feedback du mot de passe */
+:deep(.p-password .p-password-panel) {
+  margin-top: 0.5rem;
+}
 </style>

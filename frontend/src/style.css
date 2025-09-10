@@ -104,12 +104,6 @@ button:hover {
   transform: translateY(-1px);
 }
 
-button:focus,
-button:focus-visible {
-  outline: 2px solid var(--primary-color);
-  outline-offset: 2px;
-}
-
 button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
@@ -163,7 +157,61 @@ button:disabled {
   }
 }
 
-/* Mode sombre (optionnel pour plus tard) */
+/* Styles globaux pour PrimeVue Password - Force override */
+.p-password {
+  position: relative !important;
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.p-password .p-input-icon-right {
+  position: relative !important;
+  width: 100% !important;
+}
+
+.p-password .p-password-input {
+  width: 100% !important;
+  padding-right: 3rem !important;
+  box-sizing: border-box !important;
+}
+
+.p-password .p-password-toggle {
+  position: relative !important;
+  top: 50% !important;
+  right: 0.75rem !important;
+}
+.p-password .p-password-toggle:hover {
+  color: #374151 !important;
+  background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+.p-password .p-password-toggle:focus {
+  outline: 2px solid #3b82f6 !important;
+  outline-offset: 2px !important;
+}
+
+.p-password .p-password-toggle i {
+  font-size: 14px !important;
+}
+
+/* Masquer les éléments indésirables */
+.p-password .p-input-icon {
+  position: static !important;
+}
+
+/* Correction spécifique pour l'icône de toggle */
+.p-password-toggle-mask-icon {
+  inset-inline-end: var(--p-form-field-padding-x) !important;
+  color: var(--p-password-icon-color) !important;
+  position: relative !important;
+  top: 50% !important;
+  margin-top: calc(-1 * calc(var(--p-icon-size) / 2)) !important;
+  width: var(--p-icon-size) !important;
+  height: var(--p-icon-size) !important;
+}
+
+/* Mode sombre */
 @media (prefers-color-scheme: dark) {
   :root {
     --text-color: #ffffff;
@@ -172,5 +220,14 @@ button:disabled {
     --surface: #2d2d2d;
     --border: #404040;
     --shadow: rgba(0, 0, 0, 0.3);
+  }
+
+  .p-password .p-password-toggle {
+    color: #9ca3af !important;
+  }
+
+  .p-password .p-password-toggle:hover {
+    color: #d1d5db !important;
+    background-color: rgba(255, 255, 255, 0.1) !important;
   }
 }
