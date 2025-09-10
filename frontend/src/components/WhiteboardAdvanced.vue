@@ -1,10 +1,10 @@
 <template>
   <div class="advanced-tools">
-    <!-- Panneau d'outils avancés -->
+    <!-- Panneau d'outils avancï¿½s -->
     <div class="tools-panel bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl rounded-2xl border border-white/30 dark:border-gray-700/30 shadow-2xl p-4 max-w-md">
       <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center gap-2">
         <i class="pi pi-cog text-blue-500"></i>
-        Outils Avancés
+        Outils Avancï¿½s
       </h3>
 
       <!-- Layers -->
@@ -54,7 +54,7 @@
         <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Pinceau</h4>
         <div class="space-y-3">
           <div>
-            <label class="text-xs text-gray-600 dark:text-gray-400">Opacité</label>
+            <label class="text-xs text-gray-600 dark:text-gray-400">Opacitï¿½</label>
             <Slider
               v-model="brushOpacity"
               :min="0"
@@ -65,7 +65,7 @@
             <span class="text-xs text-gray-500">{{ brushOpacity }}%</span>
           </div>
           <div>
-            <label class="text-xs text-gray-600 dark:text-gray-400">Dureté</label>
+            <label class="text-xs text-gray-600 dark:text-gray-400">Duretï¿½</label>
             <Slider
               v-model="brushHardness"
               :min="0"
@@ -98,7 +98,7 @@
 
       <!-- Grid and snapping -->
       <div class="mb-6">
-        <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Grille & Magnétisme</h4>
+        <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Grille & Magnï¿½tisme</h4>
         <div class="space-y-3">
           <div class="flex gap-2">
             <label class="text-xs text-gray-600 dark:text-gray-400 flex items-center">
@@ -115,7 +115,7 @@
                 v-model="snapToGrid"
                 class="mr-2"
               />
-              Magnétisme
+              Magnï¿½tisme
             </label>
           </div>
           <div>
@@ -181,7 +181,7 @@
 
       <!-- Templates -->
       <div class="mb-4">
-        <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Modèles</h4>
+        <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Modï¿½les</h4>
         <div class="grid grid-cols-3 gap-2">
           <Button
             v-for="template in templates"
@@ -215,7 +215,7 @@ interface Layer {
   locked: boolean
 }
 
-// Interface pour les modèles
+// Interface pour les modï¿½les
 interface Template {
   id: string
   name: string
@@ -223,7 +223,7 @@ interface Template {
   elements: any[]
 }
 
-// Props et émissions
+// Props et ï¿½missions
 const emit = defineEmits([
   'brushSettingsChanged',
   'gridSettingsChanged',
@@ -232,23 +232,23 @@ const emit = defineEmits([
   'export'
 ])
 
-// État des calques
+// ï¿½tat des calques
 const layers = ref<Layer[]>([
   { id: '1', name: 'Calque 1', visible: true, locked: false }
 ])
 
-// Paramètres du pinceau
+// Paramï¿½tres du pinceau
 const brushOpacity = ref(100)
 const brushHardness = ref(80)
 const pressureSensitive = ref(false)
 const smoothing = ref(true)
 
-// Paramètres de grille
+// Paramï¿½tres de grille
 const showGrid = ref(true)
 const snapToGrid = ref(false)
 const gridSize = ref(20)
 
-// Modèles prédéfinis
+// Modï¿½les prï¿½dï¿½finis
 const templates = ref<Template[]>([
   {
     id: 'wireframe',
@@ -276,7 +276,7 @@ const templates = ref<Template[]>([
   },
   {
     id: 'presentation',
-    name: 'Présentation',
+    name: 'Prï¿½sentation',
     icon: 'pi pi-desktop',
     elements: []
   },
@@ -288,7 +288,7 @@ const templates = ref<Template[]>([
   }
 ])
 
-// Méthodes des calques
+// Mï¿½thodes des calques
 const addLayer = () => {
   const newLayer: Layer = {
     id: Date.now().toString(),
@@ -319,7 +319,7 @@ const toggleLayerVisibility = (layerId: string) => {
   }
 }
 
-// Méthodes d'export
+// Mï¿½thodes d'export
 const exportAsPNG = () => {
   emit('export', { format: 'png' })
 }
@@ -336,7 +336,7 @@ const exportAsJSON = () => {
   emit('export', { format: 'json' })
 }
 
-// Charger un modèle
+// Charger un modï¿½le
 const loadTemplate = (templateId: string) => {
   const template = templates.value.find(t => t.id === templateId)
   if (template) {
@@ -344,7 +344,7 @@ const loadTemplate = (templateId: string) => {
   }
 }
 
-// Watchers pour émettre les changements
+// Watchers pour ï¿½mettre les changements
 watch([brushOpacity, brushHardness, pressureSensitive, smoothing], () => {
   emit('brushSettingsChanged', {
     opacity: brushOpacity.value,
