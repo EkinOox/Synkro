@@ -4,7 +4,7 @@ WORKDIR /var/www
 
 RUN apt-get update && apt-get install -y \
     git unzip curl libicu-dev libpq-dev libzip-dev zip \
-    && docker-php-ext-install pdo pdo_mysql intl zip
+    && docker-php-ext-install pdo pdo_pgsql intl zip
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
