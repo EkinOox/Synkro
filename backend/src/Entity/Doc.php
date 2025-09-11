@@ -29,7 +29,7 @@ class Doc
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::TEXT)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $text = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -39,7 +39,7 @@ class Doc
     #[ORM\JoinColumn(name: 'admin', referencedColumnName: 'id', nullable: false)]
     private ?User $admin = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255)]
     private ?string $name = null;
 
     public function getId(): ?int
