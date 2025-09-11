@@ -110,9 +110,13 @@ import InputText from 'primevue/inputtext'
 import Password from 'primevue/password'
 import Button from 'primevue/button'
 import Checkbox from 'primevue/checkbox'
+import { useCollaborationRoom } from '../composables/useCollaborationRoom'
+import { useAuth } from '../composables/useAuth'
 
 const loading = ref(false)
 const googleLoading = ref(false)
+const { refreshAfterAuth } = useCollaborationRoom()
+const auth = useAuth()
 const toast = useToast()
 
 const form = reactive({
@@ -125,20 +129,6 @@ const errors = reactive({
   email: '',
   password: ''
 })
-
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
-
-interface ApiLoginResponse {
-  success: boolean
-  token: string
-  message: string
-}
-
-interface ApiErrorResponse {
-  title?: string
-  detail?: string
-  description?: string
-}
 
 const handleLogin = async () => {
   // Reset des erreurs
@@ -164,73 +154,42 @@ const handleLogin = async () => {
   loading.value = true
 
   try {
-    const response = await fetch(`${apiBaseUrl}/api/user_logins`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/ld+json',
-        'Accept': 'application/ld+json'
-      },
-      body: JSON.stringify({
-        email: form.email.trim(),
-        password: form.password
-      })
+    // Utiliser le composable useAuth pour la connexion
+    await auth.loginWithCredentials(form.email.trim(), form.password)
+
+    // Toast succès
+    toast.add({
+      severity: 'success',
+      summary: 'Connexion réussie',
+      detail: 'Bienvenue !',
+      life: 3000
     })
 
-    if (!response.ok) {
-      let data: ApiErrorResponse | null = null
-      try { data = await response.json() } catch {}
+    // Reset formulaire
+    form.email = ''
+    form.password = ''
+    form.remember = false
 
-      const errorMessage = data?.detail || data?.description || 'Email ou mot de passe incorrect'
-      errors.email = errorMessage
-
-      toast.add({
-        severity: 'error',
-        summary: 'Connexion échouée',
-        detail: errorMessage,
-        life: 6000
-      })
-      return
+    // Recharger les rooms avec le nouveau token
+    try {
+      await refreshAfterAuth()
+      console.log('✅ Rooms rechargées avec le nouveau token')
+    } catch (refreshError) {
+      console.warn('⚠️ Erreur lors du rechargement des rooms:', refreshError)
     }
 
-    // Succès
-    const loginData: ApiLoginResponse = await response.json()
+    // Redirection différée
+    setTimeout(() => router.push('/'), 600)
 
-    if (loginData.success && loginData.token) {
-      // Stockage du token
-      localStorage.setItem('auth_token', loginData.token)
-      localStorage.setItem('user_email', form.email)
-
-      // Toast succès
-      toast.add({
-        severity: 'success',
-        summary: 'Connexion réussie',
-        detail: loginData.message || 'Bienvenue !',
-        life: 3000
-      })
-
-      // Reset formulaire
-      form.email = ''
-      form.password = ''
-      form.remember = false
-
-      // Redirection différée
-      setTimeout(() => router.push('/'), 600)
-    } else {
-      errors.email = 'Réponse invalide du serveur'
-      toast.add({
-        severity: 'error',
-        summary: 'Erreur',
-        detail: 'Réponse invalide du serveur',
-        life: 6000
-      })
-    }
-  } catch (e) {
-    console.error('Erreur réseau connexion:', e)
-    errors.email = 'Erreur réseau – réessayez'
+  } catch (error) {
+    console.error('❌ Erreur de connexion:', error)
+    const errorMessage = error instanceof Error ? error.message : 'Erreur de connexion'
+    errors.email = errorMessage
+    
     toast.add({
       severity: 'error',
-      summary: 'Réseau',
-      detail: 'Erreur réseau – réessayez',
+      summary: 'Connexion échouée',
+      detail: errorMessage,
       life: 6000
     })
   } finally {

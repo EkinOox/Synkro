@@ -4,20 +4,74 @@
 
 /* Composants réutilisables glassmorphism */
 @layer components {
+	/* Panels principaux */
 	.glass-panel {
-		@apply relative rounded-2xl border border-white/30 dark:border-slate-700/50 bg-white/20 dark:bg-slate-800/30 backdrop-blur-xl shadow-glass overflow-hidden;
+		@apply relative rounded-2xl border border-white/40 dark:border-slate-700/60 bg-white/40 dark:bg-slate-800/50 backdrop-blur-xl shadow-glass overflow-hidden;
 	}
 	.glass-panel-hover {
 		@apply transition-all duration-300 hover:shadow-glass-lg hover:bg-white/30 dark:hover:bg-slate-700/40 hover:-translate-y-1;
 	}
+	.glass-section {
+		@apply glass-panel p-6 shadow-glass-lg;
+	}
+	.glass-sidebar {
+		@apply glass-panel p-6 flex flex-col gap-6;
+	}
+
+	/* Boutons glassmorphism */
+	.btn-glass {
+		@apply relative inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold backdrop-blur-xl transition-all duration-200 border shadow-soft;
+	}
+	.btn-glass-primary {
+		@apply btn-glass bg-gradient-to-r from-blue-600/80 to-emerald-500/80 text-white border-white/20 hover:from-blue-700/90 hover:to-emerald-600/90 hover:shadow-brand hover:-translate-y-0.5;
+	}
+	.btn-glass-secondary {
+		@apply btn-glass bg-white/20 dark:bg-slate-700/30 text-gray-700 dark:text-gray-200 border-white/40 dark:border-slate-600/50 hover:bg-white/30 dark:hover:bg-slate-600/40 hover:shadow-glass-lg;
+	}
+	.btn-glass-danger {
+		@apply btn-glass bg-red-500/80 text-white border-red-400/40 hover:bg-red-600/90 hover:shadow-danger hover:-translate-y-0.5;
+	}
+	.btn-glass-success {
+		@apply btn-glass bg-emerald-500/80 text-white border-emerald-400/40 hover:bg-emerald-600/90 hover:shadow-brand hover:-translate-y-0.5;
+	}
+	.btn-glass-warning {
+		@apply btn-glass bg-amber-500/80 text-white border-amber-400/40 hover:bg-amber-600/90 hover:shadow-soft-lg hover:-translate-y-0.5;
+	}
+
+	/* Badges et indicateurs */
 	.badge-glass {
 		@apply inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium bg-white/25 dark:bg-slate-700/40 backdrop-blur-md border border-white/30 dark:border-slate-600/50 shadow-soft;
 	}
+	.badge-glass-success {
+		@apply badge-glass text-emerald-700 dark:text-emerald-300 bg-emerald-200/40 dark:bg-emerald-500/20 border-emerald-300/50 dark:border-emerald-500/40;
+	}
+	.badge-glass-warning {
+		@apply badge-glass text-amber-700 dark:text-amber-300 bg-amber-200/40 dark:bg-amber-500/20 border-amber-300/50 dark:border-amber-500/40;
+	}
+	.badge-glass-danger {
+		@apply badge-glass text-red-700 dark:text-red-300 bg-red-200/40 dark:bg-red-500/20 border-red-300/50 dark:border-red-500/40;
+	}
+	.badge-glass-info {
+		@apply badge-glass text-blue-700 dark:text-blue-300 bg-blue-200/40 dark:bg-blue-500/20 border-blue-300/50 dark:border-blue-500/40;
+	}
+
+	/* Titres et textes */
 	.section-title {
 		@apply text-sm font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-3 flex items-center gap-2;
 	}
+	.room-title {
+		@apply text-xl font-bold text-gray-800 dark:text-gray-100 mb-2 flex items-center gap-2;
+	}
+	.room-subtitle {
+		@apply text-lg font-semibold text-gray-700 dark:text-gray-200 mb-4 flex items-center gap-2;
+	}
+
+	/* Utilitaires */
 	.divider-gradient {
 		@apply h-px w-full bg-gradient-to-r from-transparent via-slate-300/60 to-transparent dark:via-slate-600/60 my-6;
+	}
+	.glass-input {
+		@apply px-4 py-2.5 rounded-xl bg-white/60 dark:bg-slate-800/60 border border-white/40 dark:border-slate-600/50 focus:ring-2 focus:ring-brand-400/50 focus:outline-none text-sm backdrop-blur-xl shadow-inner;
 	}
 }
 
@@ -25,4 +79,20 @@
 @layer utilities {
 	.gradient-text-brand { @apply bg-gradient-to-r from-brand-500 via-emerald-500 to-teal-500 bg-clip-text text-transparent; }
 	.glass-hover { @apply transition-all duration-300 hover:bg-white/30 dark:hover:bg-slate-700/40 hover:shadow-glass-lg; }
+	.stagger-base { opacity:0; animation: fadeInUp .65s cubic-bezier(.16,.8,.24,1) forwards; }
+	.delay-1 { animation-delay: .05s; }
+	.delay-2 { animation-delay: .1s; }
+	.delay-3 { animation-delay: .15s; }
+	.delay-4 { animation-delay: .2s; }
+	.delay-5 { animation-delay: .25s; }
+	.delay-6 { animation-delay: .3s; }
+	.delay-7 { animation-delay: .35s; }
+	.delay-8 { animation-delay: .4s; }
+}
+
+/* Keyframes animations */
+@keyframes fadeInUp {
+	0% { opacity: 0; transform: translateY(22px) scale(.98); }
+	60% { opacity: 1; transform: translateY(-2px) scale(1.005); }
+	100% { opacity: 1; transform: translateY(0) scale(1); }
 }

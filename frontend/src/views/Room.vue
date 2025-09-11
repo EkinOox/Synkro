@@ -1,219 +1,722 @@
 <template>
-  <div class="room-page h-full flex flex-col gap-4 p-4" v-if="room">
-    <header class="flex items-center justify-between gap-4 flex-wrap">
-      <div class="flex items-center gap-3">
-        <h1 class="text-2xl font-semibold">{{ room.name }}</h1>
-        <span class="px-2 py-0.5 rounded text-xs font-medium" :class="room.locked ? 'bg-red-600/15 text-red-500':'bg-green-600/15 text-green-500'">
-          {{ room.locked ? 'Verrouillée' : 'Active' }}
-        </span>
-      </div>
-      <div class="flex items-center gap-2 flex-wrap">
-        <Button size="small" icon="pi pi-palette" label="Whiteboard" @click="openWhiteboard" />
-        <Button size="small" icon="pi pi-file" label="Exporter" @click="exportRoom" outlined />
-        <Button size="small" icon="pi pi-shield" label="Admin" v-if="isOwner" @click="toggleAdmin" outlined />
-      </div>
-    </header>
+  <div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-emerald-50 dark:from-gray-900 dark:via-slate-900 dark:to-gray-900 relative overflow-hidden">
+    <!-- Effets glassmorphism en fond -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+      <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-blue-400/20 to-emerald-400/20 rounded-full blur-3xl animate-pulse"></div>
+      <div class="absolute top-3/4 right-1/4 w-96 h-96 bg-gradient-to-r from-purple-400/20 to-pink-400/20 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
+    </div>
 
-    <div class="flex flex-1 gap-4 min-h-[600px]">
-      <aside class="w-64 border rounded p-3 flex flex-col gap-3 bg-white/70 backdrop-blur-sm shadow-sm overflow-y-auto">
-        <div class="flex items-center justify-between">
-          <h2 class="font-medium">Participants</h2>
-          <span class="text-xs opacity-60">{{ room.users.length }}</span>
+    <div class="max-w-7xl mx-auto py-10 px-4 relative z-10">
+      <!-- État de chargement -->
+      <div v-if="!room" class="flex items-center justify-center min-h-[400px]">
+        <div class="text-center">
+          <i class="pi pi-spin pi-spinner text-4xl text-blue-500 mb-4"></i>
+          <p class="text-lg text-gray-600 dark:text-gray-400">Chargement de la room...</p>
         </div>
-        <ul class="space-y-2">
-          <li v-for="u in room.users" :key="u.id" class="flex items-start gap-2 group">
-            <span class="w-2 h-2 rounded-full mt-2" :style="{ background:u.color }"></span>
-            <div class="flex-1">
-              <p class="text-sm font-medium flex items-center gap-1">
-                {{ u.name }}
-                <span v-if="u.id===room.ownerId" class="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-600">Owner</span>
-                <span v-else-if="u.role==='writer'" class="text-[10px] px-1 py-0.5 rounded bg-emerald-500/20 text-emerald-600">Write</span>
-                <span v-else-if="u.role==='read'" class="text-[10px] px-1 py-0.5 rounded bg-gray-500/20 text-gray-600">Read</span>
-              </p>
-              <div v-if="isOwner && u.id!==room.ownerId" class="flex gap-1 mt-1 opacity-0 group-hover:opacity-100 transition">
-                <Button size="small" text icon="pi pi-pencil" @click="toggleWrite(u.id)" v-tooltip.top="'Toggle édition'" />
-                <Button size="small" text icon="pi pi-ban" @click="banUser(u.id)" v-tooltip.top="'Bannir'" />
+      </div>
+
+      <!-- Contenu de la room -->
+      <div v-else class="flex flex-col md:flex-row gap-8">
+        <!-- Panel participants -->
+        <aside class="w-full md:w-1/4 glass-sidebar">
+          <h2 class="room-title">
+            <i class="pi pi-users text-brand-500"></i> Participants
+            <span class="text-sm font-normal text-gray-500 ml-2">
+              ({{ realTimeParticipants.onlineCount }} en ligne)
+            </span>
+          </h2>
+
+          <!-- Participants en ligne -->
+          <div class="space-y-3 mb-6">
+            <div v-if="realTimeParticipants.onlineCount === 0" class="text-center py-4 text-gray-500 dark:text-gray-400">
+              <i class="pi pi-users text-2xl mb-2"></i>
+              <p class="text-sm">Aucun participant en ligne</p>
+            </div>
+            
+            <div v-for="participant in realTimeParticipants.participants.filter(p => p.isOnline)" 
+                 :key="participant.id" 
+                 class="participant-card p-3 rounded-lg bg-white/20 dark:bg-gray-800/30 backdrop-blur-sm border border-white/30 dark:border-gray-700/40 hover:bg-white/30 dark:hover:bg-gray-700/40 transition-all">
+              
+              <!-- Info principale du participant -->
+              <div class="flex items-center gap-3 mb-2">
+                <div class="relative">
+                  <div 
+                    class="w-10 h-10 rounded-full flex items-center justify-center text-white font-medium text-sm"
+                    :style="{ backgroundColor: participant.color }"
+                  >
+                    <img v-if="participant.avatar" :src="participant.avatar" :alt="participant.name" class="w-full h-full rounded-full object-cover" />
+                    <span v-else>{{ participant.name.charAt(0).toUpperCase() }}</span>
+                  </div>
+                  <!-- Indicateur en ligne -->
+                  <div class="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-gray-800"></div>
+                </div>
+                
+                <div class="flex-1 min-w-0">
+                  <div class="font-medium text-gray-700 dark:text-gray-200 truncate">{{ participant.name }}</div>
+                  <div class="text-xs text-gray-500 dark:text-gray-400">
+                    Actif {{ formatLastSeen(participant.lastSeen) }}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Activités du participant -->
+              <div class="flex flex-wrap gap-1">
+                <span v-if="participant.activities.editor" 
+                      class="inline-flex items-center gap-1 px-2 py-1 text-xs bg-blue-500/20 text-blue-600 dark:text-blue-400 rounded-full">
+                  <i class="pi pi-pencil"></i> Éditeur
+                </span>
+                <span v-if="participant.activities.chat" 
+                      class="inline-flex items-center gap-1 px-2 py-1 text-xs bg-green-500/20 text-green-600 dark:text-green-400 rounded-full">
+                  <i class="pi pi-comments"></i> Chat
+                </span>
+                <span v-if="participant.activities.whiteboard" 
+                      class="inline-flex items-center gap-1 px-2 py-1 text-xs bg-purple-500/20 text-purple-600 dark:text-purple-400 rounded-full">
+                  <i class="pi pi-palette"></i> Tableau
+                </span>
+                <span v-if="participant.activities.call" 
+                      class="inline-flex items-center gap-1 px-2 py-1 text-xs bg-red-500/20 text-red-600 dark:text-red-400 rounded-full">
+                  <i class="pi pi-video"></i> Appel
+                </span>
+                <span v-if="participant.activities.comments" 
+                      class="inline-flex items-center gap-1 px-2 py-1 text-xs bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 rounded-full">
+                  <i class="pi pi-comment"></i> Commentaires
+                </span>
               </div>
             </div>
-          </li>
-        </ul>
-        <div v-if="room.bannedUserIds.length" class="pt-2 border-t mt-2">
-          <p class="text-xs font-semibold mb-1 flex items-center gap-1"><i class="pi pi-ban" /> Bannis ({{ room.bannedUserIds.length }})</p>
-          <div class="space-y-1">
-            <div v-for="b in room.bannedUserIds" :key="b" class="flex items-center justify-between text-xs">
-              <span class="truncate">{{ b }}</span>
-              <Button size="small" text icon="pi pi-undo" @click="unbanUser(b)" />
-            </div>
           </div>
-        </div>
-      </aside>
 
-      <main class="flex-1 flex flex-col gap-4">
-        <section class="editor flex-1 border rounded bg-white/70 backdrop-blur-sm p-4 shadow-sm">
-          <h2 class="text-sm font-semibold uppercase tracking-wide mb-2 opacity-70">Editeur collaboratif</h2>
-          <div class="h-[360px] border rounded bg-white/60 flex items-center justify-center text-sm text-gray-500">
-            (Prochainement: intégration Tiptap + Y.js) – Room ID: {{ room.id }}
-          </div>
-        </section>
-        <section class="chat border rounded bg-white/70 backdrop-blur-sm p-4 shadow-sm flex flex-col h-64">
-          <h2 class="text-sm font-semibold uppercase tracking-wide mb-2 opacity-70">Chat</h2>
-          <div class="flex-1 overflow-y-auto space-y-2 pr-1">
-            <div v-for="m in localMessages" :key="m.id" class="text-sm">
-              <span class="font-semibold">{{ m.author }}:</span>
-              <span class="ml-1">{{ m.content }}</span>
-              <span class="ml-2 text-[10px] opacity-50">{{ formatTime(m.createdAt) }}</span>
-            </div>
-            <div v-if="!localMessages.length" class="text-xs opacity-50">Aucun message</div>
-          </div>
-          <form @submit.prevent="submitMessage" class="mt-2 flex gap-2">
-            <input v-model="draft" placeholder="Votre message..." class="flex-1 px-3 py-2 rounded border text-sm focus:outline-none focus:ring focus:ring-sky-300" />
-            <Button size="small" label="Envoyer" type="submit" :disabled="!draft" />
-          </form>
-        </section>
-      </main>
-    </div>
-  </div>
-  <div v-else class="relative w-full max-w-7xl mx-auto px-6 pb-24">
-    <div class="relative mb-14">
-      <div class="absolute -inset-1 bg-gradient-to-r from-blue-500/30 via-emerald-400/30 to-teal-400/30 blur-2xl rounded-3xl"></div>
-      <div class="glass-panel p-8 md:p-10 shadow-glass-lg mt-8">
-        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
-          <div class="flex-1 space-y-4">
-            <h1 class="text-3xl md:text-4xl font-bold gradient-text-brand tracking-tight flex items-center gap-3">
-              <i class="pi pi-users text-blue-500 drop-shadow"></i>
-              Salles collaboratives
-            </h1>
-            <p class="text-sm md:text-base text-slate-600 dark:text-slate-300 max-w-2xl leading-relaxed">Crée ou rejoins des espaces de travail temps réel. Filtre par propriété, visibilité ou tri.</p>
-          </div>
-          <form @submit.prevent="createRoom" class="shrink-0 flex flex-col sm:flex-row gap-4 items-start sm:items-end bg-white/20 dark:bg-slate-800/30 backdrop-blur-xl rounded-2xl border border-white/30 dark:border-slate-700/50 p-5 shadow-inner">
-            <div class="flex flex-col gap-2">
-              <label class="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Nom</label>
-              <input v-model="newRoomName" required minlength="3" class="w-60 px-4 py-2.5 rounded-xl bg-white/60 dark:bg-slate-800/60 border border-white/40 dark:border-slate-600/50 focus:ring-2 focus:ring-blue-400/50 focus:outline-none text-sm shadow-inner placeholder:text-slate-400 dark:placeholder:text-slate-500" placeholder="Ex: Daily Standup" />
-            </div>
-            <div class="flex items-center gap-2 pt-2 sm:pt-0">
-              <input type="checkbox" id="private" v-model="newRoomPrivate" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 bg-white/70 dark:bg-slate-700/70" />
-              <label for="private" class="text-xs font-medium text-slate-600 dark:text-slate-300">Privée</label>
-            </div>
-            <button type="submit" :disabled="loading" class="relative inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-br from-blue-600 to-emerald-500 text-white shadow-brand hover:shadow-brand-lg hover:brightness-110 hover:-translate-y-0.5 transition disabled:opacity-50 disabled:cursor-not-allowed">
-              <i class="pi pi-plus text-xs"></i>
-              Créer
+          <!-- Participants hors ligne (repliable) -->
+          <div v-if="realTimeParticipants.participants.filter(p => !p.isOnline).length > 0" class="border-t border-gray-300/30 dark:border-gray-600/30 pt-4">
+            <button 
+              @click="showOfflineParticipants = !showOfflineParticipants"
+              class="flex items-center justify-between w-full text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors mb-3"
+            >
+              <span>Participants récents ({{ realTimeParticipants.participants.filter(p => !p.isOnline).length }})</span>
+              <i :class="showOfflineParticipants ? 'pi pi-chevron-up' : 'pi pi-chevron-down'"></i>
             </button>
-          </form>
-        </div>
+
+            <Transition name="slide-down">
+              <div v-if="showOfflineParticipants" class="space-y-2">
+                <div v-for="participant in realTimeParticipants.participants.filter(p => !p.isOnline)" 
+                     :key="participant.id" 
+                     class="flex items-center gap-3 p-2 rounded-lg hover:bg-white/10 dark:hover:bg-gray-700/20 transition-all opacity-60">
+                  <div 
+                    class="w-8 h-8 rounded-full flex items-center justify-center text-white font-medium text-xs"
+                    :style="{ backgroundColor: participant.color }"
+                  >
+                    <img v-if="participant.avatar" :src="participant.avatar" :alt="participant.name" class="w-full h-full rounded-full object-cover" />
+                    <span v-else>{{ participant.name.charAt(0).toUpperCase() }}</span>
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <div class="text-sm text-gray-600 dark:text-gray-300 truncate">{{ participant.name }}</div>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">
+                      Vu {{ formatLastSeen(participant.lastSeen) }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Transition>
+          </div>
+
+          <!-- Ancienne section participants (admin) -->
+          <div v-if="participants.length > 0" class="border-t border-gray-300/30 dark:border-gray-600/30 pt-6 mt-6">
+            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+              <i class="pi pi-cog"></i> Administration
+            </h3>
+            <div class="flex flex-col gap-3">
+              <div v-for="user in participants" :key="user.id" class="flex items-center gap-3 p-2 rounded-lg hover:bg-white/30 dark:hover:bg-gray-700/30 transition-all participant-item">
+                <Avatar :image="user.avatar" shape="circle" size="large" />
+                <div class="flex-1">
+                  <span class="font-medium text-gray-700 dark:text-gray-200 block">{{ user.name }}</span>
+                  <div class="flex items-center gap-2">
+                    <Badge v-if="user.isAdmin" value="Admin" severity="info" size="small" />
+                    <Badge v-if="!user.canWrite" value="Muet" severity="warning" size="small" />
+                  </div>
+                </div>
+                <div class="ml-auto flex gap-1">
+                  <button v-if="isAdmin && !user.isAdmin && user.canWrite" class="btn-glass-warning !px-2 !py-1.5" @click="muteUser(user.id)" v-tooltip.top="'Interdire d\'écrire'">
+                    <i class="pi pi-eye-slash text-xs"></i>
+                  </button>
+                  <button v-if="isAdmin && !user.isAdmin && !user.canWrite" class="btn-glass-success !px-2 !py-1.5" @click="user.canWrite = true" v-tooltip.top="'Autoriser à écrire'">
+                    <i class="pi pi-eye text-xs"></i>
+                  </button>
+                  <button v-if="isAdmin && !user.isAdmin" class="btn-glass-danger !px-2 !py-1.5" @click="banUser(user.id)" v-tooltip.top="'Exclure'">
+                    <i class="pi pi-ban text-xs"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Liste noire -->
+          <div v-if="isAdmin && blacklist.length" class="mt-6 p-4 bg-red-500/10 dark:bg-red-900/20 rounded-xl border border-red-300/30 dark:border-red-700/40 backdrop-blur-sm">
+            <h3 class="text-sm font-semibold text-red-700 dark:text-red-300 mb-3 flex items-center gap-2">
+              <i class="pi pi-ban"></i> Liste noire
+            </h3>
+            <div class="space-y-2">
+              <div v-for="user in blacklist" :key="user.id" class="flex items-center justify-between text-sm">
+                <span class="text-red-600 dark:text-red-400">{{ user.name }}</span>
+                <button class="btn-glass-success !px-2 !py-1" @click="unbanUser(user.id)" v-tooltip.top="'Réintégrer'">
+                  <i class="pi pi-times text-xs"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Panel principal -->
+        <main class="flex-1 flex flex-col gap-8">
+          <!-- Indicateur de statut de collaboration -->
+          <div class="fixed top-4 right-4 z-50">
+            <CollaborationStatusIndicator />
+          </div>
+
+          <!-- Header room -->
+          <div class="glass-section">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h1 class="text-3xl font-bold bg-gradient-to-r from-brand-600 to-emerald-500 bg-clip-text text-transparent mb-2">
+                  {{ room?.name || 'Room collaborative' }}
+                </h1>
+                <p class="text-gray-600 dark:text-gray-400">
+                  Espace de travail partagé et interactif avec tous les outils collaboratifs.
+                </p>
+                <div class="flex items-center gap-2 mt-3">
+                  <span 
+                    :class="room?.password ? 'badge-glass-warning' : 'badge-glass-success'"
+                  >
+                    {{ room?.password ? 'Privée' : 'Publique' }}
+                  </span>
+                  <span 
+                    v-if="isAdmin" 
+                    class="badge-glass-info"
+                  >
+                    Administrateur
+                  </span>
+                </div>
+              </div>
+              <div class="flex gap-3">
+                <button class="btn-glass-secondary" @click="exportRoom('pdf')">
+                  <i class="pi pi-file-pdf"></i>
+                  PDF
+                </button>
+                <button class="btn-glass-secondary" @click="exportRoom('odt')">
+                  <i class="pi pi-file"></i>
+                  ODT
+                </button>
+                <button class="btn-glass-primary" @click="importRoom">
+                  <i class="pi pi-upload"></i>
+                  Importer
+                </button>
+                <button v-if="isAdmin" class="btn-glass-danger" @click="deleteRoom">
+                  <i class="pi pi-trash"></i>
+                  Supprimer
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Appel audio/vidéo -->
+          <section class="glass-section">
+            <h2 class="room-subtitle">
+              <i class="pi pi-video text-brand-500"></i> Réunion audio/vidéo
+            </h2>
+            <RoomCallYjs :room-id="room?.id || '1'" :user="collaborationUser" :participants="participants" />
+          </section>
+
+          <!-- Tableau collaboratif TipTap -->
+          <section class="glass-section">
+            <h2 class="room-subtitle">
+              <i class="pi pi-pencil text-brand-500"></i> Tableau collaboratif
+            </h2>
+            <TipTapEditorYjs 
+              :room-id="room?.id || '1'" 
+              :user="collaborationUser" 
+            />
+          </section>
+
+          <!-- Commentaires / Post-its -->
+          <section class="glass-section">
+            <h2 class="room-subtitle">
+              <i class="pi pi-comment text-brand-500"></i> Commentaires & Post-its
+            </h2>
+            <CommentBoardYjs 
+              :room-id="room?.id || '1'" 
+              :user="collaborationUser" 
+              :can-write="canWrite" 
+            />
+          </section>
+
+          <!-- WhiteBoard -->
+          <section class="glass-section">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="room-subtitle !mb-0">
+                <i class="pi pi-palette text-brand-500"></i> WhiteBoard collaboratif
+              </h2>
+              <button class="btn-glass-primary" @click="openWhiteboard">
+                <i class="pi pi-external-link"></i>
+                Plein écran
+              </button>
+            </div>
+            <RoomWhiteboardYjs :room-id="room?.id || '1'" :user="collaborationUser" />
+          </section>
+
+          <!-- Chat de la room -->
+          <section class="glass-section">
+            <h2 class="room-subtitle">
+              <i class="pi pi-comments text-brand-500"></i> Chat de la room
+            </h2>
+            <RoomChatYjs :room-id="room?.id || '1'" :user="collaborationUser" :can-write="canWrite" />
+          </section>
+        </main>
       </div>
     </div>
 
-    <div class="glass-panel mb-12 p-6 md:p-7">
-      <div class="flex flex-col lg:flex-row gap-8 lg:items-center lg:justify-between">
-        <div class="flex flex-wrap items-center gap-4">
-          <span class="section-title mb-0"><i class="pi pi-filter text-blue-500"></i>Filtres</span>
-          <div class="flex gap-2">
-            <button type="button" @click="showMine=null" :class="['badge-glass', showMine===null ? 'ring-2 ring-blue-400/60 bg-white/40 dark:bg-slate-600/40' : '']">Toutes</button>
-            <button type="button" @click="showMine=true" :class="['badge-glass', showMine===true ? 'ring-2 ring-blue-400/60 bg-white/40 dark:bg-slate-600/40' : '']">Mes Salles</button>
-            <button type="button" @click="showMine=false" :class="['badge-glass', showMine===false ? 'ring-2 ring-blue-400/60 bg-white/40 dark:bg-slate-600/40' : '']">Autres</button>
-          </div>
-          <div class="w-px h-6 bg-gradient-to-b from-transparent via-slate-300/60 to-transparent dark:via-slate-600/60"></div>
-          <div class="flex gap-2">
-            <button type="button" @click="showPrivacy='all'" :class="['badge-glass', showPrivacy==='all' ? 'ring-2 ring-emerald-400/60 bg-white/40 dark:bg-slate-600/40' : '']">Tous types</button>
-            <button type="button" @click="showPrivacy='public'" :class="['badge-glass', showPrivacy==='public' ? 'ring-2 ring-emerald-400/60 bg-white/40 dark:bg-slate-600/40' : '']">Publiques</button>
-            <button type="button" @click="showPrivacy='private'" :class="['badge-glass', showPrivacy==='private' ? 'ring-2 ring-emerald-400/60 bg-white/40 dark:bg-slate-600/40' : '']">Privées</button>
-          </div>
-        </div>
-        <div class="flex items-center gap-3">
-          <span class="section-title mb-0"><i class="pi pi-sort-alt text-emerald-500"></i>Tri</span>
-          <div class="flex gap-2">
-            <button type="button" @click="sortMode='recent'" :class="['badge-glass', sortMode==='recent' ? 'ring-2 ring-indigo-400/60 bg-white/40 dark:bg-slate-600/40' : '']">Récent</button>
-            <button type="button" @click="sortMode='alpha'" :class="['badge-glass', sortMode==='alpha' ? 'ring-2 ring-indigo-400/60 bg-white/40 dark:bg-slate-600/40' : '']">A→Z</button>
-          </div>
-        </div>
+    <!-- Dialogs -->
+    <!-- Dialog de suppression -->
+    <Dialog 
+      v-model:visible="showDeleteDialog" 
+      modal 
+      header="Supprimer la room" 
+      :style="{ width: '450px' }"
+    >
+      <div class="flex align-items-center gap-3 mb-3">
+        <i class="pi pi-exclamation-triangle text-red-500" style="font-size: 2rem"></i>
+        <span>Êtes-vous sûr de vouloir supprimer définitivement cette room ? Cette action est irréversible.</span>
       </div>
-      <div class="divider-gradient"></div>
-      <div class="flex items-center justify-between text-[11px] tracking-wide font-medium text-slate-500 dark:text-slate-400">
-        <span>{{ filteredRooms.length }} salle(s) affichée(s)</span>
-        <span class="hidden sm:inline-flex items-center gap-2"><i class="pi pi-lock text-xs"></i><span class="opacity-70">Privée = mot de passe requis</span></span>
-      </div>
-    </div>
+      <template #footer>
+        <div class="flex gap-3">
+          <button class="btn-glass-secondary" @click="showDeleteDialog = false">
+            <i class="pi pi-times"></i>
+            Annuler
+          </button>
+          <button class="btn-glass-danger" @click="confirmDeleteRoom">
+            <i class="pi pi-trash"></i>
+            Supprimer
+          </button>
+        </div>
+      </template>
+    </Dialog>
 
-    <div class="grid gap-7 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      <div v-for="r in filteredRooms" :key="r.id" @click="handleJoin(r)" class="group glass-panel glass-panel-hover cursor-pointer p-5 pb-6 flex flex-col">
-        <div class="flex items-start justify-between mb-4">
-          <h3 class="font-semibold text-base md:text-lg tracking-tight truncate max-w-[70%]" :title="r.name">{{ r.name }}</h3>
-          <span :class="['badge-glass !px-2 !py-1', r.password ? 'text-purple-600 dark:text-purple-400 bg-purple-200/30 dark:bg-purple-500/20 border-purple-300/40 dark:border-purple-500/40':'text-emerald-600 dark:text-emerald-400 bg-emerald-200/30 dark:bg-emerald-500/20 border-emerald-300/40 dark:border-emerald-500/40']">{{ r.password ? 'Privée':'Publique' }}</span>
-        </div>
-        <div class="flex -space-x-2 mb-4">
-          <div v-for="u in r.users.slice(0,4)" :key="u.id" class="w-9 h-9 rounded-full border border-white/40 dark:border-slate-700/60 flex items-center justify-center text-[11px] font-semibold shadow-soft backdrop-blur-sm" :style="{ background:u.color }" :title="u.name">{{ u.name.charAt(0) }}</div>
-          <div v-if="r.users.length>4" class="w-9 h-9 rounded-full bg-slate-200/70 dark:bg-slate-600/60 border border-white/40 dark:border-slate-700/60 flex items-center justify-center text-[11px] font-semibold text-slate-600 dark:text-slate-200 backdrop-blur-sm">+{{ r.users.length-4 }}</div>
-        </div>
-        <div class="flex items-center justify-between text-[11px] uppercase tracking-wider font-semibold text-slate-500 dark:text-slate-400 mb-3">
-          <span v-if="r.ownerId===currentUserId" class="text-indigo-600 dark:text-indigo-400 flex items-center gap-1"><i class="pi pi-star text-xs"></i>Ma salle</span>
-          <span v-else class="opacity-0 group-hover:opacity-80 transition flex items-center gap-1"><i class="pi pi-user text-[10px]"></i>{{ r.users.length }}</span>
-          <span>{{ new Date(r.createdAt).toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' }) }}</span>
-        </div>
-        <div class="mt-auto flex items-center justify-between">
-          <div class="flex items-center gap-2 text-[10px] font-medium text-slate-500 dark:text-slate-400">
-            <i class="pi" :class="r.password ? 'pi-lock text-purple-500':'pi-unlock text-emerald-500'"></i>
-            <span>{{ r.password ? 'Accès restreint':'Accès direct' }}</span>
-          </div>
-          <div class="opacity-0 group-hover:opacity-100 transition-transform duration-300 translate-y-1 group-hover:translate-y-0">
-            <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg text-[10px] font-semibold bg-gradient-to-r from-blue-600/80 to-emerald-500/80 text-white shadow-brand">
-              <i class="pi pi-sign-in text-[10px]"></i>
-              Rejoindre
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div v-if="!filteredRooms.length" class="text-center text-sm opacity-60 py-16">Aucune salle ne correspond aux filtres.</div>
+    <!-- Dialog d'import -->
+    <Dialog 
+      v-model:visible="showImportDialog" 
+      modal 
+      header="Importer des fichiers" 
+      :style="{ width: '500px' }"
+    >
+      <FileUpload
+        mode="basic"
+        accept=".pdf,.odt,.docx,.txt"
+        :maxFileSize="10000000"
+        :auto="true"
+        @select="onFileSelect"
+        chooseLabel="Choisir des fichiers"
+        class="w-full"
+      />
+      <small class="text-gray-500">Formats supportés: PDF, ODT, DOCX, TXT (max 10Mo)</small>
+      <template #footer>
+        <button class="btn-glass-secondary" @click="showImportDialog = false">
+          <i class="pi pi-times"></i>
+          Fermer
+        </button>
+      </template>
+    </Dialog>
+
+    <!-- Toast pour les notifications -->
+    <Toast />
   </div>
 </template>
+
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import Button from 'primevue/button'
-import Tooltip from 'primevue/tooltip'
+import { ref, computed, onMounted, watch } from 'vue'
+import Avatar from 'primevue/avatar'
+import Dialog from 'primevue/dialog'
+import FileUpload from 'primevue/fileupload'
+import Toast from 'primevue/toast'
+import { useToast } from 'primevue/usetoast'
+
+// Composants custom
+import TipTapEditorYjs from '../components/TipTapEditorYjs.vue'
+import CommentBoardYjs from '../components/CommentBoardYjs.vue'
+import RoomWhiteboardYjs from '../components/RoomWhiteboardYjs.vue'
+import RoomChatYjs from '../components/RoomChatYjs.vue'
+import RoomCallYjs from '../components/RoomCallYjs.vue'
+import CollaborationStatusIndicator from '../components/CollaborationStatusIndicator.vue'
+
+// Composable pour l'authentification et la collaboration
 import { useCollaborationRoom } from '../composables/useCollaborationRoom'
+import { useCollaborationUser } from '../composables/useCollaborationUser'
+import { useRoomParticipants } from '../composables/useRoomParticipants'
 
-const { room, filteredRooms, sortMode, showMine, showPrivacy, currentUserId, loading, initRoom, joinRoom, toggleWrite, banUser, unbanUser } = useCollaborationRoom()
+// Props pour recevoir l'ID de la room
+interface Props {
+  id?: string
+}
 
-function handleJoin(r:any){
-  if(r.password){
-    const value = window.prompt('Mot de passe ?') || undefined
-    if(value===undefined) return
-    joinRoom(r, value)
-  } else {
-    joinRoom(r)
+const props = defineProps<Props>()
+const toast = useToast()
+
+// Utiliser le composable pour la gestion des rooms
+const { room, currentUserId, loadRoomById } = useCollaborationRoom()
+
+// Utiliser l'utilisateur pour la collaboration
+const { user: collaborationUser } = useCollaborationUser()
+
+// Utiliser les participants en temps réel
+const { roomParticipants: realTimeParticipants } = useRoomParticipants(room.value?.id || props.id || '1')
+
+// État pour l'affichage des participants hors ligne
+const showOfflineParticipants = ref(false)
+
+// Fonction pour formater le temps depuis la dernière activité
+function formatLastSeen(timestamp: number): string {
+  const now = Date.now()
+  const diff = now - timestamp
+  const seconds = Math.floor(diff / 1000)
+  
+  if (seconds < 5) return 'à l\'instant'
+  if (seconds < 60) return `il y a ${seconds}s`
+  if (seconds < 3600) return `il y a ${Math.floor(seconds / 60)}m`
+  if (seconds < 86400) return `il y a ${Math.floor(seconds / 3600)}h`
+  return `il y a ${Math.floor(seconds / 86400)}j`
+}
+
+// Charger la room au montage et quand l'ID change
+onMounted(() => {
+  if (props.id) {
+    loadRoomById(props.id)
+  }
+})
+
+watch(() => props.id, (newId) => {
+  if (newId) {
+    loadRoomById(newId)
+  }
+})
+
+// Adapter les participants pour la compatibilité avec le template existant
+const participants = computed(() => {
+  if (!room.value || !room.value.users || !Array.isArray(room.value.users)) return []
+  return room.value.users.map(user => ({
+    id: parseInt(user.id) || Date.now(),
+    name: user.name,
+    avatar: `/avatars/${user.name.toLowerCase()}.png`,
+    isAdmin: user.role === 'owner',
+    canWrite: user.role === 'owner' || user.role === 'writer'
+  }))
+})
+
+const blacklist = computed(() => {
+  if (!room.value || !room.value.bannedUserIds || !Array.isArray(room.value.bannedUserIds)) return []
+  return room.value.bannedUserIds.map(userId => ({
+    id: parseInt(userId) || Date.now(),
+    name: `Utilisateur-${userId}`,
+    avatar: `/avatars/banned.png`,
+    isAdmin: false,
+    canWrite: false
+  }))
+})
+
+const showDeleteDialog = ref(false)
+const showImportDialog = ref(false)
+
+const isAdmin = computed(() => {
+  if (!room.value) return false
+  return room.value.ownerId === currentUserId.value
+})
+
+const canWrite = computed(() => {
+  if (!room.value) return false
+  const currentUser = room.value.users.find(u => u.id === currentUserId.value)
+  return currentUser?.role === 'owner' || currentUser?.role === 'writer'
+})
+
+// Gestion des participants
+function banUser(userId: number) {
+  const userIndex = participants.value.findIndex(p => p.id === userId)
+  if (userIndex !== -1) {
+    const user = participants.value[userIndex]
+    participants.value.splice(userIndex, 1)
+    blacklist.value.push(user)
+    
+    toast.add({
+      severity: 'warn',
+      summary: 'Utilisateur exclu',
+      detail: `${user.name} a été exclu de la room`,
+      life: 3000
+    })
   }
 }
 
-// Création de salle
-const newRoomName = ref('Nouvelle salle')
-const newRoomPrivate = ref(false)
-function createRoom() { initRoom(newRoomName.value, newRoomPrivate.value) }
-
-// Chat local (placeholder avant backend / WS)
-interface LocalMessage { id:string; author:string; content:string; createdAt:Date }
-const localMessages = ref<LocalMessage[]>([])
-const draft = ref('')
-function submitMessage() {
-  if(!draft.value.trim()) return
-  localMessages.value.push({ id: crypto.randomUUID(), author: 'Moi', content: draft.value.trim(), createdAt: new Date() })
-  draft.value = ''
+function muteUser(userId: number) {
+  const user = participants.value.find(p => p.id === userId)
+  if (user) {
+    user.canWrite = false
+    toast.add({
+      severity: 'info',
+      summary: 'Utilisateur muet',
+      detail: `${user.name} ne peut plus écrire`,
+      life: 3000
+    })
+  }
 }
-function formatTime(d:Date) { return d.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' }) }
 
-// Admin / permissions
-const isOwner = computed(()=> room.value && room.value.ownerId === currentUserId.value)
-function toggleAdmin() { /* future admin panel */ }
+function unbanUser(userId: number) {
+  const userIndex = blacklist.value.findIndex(p => p.id === userId)
+  if (userIndex !== -1) {
+    const user = blacklist.value[userIndex]
+    blacklist.value.splice(userIndex, 1)
+    user.canWrite = true
+    participants.value.push(user)
+    
+    toast.add({
+      severity: 'success',
+      summary: 'Utilisateur réintégré',
+      detail: `${user.name} peut à nouveau participer`,
+      life: 3000
+    })
+  }
+}
 
-// Whiteboard navigation avec room id
-function openWhiteboard() { if(room.value) window.history.pushState({},'',`/whiteboard/${room.value.id}`); else window.history.pushState({},'','/whiteboard') }
+// Export et import
+async function exportRoom(type: 'pdf' | 'odt') {
+  if (!room.value) {
+    toast.add({
+      severity: 'error',
+      summary: 'Erreur',
+      detail: 'Aucune room sélectionnée',
+      life: 3000
+    })
+    return
+  }
 
-function exportRoom() { /* placeholder */ alert('Export à venir') }
+  try {
+    toast.add({
+      severity: 'info',
+      summary: 'Export en cours',
+      detail: `Génération du fichier ${type.toUpperCase()}...`,
+      life: 3000
+    })
 
+    // Simuler l'export (ici vous intégreriez une vraie API)
+    await new Promise(resolve => setTimeout(resolve, 2000))
+
+    // Créer un lien de téléchargement
+    const link = document.createElement('a')
+    link.href = '#'
+    link.download = `room-${room.value.id}.${type}`
+    link.click()
+
+    toast.add({
+      severity: 'success',
+      summary: 'Export réussi',
+      detail: `Le fichier ${type.toUpperCase()} a été téléchargé`,
+      life: 3000
+    })
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Erreur d\'export',
+      detail: 'Impossible d\'exporter la room',
+      life: 3000
+    })
+  }
+}
+
+function importRoom() {
+  showImportDialog.value = true
+}
+
+function onFileSelect(event: any) {
+  const files = event.files
+  if (files && files.length > 0) {
+    toast.add({
+      severity: 'success',
+      summary: 'Import réussi',
+      detail: `${files.length} fichier(s) importé(s)`,
+      life: 3000
+    })
+    showImportDialog.value = false
+  }
+}
+
+function deleteRoom() {
+  showDeleteDialog.value = true
+}
+
+function confirmDeleteRoom() {
+  toast.add({
+    severity: 'error',
+    summary: 'Room supprimée',
+    detail: 'La room a été définitivement supprimée',
+    life: 3000
+  })
+  showDeleteDialog.value = false
+  // Rediriger vers la liste des rooms
+  // router.push('/roomList')
+}
+
+function openWhiteboard() {
+  // Ouvrir le whiteboard dans un nouvel onglet
+  if (room.value) {
+    window.open(`/whiteboard/${room.value.id}`, '_blank')
+  } else {
+    toast.add({
+      severity: 'warn',
+      summary: 'Attention',
+      detail: 'Aucune room sélectionnée',
+      life: 3000
+    })
+  }
+}
 </script>
-<script lang="ts">
-export default { directives: { tooltip: Tooltip } }
-</script>
+
 <style scoped>
-.room-page { animation: fade .3s ease }
-@keyframes fade { from { opacity:0; transform: translateY(4px) } to { opacity:1; transform: translateY(0) } }
+/* Effet glassmorphism pour les sections */
+.room-section {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.room-section:hover {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.dark .room-section:hover {
+  background: rgba(17, 24, 39, 0.7);
+  border-color: rgba(75, 85, 99, 0.4);
+}
+
+/* Animation pour les participants */
+.participant-item {
+  animation: slideInLeft 0.3s ease-out;
+  transition: all 0.2s ease;
+}
+
+.participant-item:hover {
+  transform: translateX(5px);
+  background: rgba(255, 255, 255, 0.5) !important;
+}
+
+.dark .participant-item:hover {
+  background: rgba(55, 65, 81, 0.5) !important;
+}
+
+.participant-card {
+  animation: slideInUp 0.3s ease-out;
+  transition: all 0.3s ease;
+}
+
+.participant-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Transitions pour les sections repliables */
+.slide-down-enter-active,
+.slide-down-leave-active {
+  transition: all 0.3s ease;
+}
+
+.slide-down-enter-from {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.slide-down-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Couleurs brand personnalisées */
+.text-brand-500 {
+  color: #3b82f6;
+}
+
+.text-brand-700 {
+  color: #1d4ed8;
+}
+
+.text-brand-400 {
+  color: #60a5fa;
+}
+
+/* Animation des bulles de fond */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.5;
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .room-section {
+    margin: 0 -1rem;
+    border-radius: 1rem;
+  }
+  
+  .participant-item {
+    padding: 1rem;
+  }
+  
+  .max-w-7xl {
+    padding: 1rem;
+  }
+
+  .flex-col.md\\:flex-row {
+    gap: 1rem;
+  }
+}
+
+/* Scrollbar personnalisée */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 130, 246, 0.7);
+}
 </style>
