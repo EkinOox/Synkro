@@ -33,6 +33,7 @@ class DocListOneProcessor implements ProviderInterface
 
         $isBanned = false;
         $isAllowed = false;
+        $textdoc = null;
 
         foreach ($this->em->getRepository(Blist::class)->findBy(['doc' => $doc]) as $blist) {
             $blistUser = $blist->getUserId();
@@ -49,11 +50,13 @@ class DocListOneProcessor implements ProviderInterface
                 break;
             }
         }
-
+        if(!$isBanned){
+            $textdoc = $doc->getText();
+        }
         return new DocListOneOutput(
             $doc->getId(),
             $doc->getName(),
-            $doc->getText(),
+            $textdoc,
             $doc->getPassword(),
             $doc->getAdmin()?->getId(),
             $isBanned,
