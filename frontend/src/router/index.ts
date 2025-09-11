@@ -3,9 +3,12 @@ import { ref, defineComponent, h, type App } from 'vue'
 import Home from '../views/Home.vue'
 import Whiteboard from '../views/Whiteboard.vue'
 import Room from '../views/Room.vue'
+import RoomList from '../views/RoomList.vue'
 import Compte from '../views/Compte.vue'
 import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
+import TestCollaboration from '../views/TestCollaboration.vue'
+import AuthTest from '../views/AuthTest.vue'
 import NotFound from '../views/NotFound.vue'
 
 interface BasicRoute { path:string; name:string; component:any; props?:boolean }
@@ -15,9 +18,12 @@ const routes: BasicRoute[] = [
   { path:'/whiteboard/:roomId', name:'WhiteboardRoom', component: Whiteboard, props:true },
   { path:'/room', name:'Room', component: Room },
   { path:'/room/:id', name:'RoomDetail', component: Room, props:true },
+  { path:'/roomList', name:'RoomList', component: RoomList, props:true },
   { path:'/compte', name:'Compte', component: Compte },
   { path:'/login', name:'Login', component: Login },
   { path:'/register', name:'Register', component: Register },
+  { path:'/test-collaboration', name:'TestCollaboration', component: TestCollaboration },
+  { path:'/auth-test', name:'AuthTest', component: AuthTest },
   { path:'/:pathMatch(.*)*', name:'NotFound', component: NotFound }
 ]
 

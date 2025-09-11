@@ -184,10 +184,10 @@ export const useAuth = (router?: any) => {
   const loginWithCredentials = async (email: string, password: string) => {
     try {
       // Simuler une requÃªte d'authentification Ã  votre backend
-      const response = await fetch('/api/auth/login', {
+      const response = await fetch('http://localhost:8000/api/user_logins', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/ld+json',
         },
         body: JSON.stringify({ email, password }),
       })
@@ -195,18 +195,33 @@ export const useAuth = (router?: any) => {
       if (response.ok) {
         const data = await response.json()
 
-        authState.value = {
-          user: data.user,
-          token: data.token,
-          isAuthenticated: true
+        // Vérifier que la réponse contient un token
+        if (data.success && data.token) {
+          // Créer un objet utilisateur basé sur l'email
+          const user = {
+            email: email,
+            name: email.split('@')[0], // Utiliser la partie avant @ comme nom
+            picture: 'https://via.placeholder.com/100',
+            sub: `user-${email}`
+          }
+
+          authState.value = {
+            user,
+            token: data.token,
+            isAuthenticated: true
+          }
+
+          localStorage.setItem('auth_token', data.token)
+          localStorage.setItem('auth_user', JSON.stringify(user))
+
+          console.log('? Connexion réussie avec token JWT réel:', data.token.substring(0, 30) + '...')
+          return true
+        } else {
+          throw new Error(data.message || 'Token non reçu du serveur')
         }
-
-        localStorage.setItem('auth_token', data.token)
-        localStorage.setItem('auth_user', JSON.stringify(data.user))
-
-        return true
       } else {
-        throw new Error('Identifiants invalides')
+        const errorData = await response.json()
+        throw new Error(errorData.message || errorData.detail || 'Identifiants invalides')
       }
     } catch (error) {
       console.error('Erreur de connexion:', error)

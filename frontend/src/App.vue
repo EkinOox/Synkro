@@ -48,28 +48,9 @@ const menuItems = computed(() => [
     {
       label: 'Salles',
       icon: 'pi pi-users',
-      items: [
-        {
-          label: 'Créer une Salle',
-          icon: 'pi pi-plus',
-          command: () => router.push('/room')
-        },
-        {
-          label: 'Mes Salles',
-          icon: 'pi pi-list',
-          command: () => router.push('/room')
-        },
-        {
-          separator: true
-        },
-        {
-          label: 'Rejoindre une Salle',
-          icon: 'pi pi-sign-in',
-          command: () => router.push('/room')
-        }
-      ]
+      command: () => router.push('/roomList')
     }
-  ] : [])
+  ] : []),
 ])
 
 // Écouter les changements d'authentification
