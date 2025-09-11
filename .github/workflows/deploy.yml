@@ -36,6 +36,6 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            cd /chemin/vers/projet
+            cd /home/student/synkro
             docker-compose pull
             docker-compose up -d
