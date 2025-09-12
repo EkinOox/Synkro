@@ -52,7 +52,7 @@ export function useYjsCall(roomId: string, user: CallUser) {
       isConnecting.value = true
       error.value = null
       
-      // Créer le document Yjs
+      // CrÃ©er le document Yjs
       ydoc = new Y.Doc()
       
       // URL du serveur WebSocket
@@ -61,10 +61,10 @@ export function useYjsCall(roomId: string, user: CallUser) {
       
       console.log(`?? Connexion Call: ${url}/${roomId}`)
 
-      // Créer le provider WebSocket
+      // CrÃ©er le provider WebSocket
       provider = new WebsocketProvider(url, `call-${roomId}`, ydoc)
 
-      // Créer la structure partagée pour le signaling
+      // CrÃ©er la structure partagÃ©e pour le signaling
       ySignaling = ydoc.getArray<SignalingMessage>('call-signaling')
 
       // Configurer l'awareness
@@ -79,9 +79,9 @@ export function useYjsCall(roomId: string, user: CallUser) {
         })
       }
 
-      // Gestionnaires d'événements du provider
+      // Gestionnaires d'Ã©vÃ¨nements du provider
       provider.on('status', (event: any) => {
-        console.log('?? Statut Call WebSocket:', event.status)
+        console.log('Statut Call WebSocket:', event.status)
         isConnected.value = event.status === 'connected'
         isConnecting.value = event.status === 'connecting'
 
@@ -143,7 +143,7 @@ export function useYjsCall(roomId: string, user: CallUser) {
       }
 
       isConnecting.value = false
-      console.log('? Système d\'appel initialisé')
+      console.log('SystÃ¨me d\'appel initialisÃ©')
 
     } catch (err) {
       console.error('? Erreur d\'initialisation Call:', err)
@@ -154,9 +154,9 @@ export function useYjsCall(roomId: string, user: CallUser) {
 
   const startCall = async (withVideo: boolean = false) => {
     try {
-      console.log(`?? Démarrage appel ${withVideo ? 'vidéo' : 'audio'}`)
-      
-      // Demander l'accès aux médias
+      console.log(`DÃ©marrage appel ${withVideo ? 'vidÃ©o' : 'audio'}`)
+
+      // Demander l'accÃ¨s aux mÃ©dias
       const constraints = {
         audio: true,
         video: withVideo
@@ -169,7 +169,7 @@ export function useYjsCall(roomId: string, user: CallUser) {
       audioEnabled.value = true
       videoEnabled.value = withVideo
 
-      // Mettre à jour l'awareness
+      // Mettre Ã  jour l'awareness
       if (provider && provider.awareness) {
         provider.awareness.setLocalStateField('user', {
           id: user.id,
@@ -184,18 +184,18 @@ export function useYjsCall(roomId: string, user: CallUser) {
       // Envoyer un signal que l'utilisateur a rejoint l'appel
       sendSignalingMessage('user-joined', { withVideo })
 
-      console.log('? Appel démarré')
+      console.log('? Appel dÃ©marrÃ©')
 
     } catch (err) {
-      console.error('? Erreur démarrage appel:', err)
-      error.value = 'Impossible d\'accéder aux médias'
+      console.error('? Erreur dÃ©marrage appel:', err)
+      error.value = 'Impossible d\'accÃ©der aux mÃ©dias'
     }
   }
 
   const endCall = () => {
     console.log('?? Fin d\'appel')
 
-    // Arrêter le stream local
+    // ArrÃ©ter le stream local
     if (localStream.value) {
       localStream.value.getTracks().forEach(track => track.stop())
       localStream.value = null
@@ -214,7 +214,7 @@ export function useYjsCall(roomId: string, user: CallUser) {
     videoEnabled.value = true
     participants.value = []
 
-    // Mettre à jour l'awareness
+    // Mettre Ã  jour l'awareness
     if (provider && provider.awareness) {
       provider.awareness.setLocalStateField('user', {
         id: user.id,
@@ -226,7 +226,7 @@ export function useYjsCall(roomId: string, user: CallUser) {
       })
     }
 
-    // Envoyer un signal de départ
+    // Envoyer un signal de dÃ©part
     sendSignalingMessage('user-left', {})
   }
 
@@ -237,7 +237,7 @@ export function useYjsCall(roomId: string, user: CallUser) {
         audioTrack.enabled = !audioTrack.enabled
         audioEnabled.value = audioTrack.enabled
         
-        // Mettre à jour l'awareness
+        // Mettre Ã  jour l'awareness
         updateUserStatus()
         
         // Notifier les autres participants
@@ -253,7 +253,7 @@ export function useYjsCall(roomId: string, user: CallUser) {
         videoTrack.enabled = !videoTrack.enabled
         videoEnabled.value = videoTrack.enabled
         
-        // Mettre à jour l'awareness
+        // Mettre Ã  jour l'awareness
         updateUserStatus()
         
         // Notifier les autres participants
@@ -288,11 +288,11 @@ export function useYjsCall(roomId: string, user: CallUser) {
     }
 
     ySignaling.push([message])
-    console.log('?? Message signaling envoyé:', type)
+    console.log('Message signaling envoyÃ©:', type)
   }
 
   const handleSignalingMessage = (message: SignalingMessage) => {
-    console.log('?? Message signaling reçu:', message.type, 'de', message.fromUserId)
+    console.log('Message signaling reÃ§u:', message.type, 'de', message.fromUserId)
     
     switch (message.type) {
       case 'user-joined':
@@ -300,7 +300,7 @@ export function useYjsCall(roomId: string, user: CallUser) {
         handleUserJoined(message.fromUserId, message.data)
         break
       case 'user-left':
-        // Un utilisateur a quitté l'appel
+        // Un utilisateur a quittÃ© l'appel
         handleUserLeft(message.fromUserId)
         break
       case 'offer':
@@ -308,7 +308,7 @@ export function useYjsCall(roomId: string, user: CallUser) {
         handleOffer(message.fromUserId, message.data)
         break
       case 'answer':
-        // Recevoir une réponse WebRTC
+        // Recevoir une rÃ©ponse WebRTC
         handleAnswer(message.fromUserId, message.data)
         break
       case 'ice-candidate':
@@ -317,20 +317,20 @@ export function useYjsCall(roomId: string, user: CallUser) {
         break
       case 'toggle-audio':
       case 'toggle-video':
-        // Mise à jour du statut média d'un participant
+        // Mise Ã  jour du statut mÃ©dia d'un participant
         updateParticipantStatus(message.fromUserId, message.type, message.data.enabled)
         break
     }
   }
 
   const handleUserJoined = (userId: string, _data: any) => {
-    console.log('?? Utilisateur rejoint appel:', userId)
+    console.log('Utilisateur rejoint appel:', userId)
     // Ici on initierait une connexion WebRTC avec le nouvel utilisateur
-    // Pour la simplicité, on simule juste l'ajout à la liste
+    // Pour la simplicitÃ©, on simule juste l'ajout Ã  la liste
   }
 
   const handleUserLeft = (userId: string) => {
-    console.log('?? Utilisateur quitté appel:', userId)
+    console.log('Utilisateur quittÃ© appel:', userId)
     // Nettoyer la connexion WebRTC avec cet utilisateur
     const participantIndex = participants.value.findIndex(p => p.id === userId)
     if (participantIndex !== -1) {
@@ -343,18 +343,18 @@ export function useYjsCall(roomId: string, user: CallUser) {
   }
 
   const handleOffer = (userId: string, _offer: RTCSessionDescriptionInit) => {
-    // Traiter une offre WebRTC (implémentation WebRTC complète nécessaire)
-    console.log('?? Offre reçue de:', userId)
+    // Traiter une offre WebRTC (implÃ©mentation WebRTC complÃ¨te nÃ©cessaire)
+    console.log('Offre reÃ§ue de:', userId)
   }
 
   const handleAnswer = (userId: string, _answer: RTCSessionDescriptionInit) => {
-    // Traiter une réponse WebRTC
-    console.log('?? Réponse reçue de:', userId)
+    // Traiter une rÃ©ponse WebRTC
+    console.log('RÃ©ponse reÃ§ue de:', userId)
   }
 
   const handleIceCandidate = (userId: string, _candidate: RTCIceCandidateInit) => {
     // Traiter un candidat ICE
-    console.log('?? Candidat ICE reçu de:', userId)
+    console.log('Candidat ICE reÃ§u de:', userId)
   }
 
   const updateParticipantStatus = (userId: string, type: string, enabled: boolean) => {
@@ -369,7 +369,7 @@ export function useYjsCall(roomId: string, user: CallUser) {
   }
 
   const destroyCall = () => {
-    console.log('??? Destruction du système d\'appel')
+    console.log('??? Destruction du systÃ¨me d\'appel')
 
     // Terminer l'appel s'il est en cours
     if (inCall.value) {
@@ -377,20 +377,20 @@ export function useYjsCall(roomId: string, user: CallUser) {
     }
     
     if (provider) {
-      // Nettoyer les événements avant la destruction
+      // Nettoyer les Ã©vÃ©nements avant la destruction
       if (provider.awareness && awarenessChangeCallback) {
         try {
           provider.awareness.off('change', awarenessChangeCallback)
           awarenessChangeCallback = null
         } catch (e) {
-          console.warn('?? Erreur lors du nettoyage des événements awareness:', e)
+          console.warn('Erreur lors du nettoyage des Ã©vÃ¨nements awareness:', e)
         }
       }
       
       try {
         provider.destroy()
       } catch (e) {
-        console.warn('?? Erreur lors de la destruction du provider:', e)
+        console.warn('Erreur lors de la destruction du provider:', e)
       }
       provider = null
     }
@@ -427,12 +427,12 @@ export function useYjsCall(roomId: string, user: CallUser) {
   })
 
   return {
-    // État de la collaboration
+    // Ã©tat de la collaboration
     isConnected,
     isConnecting,
     error,
     
-    // État de l'appel
+    // Ã©tat de l'appel
     inCall,
     isVideoCall,
     participants,

@@ -1,10 +1,10 @@
 import WebSocket, { WebSocketServer } from 'ws';
 import http from 'http';
 
-// Créer un serveur HTTP
+// CrÃ©er un serveur HTTP
 const server = http.createServer();
 
-// Créer un serveur WebSocket
+// CrÃ©er un serveur WebSocket
 const wss = new WebSocketServer({
   server,
   path: '/whiteboard'
@@ -13,7 +13,7 @@ const wss = new WebSocketServer({
 // Stockage des salles et des utilisateurs
 const rooms = new Map();
 
-// Fonction utilitaire pour nettoyer les connexions fermées
+// Fonction utilitaire pour nettoyer les connexions fermÃ©es
 function cleanupRoom(roomId) {
   const room = rooms.get(roomId);
   if (room) {
@@ -23,12 +23,12 @@ function cleanupRoom(roomId) {
 
     if (room.clients.length === 0) {
       rooms.delete(roomId);
-      console.log(`Salle ${roomId} supprimée (vide)`);
+      console.log(`Salle ${roomId} supprimÃ©e (vide)`);
     }
   }
 }
 
-// Fonction pour diffuser un message à tous les clients d'une salle
+// Fonction pour diffuser un message Ã  tous les clients d'une salle
 function broadcastToRoom(roomId, message, excludeClient = null) {
   const room = rooms.get(roomId);
   if (room) {
@@ -59,25 +59,25 @@ wss.on('connection', (ws, req) => {
           currentRoom = message.roomId;
           currentUser = message.user;
 
-          // Créer la salle si elle n'existe pas
+          // CrÃ©er la salle si elle n'existe pas
           if (!rooms.has(currentRoom)) {
             rooms.set(currentRoom, {
               id: currentRoom,
               clients: [],
               elements: [] // Historique des dessins
             });
-            console.log(`Salle ${currentRoom} créée`);
+            console.log(`Salle ${currentRoom} crÃ©Ã©e`);
           }
 
           const room = rooms.get(currentRoom);
 
-          // Ajouter le client à la salle
+          // Ajouter le client Ã  la salle
           const clientInfo = { ws, user: currentUser };
           room.clients.push(clientInfo);
 
           console.log(`Utilisateur ${currentUser.name} rejoint la salle ${currentRoom}`);
 
-          // Envoyer la liste des collaborateurs à tous
+          // Envoyer la liste des collaborateurs Ã  tous
           const collaborators = room.clients.map(c => c.user);
           broadcastToRoom(currentRoom, {
             type: 'collaborators_list',
@@ -92,7 +92,7 @@ wss.on('connection', (ws, req) => {
             }));
           }
 
-          // Notifier les autres de l'arrivée
+          // Notifier les autres de l'arrivÃ©e
           broadcastToRoom(currentRoom, {
             type: 'user_joined',
             user: currentUser
@@ -110,10 +110,10 @@ wss.on('connection', (ws, req) => {
           if (currentRoom) {
             const room = rooms.get(currentRoom);
             if (room) {
-              // Sauvegarder l'élément dans l'historique de la salle
+              // Sauvegarder l'Ã©lÃ©ment dans l'historique de la salle
               room.elements.push(message.data.element);
 
-              // Diffuser à tous les autres clients
+              // Diffuser Ã  tous les autres clients
               broadcastToRoom(currentRoom, message, ws);
             }
           }
@@ -140,7 +140,7 @@ wss.on('connection', (ws, req) => {
           break;
 
         default:
-          console.log('Message non géré:', message.type);
+          console.log('Message non gÃ©rÃ©:', message.type);
       }
     } catch (error) {
       console.error('Erreur traitement message:', error);
@@ -148,7 +148,7 @@ wss.on('connection', (ws, req) => {
   });
 
   ws.on('close', () => {
-    console.log('Connexion fermée');
+    console.log('Connexion fermÃ©e');
 
     if (currentRoom && currentUser) {
       const room = rooms.get(currentRoom);
@@ -156,13 +156,13 @@ wss.on('connection', (ws, req) => {
         // Retirer le client de la salle
         room.clients = room.clients.filter(c => c.ws !== ws);
 
-        // Notifier les autres du départ
+        // Notifier les autres du dÃ©part
         broadcastToRoom(currentRoom, {
           type: 'user_left',
           userId: currentUser.id
         });
 
-        // Mettre à jour la liste des collaborateurs
+        // Mettre Ã  jour la liste des collaborateurs
         const collaborators = room.clients.map(c => c.user);
         broadcastToRoom(currentRoom, {
           type: 'collaborators_list',
@@ -189,16 +189,16 @@ wss.on('connection', (ws, req) => {
   }, 30000);
 });
 
-// Démarrer le serveur
+// DÃ©marrer le serveur
 const PORT = process.env.PORT || 3002;
 server.listen(PORT, () => {
-  console.log(`Serveur WebSocket démarré sur le port ${PORT}`);
+  console.log(`Serveur WebSocket dÃ©marrÃ© sur le port ${PORT}`);
   console.log(`URL: ws://localhost:${PORT}/whiteboard`);
 });
 
-// Gestion de l'arrêt propre
+// Gestion de l'arrÃªt propre
 process.on('SIGTERM', () => {
-  console.log('Arrêt du serveur...');
+  console.log('ArrÃªt du serveur...');
   wss.close(() => {
     server.close();
   });

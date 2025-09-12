@@ -1,6 +1,6 @@
 <template>
   <div class="comment-board glass-panel rounded-xl p-6">
-    <!-- En-t�te avec statistiques -->
+    <!-- En-tête avec statistiques -->
     <div class="flex items-center justify-between mb-6">
       <div class="flex items-center gap-3">
         <h3 class="text-xl font-semibold text-white">Commentaires</h3>
@@ -9,7 +9,7 @@
             {{ commentStats.total }} total
           </span>
           <span class="badge-glass-warning text-xs" v-if="commentStats.unresolved > 0">
-            {{ commentStats.unresolved }} non r�solus
+            {{ commentStats.unresolved }} non résolus
           </span>
         </div>
       </div>
@@ -57,13 +57,13 @@
           @click="setFilter('unresolved')"
           :class="['btn-glass-secondary text-sm', { 'btn-glass-primary': activeFilter === 'unresolved' }]"
         >
-          Non r�solus ({{ commentStats.unresolved }})
+          Non résolus ({{ commentStats.unresolved }})
         </button>
         <button
           @click="setFilter('resolved')"
           :class="['btn-glass-secondary text-sm', { 'btn-glass-primary': activeFilter === 'resolved' }]"
         >
-          R�solus ({{ commentStats.resolved }})
+          Résolus ({{ commentStats.resolved }})
         </button>
         <button
           @click="setFilter('mine')"
@@ -113,7 +113,7 @@
           'border-blue-400/30 bg-blue-500/5': comment.type === 'suggestion' && !comment.resolved
         }"
       >
-        <!-- En-t�te du commentaire -->
+        <!-- En-tête du commentaire -->
         <div class="flex items-start justify-between mb-3">
           <div class="flex items-center gap-3">
             <div
@@ -136,7 +136,7 @@
                   v-if="comment.resolved"
                   class="text-xs px-2 py-1 rounded-full bg-green-500/20 text-green-300"
                 >
-                  ? R�solu
+                  ? Résolu
                 </span>
               </div>
               <div class="text-xs text-white/60 mt-1">
@@ -151,7 +151,7 @@
               v-if="!comment.resolved"
               @click="resolveComment(comment.id)"
               class="btn-glass-success text-xs"
-              title="Marquer comme r�solu"
+              title="Marquer comme résolu"
             >
               ?
             </button>
@@ -174,7 +174,7 @@
             <button
               @click="replyToComment(comment)"
               class="btn-glass-secondary text-xs"
-              title="R�pondre"
+              title="Répondre"
             >
               ??
             </button>
@@ -186,7 +186,7 @@
           {{ comment.content }}
         </div>
 
-        <!-- R�ponses -->
+        <!-- Réponses -->
         <div v-if="getReplies(comment.id).length > 0" class="ml-6 space-y-2 border-l-2 border-white/10 pl-4">
           <div
             v-for="reply in getReplies(comment.id)"
@@ -225,9 +225,9 @@
       <button
         @click="clearAllResolved"
         class="btn-glass-warning text-sm"
-        title="Supprimer tous les commentaires r�solus"
+        title="Supprimer tous les commentaires résolus"
       >
-        ?? Nettoyer les r�solus ({{ commentStats.resolved }})
+        Nettoyer les résolus ({{ commentStats.resolved }})
       </button>
     </div>
 
@@ -239,7 +239,7 @@
     >
       <div class="glass-panel rounded-xl p-6 w-full max-w-md mx-4">
         <h4 class="text-lg font-semibold text-white mb-4">
-          {{ replyingTo ? 'R�pondre au commentaire' : 'Nouveau commentaire' }}
+          {{ replyingTo ? 'Répondre au commentaire' : 'Nouveau commentaire' }}
         </h4>
 
         <div class="space-y-4">
@@ -256,7 +256,7 @@
             <label class="block text-sm font-medium text-white/80 mb-2">Contenu</label>
             <textarea
               v-model="newCommentContent"
-              placeholder="�crivez votre commentaire..."
+              placeholder="écrivez votre commentaire..."
               class="glass-input w-full h-32 resize-none"
               @keydown.ctrl.enter="submitComment"
             ></textarea>
@@ -275,7 +275,7 @@
             :disabled="!newCommentContent.trim()"
             class="btn-glass-primary disabled:opacity-50"
           >
-            {{ replyingTo ? 'R�pondre' : 'Publier' }}
+            {{ replyingTo ? 'Répondre' : 'Publier' }}
           </button>
         </div>
       </div>
@@ -344,7 +344,7 @@ watch([isConnected, isConnecting, error, collaborators], () => {
   )
 }, { immediate: true })
 
-// �tat du modal
+// état du modal
 const showAddModal = ref(false)
 const newCommentContent = ref('')
 const newCommentType = ref<'comment' | 'suggestion' | 'question'>('comment')
@@ -381,7 +381,7 @@ const formatDate = (timestamp: number) => {
   const now = new Date()
   const diff = now.getTime() - date.getTime()
 
-  if (diff < 60000) return '� l\'instant'
+  if (diff < 60000) return 'à l\'instant'
   if (diff < 3600000) return `Il y a ${Math.floor(diff / 60000)} min`
   if (diff < 86400000) return `Il y a ${Math.floor(diff / 3600000)}h`
   
@@ -424,7 +424,7 @@ const formatDate = (timestamp: number) => {
   background-color: rgba(255, 255, 255, 0.15);
 }
 
-/* Scrollbar personnalis�e */
+/* Scrollbar personnalisée */
 .max-h-\[400px\]::-webkit-scrollbar {
   width: 6px;
 }

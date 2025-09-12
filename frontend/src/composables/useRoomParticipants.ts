@@ -31,13 +31,13 @@ export function useRoomParticipants(roomId: string) {
   const providers = ref<Map<string, WebsocketProvider>>(new Map())
   const docs = ref<Map<string, Y.Doc>>(new Map())
   
-  // Configuration des composants à surveiller
+  // Configuration des composants Ã  surveiller
   const components = [
     { key: 'editor', roomSuffix: '' }, // Room ID: "1"
     { key: 'chat', roomSuffix: '-1' }, // Room ID: "chat-1"  
     { key: 'whiteboard', roomSuffix: '-1' }, // Room ID: "whiteboard-1"
     { key: 'call', roomSuffix: '-1' }, // Room ID: "call-1"
-    { key: 'comments', roomSuffix: '' } // Utilise le même que l'éditeur
+    { key: 'comments', roomSuffix: '' } // Utilise le mÃªme que l'Ã©diteur
   ]
 
   // Couleurs pour les participants
@@ -56,12 +56,12 @@ export function useRoomParticipants(roomId: string) {
     const now = Date.now()
     
     if (existing) {
-      // Mettre à jour le participant existant
+      // Mettre Ã  jour le participant existant
       existing.activities[component as keyof typeof existing.activities] = isActive
       existing.lastSeen = now
       existing.isOnline = Object.values(existing.activities).some(activity => activity)
     } else {
-      // Créer un nouveau participant
+      // CrÃ©er un nouveau participant
       const newParticipant: Participant = {
         id: userId,
         name: userName,
@@ -103,11 +103,11 @@ export function useRoomParticipants(roomId: string) {
     docs.value.set(componentKey, doc)
     providers.value.set(componentKey, provider)
 
-    // Écouter les changements d'awareness
+    // Ã©couter les changements d'awareness
     provider.awareness.on('change', () => {
       const states = Array.from(provider.awareness.getStates().entries())
       
-      // Traiter chaque utilisateur connecté
+      // Traiter chaque utilisateur connectÃ©
       states.forEach(([clientId, state]) => {
         if (state.user) {
           const userId = state.user.id || `user-${clientId}`
@@ -130,14 +130,14 @@ export function useRoomParticipants(roomId: string) {
     return provider
   }
 
-  // État calculé
+  // Ã©tat calculÃ©
   const roomParticipants = computed<RoomParticipants>(() => {
     const participantsList = Array.from(participants.value.values())
     const onlineParticipants = participantsList.filter(p => p.isOnline)
     
     return {
       participants: participantsList.sort((a, b) => {
-        // Trier par statut en ligne puis par dernière activité
+        // Trier par statut en ligne puis par derniÃ¨re activitÃ©
         if (a.isOnline && !b.isOnline) return -1
         if (!a.isOnline && b.isOnline) return 1
         return b.lastSeen - a.lastSeen

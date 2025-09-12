@@ -27,7 +27,7 @@
       </div>
     </div>
 
-    <!-- Détails des composants (dépliable) -->
+    <!-- DÃ©tails des composants (dÃ©pliable) -->
     <Transition name="slide-down">
       <div v-if="showDetails" class="status-details">
         <div class="status-grid">
@@ -63,9 +63,9 @@
               {{ component.error }}
             </div>
             
-            <!-- Dernière mise à jour -->
+            <!-- DerniÃ¨re mise Ã  jour -->
             <div class="last-update text-xs opacity-50 mt-1">
-              Mis à jour {{ formatRelativeTime(component.lastUpdate) }}
+              Mis Ã  jour {{ formatRelativeTime(component.lastUpdate) }}
             </div>
           </div>
         </div>
@@ -128,7 +128,7 @@ function formatRelativeTime(date: Date): string {
   const diff = now.getTime() - date.getTime()
   const seconds = Math.floor(diff / 1000)
   
-  if (seconds < 10) return 'à l\'instant'
+  if (seconds < 10) return 'Ã  l\'instant'
   if (seconds < 60) return `il y a ${seconds}s`
   if (seconds < 3600) return `il y a ${Math.floor(seconds / 60)}m`
   return `il y a ${Math.floor(seconds / 3600)}h`
@@ -136,7 +136,7 @@ function formatRelativeTime(date: Date): string {
 
 function refreshAllConnections() {
   resetAllStatus()
-  // Déclencher la reconnexion de tous les composants
+  // DÃ©clencher la reconnexion de tous les composants
   window.location.reload()
 }
 
@@ -146,14 +146,14 @@ ${globalStatus.value.message}
 Composants: ${globalStatus.value.connectedCount}/${globalStatus.value.totalComponents}
 Collaborateurs: ${globalStatus.value.totalCollaborators}
 
-Détails par composant:
+DÃ©tails par composant:
 ${Object.entries(roomStatus.value)
   .map(([_, comp]) => `- ${(comp as any).name}: ${(comp as any).connected ? '?' : (comp as any).connecting ? '??' : '?'} ${(comp as any).error || ''}`)
   .join('\n')}`
 
   navigator.clipboard.writeText(statusText).then(() => {
     // TODO: Ajouter une notification toast
-    console.log('Statut copié dans le presse-papiers')
+    console.log('Statut copiÃ© dans le presse-papiers')
   })
 }
 </script>

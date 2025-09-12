@@ -13,7 +13,7 @@ interface AuthState {
   isAuthenticated: boolean
 }
 
-// Déclaration des types pour l'API Google Identity Services
+// DÃ©claration des types pour l'API Google Identity Services
 declare global {
   interface Window {
     google: {
@@ -35,7 +35,7 @@ const authState = ref<AuthState>({
 })
 
 export const useAuth = (router?: any) => {
-  // Initialiser l'état d'authentification depuis le localStorage
+  // Initialiser l'Ã©tat d'authentification depuis le localStorage
   const initAuth = () => {
     const token = localStorage.getItem('auth_token')
     const user = localStorage.getItem('auth_user')
@@ -59,11 +59,11 @@ export const useAuth = (router?: any) => {
     }
   }
 
-  // Gestionnaire de réponse Google
+  // Gestionnaire de rÃ©ponse Google
   const handleCredentialResponse = (response: any) => {
     try {
       if (response.credential) {
-        // Décoder le JWT pour obtenir les informations utilisateur
+        // DÃ©coder le JWT pour obtenir les informations utilisateur
         const userInfo = parseJwt(response.credential)
 
         if (userInfo) {
@@ -74,7 +74,7 @@ export const useAuth = (router?: any) => {
             sub: userInfo.sub
           }
 
-          // Sauvegarder dans l'état et localStorage
+          // Sauvegarder dans l'Ã©tat et localStorage
           authState.value = {
             user,
             token: response.credential,
@@ -89,7 +89,7 @@ export const useAuth = (router?: any) => {
         }
       }
     } catch (error) {
-      console.error('Erreur lors du traitement de la réponse Google:', error)
+      console.error('Erreur lors du traitement de la rÃ©ponse Google:', error)
     }
   }
 
@@ -98,7 +98,7 @@ export const useAuth = (router?: any) => {
     return new Promise<void>((resolve, reject) => {
       try {
         if (typeof window !== 'undefined' && window.google) {
-          // Déclencher la popup de connexion Google
+          // DÃ©clencher la popup de connexion Google
           window.google.accounts.id.prompt()
           resolve()
         } else {
@@ -114,7 +114,7 @@ export const useAuth = (router?: any) => {
   // Connexion avec credentials email/password
   const loginWithCredentials = async (email: string, password: string) => {
     try {
-      // Simuler une requête d'authentification à votre backend
+      // Simuler une requÃªte d'authentification Ã  votre backend
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
@@ -145,7 +145,7 @@ export const useAuth = (router?: any) => {
     }
   }
 
-  // Déconnexion
+  // DÃ©connexion
   const logout = () => {
     authState.value = {
       user: null,
@@ -163,7 +163,7 @@ export const useAuth = (router?: any) => {
     }
   }
 
-  // Vérifier si l'utilisateur est authentifié
+  // VÃ©rifier si l'utilisateur est authentifiÃ©
   const isAuthenticated = () => {
     return authState.value.isAuthenticated
   }
@@ -178,7 +178,7 @@ export const useAuth = (router?: any) => {
     return authState.value.token
   }
 
-  // Utilitaire pour décoder un JWT (simplifié)
+  // Utilitaire pour dÃ©coder un JWT (simplifiÃ©)
   const parseJwt = (token: string) => {
     try {
       const base64Url = token.split('.')[1]
@@ -191,7 +191,7 @@ export const useAuth = (router?: any) => {
       )
       return JSON.parse(jsonPayload)
     } catch (error) {
-      console.error('Erreur lors du décodage du JWT:', error)
+      console.error('Erreur lors du dÃ©codage du JWT:', error)
       return null
     }
   }
@@ -222,10 +222,10 @@ export const useAuth = (router?: any) => {
   }
 
   return {
-    // État
+    // Ã©tat
     authState: readonly(authState),
 
-    // Méthodes
+    // MÃ©thodes
     initAuth,
     initGoogleAuth,
     loginWithGoogle,

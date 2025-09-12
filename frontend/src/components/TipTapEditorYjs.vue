@@ -73,7 +73,7 @@
           <button
             @click="toggleUnderline"
             :class="['btn-glass-secondary', { 'btn-glass-primary': isActive('underline') }]"
-            title="Soulign� (Ctrl+U)"
+            title="Souligné (Ctrl+U)"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 17c3.31 0 6-2.69 6-6V3h-2.5v8c0 1.93-1.57 3.5-3.5 3.5S8.5 12.93 8.5 11V3H6v8c0 3.31 2.69 6 6 6zm-7 2v2h14v-2H5z"/>
@@ -82,7 +82,7 @@
           <button
             @click="toggleStrike"
             :class="['btn-glass-secondary', { 'btn-glass-primary': isActive('strike') }]"
-            title="Barr�"
+            title="Barré"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M10 19h4v-3h-4v3zM5 4v3h5v3h4V7h5V4H5zM3 14h18v-2H3v2z"/>
@@ -119,7 +119,7 @@
           <button
             @click="toggleBulletList"
             :class="['btn-glass-secondary', { 'btn-glass-primary': isActive('bulletList') }]"
-            title="Liste � puces"
+            title="Liste à puces"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M4 10.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5zm0-6c-.83 0-1.5.67-1.5 1.5S3.17 7.5 4 7.5 5.5 6.83 5.5 6 4.83 4.5 4 4.5zm0 12c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5zM7 19h14v-2H7v2zm0-6h14v-2H7v2zm0-8v2h14V5H7z"/>
@@ -128,7 +128,7 @@
           <button
             @click="toggleOrderedList"
             :class="['btn-glass-secondary', { 'btn-glass-primary': isActive('orderedList') }]"
-            title="Liste num�rot�e"
+            title="Liste numérotée"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M2 17h2v.5H3v1h1v.5H2v1h3v-4H2v1zm1-9h1V4H2v1h1v3zm-1 3h1.8L2 13.1v.9h3v-1H3.2L5 10.9V10H2v1zm5-6v2h14V5H7zm0 14h14v-2H7v2zm0-6h14v-2H7v2z"/>
@@ -141,7 +141,7 @@
           <button
             @click="setTextAlign('left')"
             :class="['btn-glass-secondary', { 'btn-glass-primary': isActive('textAlign') }]"
-            title="Aligner � gauche"
+            title="Aligner à gauche"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M15 15H3v2h12v-2zm0-8H3v2h12V7zM3 13h18v-2H3v2zm0 8h18v-2H3v2zM3 3v2h18V3H3z"/>
@@ -159,7 +159,7 @@
           <button
             @click="setTextAlign('right')"
             :class="['btn-glass-secondary', { 'btn-glass-primary': isActive('textAlign') }]"
-            title="Aligner � droite"
+            title="Aligner à droite"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M3 21h18v-2H3v2zm6-4h12v-2H9v2zm-6-4h18v-2H3v2zm6-4h12V7H9v2zM3 3v2h18V3H3z"/>
@@ -183,7 +183,7 @@
             @click="redo"
             :disabled="!canRedo()"
             :class="['btn-glass-secondary', { 'opacity-50': !canRedo() }]"
-            title="R�tablir (Ctrl+Y)"
+            title="Rétablir (Ctrl+Y)"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M18.4 10.6C16.55 8.99 14.15 8 11.5 8c-4.65 0-8.58 3.03-9.96 7.22L3.9 16c1.05-3.19 4.05-5.5 7.6-5.5 1.95 0 3.73.72 5.12 1.88L13 16h9V7l-3.6 3.6z"/>
@@ -204,11 +204,11 @@
       <!-- Message de chargement -->
       <div v-else class="flex items-center justify-center py-4 text-white/60">
         <div class="animate-spin rounded-full h-5 w-5 border-2 border-white/20 border-t-white/60 mr-3"></div>
-        Initialisation de l'�diteur...
+        Initialisation de l'éditeur...
       </div>
     </div>
 
-    <!-- �diteur -->
+    <!-- Éditeur -->
     <div class="glass-panel rounded-b-xl">
       <div 
         ref="editorElement" 
@@ -223,7 +223,7 @@
       >
         <div class="text-center">
           <div class="animate-spin rounded-full h-8 w-8 border-2 border-white/20 border-t-white/60 mx-auto mb-4"></div>
-          <p>Connexion � l'�diteur collaboratif...</p>
+          <p>Connexion à l'éditeur collaboratif...</p>
         </div>
       </div>
     </div>
@@ -253,7 +253,7 @@ const props = withDefaults(defineProps<Props>(), {
   })
 })
 
-// R�f�rence pour l'�l�ment �diteur
+// Référence pour l'élément éditeur
 const editorElement = ref<HTMLElement>()
 
 // Composable Yjs TipTap
@@ -313,10 +313,10 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
-  // Le nettoyage est g�r� par le composable
+  // Le nettoyage est géré par le composable
 })
 
-// Exposer l'�diteur pour l'acc�s parent
+// Exposer l'éditeur pour l'accès parent
 defineExpose({
   editor,
   isReady,
@@ -327,7 +327,7 @@ defineExpose({
 </script>
 
 <style scoped>
-/* Styles pour l'�diteur collaboratif */
+/* Styles pour l'éditeur collaboratif */
 .collaborative-editor {
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
@@ -352,7 +352,7 @@ defineExpose({
   white-space: nowrap;
 }
 
-/* Am�liorer la lisibilit� du contenu */
+/* Améliorer la lisibilité du contenu */
 :deep(.ProseMirror) {
   outline: none;
   color: white;

@@ -1,9 +1,9 @@
 <template>
   <div class="flex flex-col h-80">
-    <!-- État de connexion -->
+    <!-- Ã©tat de connexion -->
     <div v-if="!isConnected" class="flex items-center justify-center py-4 text-white/60">
       <div class="animate-spin rounded-full h-4 w-4 border-2 border-white/20 border-t-white/60 mr-2"></div>
-      <span class="text-sm">{{ isConnecting ? 'Connexion au chat...' : 'Chat déconnecté' }}</span>
+      <span class="text-sm">{{ isConnecting ? 'Connexion au chat...' : 'Chat dÃ©connectÃ©' }}</span>
     </div>
 
     <!-- Messages -->
@@ -53,7 +53,7 @@
         <div v-if="typingUsers.length > 0" class="flex justify-start">
           <div class="max-w-xs px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-600 dark:text-gray-300 rounded-2xl rounded-bl-sm">
             <div class="text-xs">
-              {{ typingUsers.join(', ') }} {{ typingUsers.length === 1 ? 'est en train d\'écrire' : 'sont en train d\'écrire' }}...
+              {{ typingUsers.join(', ') }} {{ typingUsers.length === 1 ? 'est en train d\'Ã©crire' : 'sont en train d\'Ã©crire' }}...
             </div>
             <div class="flex gap-1 mt-1">
               <div class="w-2 h-2 bg-current rounded-full animate-bounce"></div>
@@ -117,7 +117,7 @@ const props = withDefaults(defineProps<Props>(), {
   canWrite: true
 })
 
-// État local
+// Ã©tat local
 const newMessage = ref('')
 const messagesContainer = ref<HTMLElement>()
 let typingTimeout: number | null = null
@@ -142,7 +142,7 @@ const {
 // Statut de collaboration
 const { updateChatStatus } = useRoomStatus()
 
-// Watcher pour mettre à jour le statut
+// Watcher pour mettre Ã  jour le statut
 watch([isConnected, isConnecting, error, typingUsers], () => {
   updateChatStatus(
     isConnected.value,
@@ -165,7 +165,7 @@ watch(messages, async () => {
   }
 }, { deep: true })
 
-// Gérer l'envoi de message
+// GÃ©rer l'envoi de message
 const handleSendMessage = () => {
   if (newMessage.value.trim() && props.canWrite && isConnected.value) {
     sendMessage(newMessage.value)
@@ -173,19 +173,19 @@ const handleSendMessage = () => {
   }
 }
 
-// Gérer l'indicateur de frappe
+// GÃ©rer l'indicateur de frappe
 const handleTyping = () => {
   if (!props.canWrite || !isConnected.value) return
 
   // Indiquer qu'on est en train de taper
   setTypingStatus(true)
 
-  // Annuler le timeout précédent
+  // Annuler le timeout prÃ©cÃ©dent
   if (typingTimeout) {
     clearTimeout(typingTimeout)
   }
 
-  // Arrêter l'indicateur après 2 secondes d'inactivité
+  // ArrÃªter l'indicateur aprÃ¨s 2 secondes d'inactivitÃ©
   typingTimeout = setTimeout(() => {
     setTypingStatus(false)
   }, 2000)
@@ -202,7 +202,7 @@ const formatTime = (timestamp: number) => {
 </script>
 
 <style scoped>
-/* Scrollbar personnalisée pour les messages */
+/* Scrollbar personnalisÃ©e pour les messages */
 .overflow-y-auto::-webkit-scrollbar {
   width: 4px;
 }

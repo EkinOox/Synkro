@@ -50,7 +50,7 @@
           class="!p-2 !w-10 !h-10 rounded-lg"
           severity="secondary"
           text
-          v-tooltip.top="'Flèche'"
+          v-tooltip.top="'FlÃªche'"
         >
           <i class="pi pi-arrow-up-right"></i>
         </Button>
@@ -109,7 +109,7 @@
           icon="pi pi-redo"
           severity="secondary"
           text
-          v-tooltip.top="'Rétablir'"
+          v-tooltip.top="'RÃ©tablir'"
         />
         <Button
           @click="clearCanvas"
@@ -160,10 +160,10 @@
       />
     </div>
 
-    <!-- Participants en temps réel -->
+    <!-- Participants en temps rÃ©el -->
     <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
       <i class="pi pi-users"></i>
-      <span>{{ collaborators.length }} personne(s) dessinent en temps réel</span>
+      <span>{{ collaborators.length }} personne(s) dessinent en temps rÃ©el</span>
       <div class="flex gap-1 ml-2">
         <div
           v-for="collaborator in collaborators"
@@ -220,7 +220,7 @@ const canvasContainer = ref<HTMLDivElement>()
 const textInput = ref<HTMLInputElement>()
 const ctx = ref<CanvasRenderingContext2D | null>(null)
 
-// État du dessin
+// Ã©tat du dessin
 const currentTool = ref('pen')
 const currentColor = ref('#000000')
 const brushSize = ref(5)
@@ -229,7 +229,7 @@ const elements = ref<DrawingElement[]>([])
 const history = ref<DrawingElement[][]>([])
 const historyStep = ref(-1)
 
-// Couleurs prédéfinies
+// Couleurs prÃ©dÃ©finies
 const colors = [
   '#000000', '#FFFFFF', '#FF0000', '#00FF00', '#0000FF',
   '#FFFF00', '#FF00FF', '#00FFFF', '#FFA500', '#800080',
@@ -245,7 +245,7 @@ const textValue = ref('')
 const collaborators = ref<Collaborator[]>([])
 let socket: WebSocket
 
-// État de l'historique
+// Ã©tat de l'historique
 const canUndo = computed(() => historyStep.value > 0)
 const canRedo = computed(() => historyStep.value < history.value.length - 1)
 
@@ -298,11 +298,11 @@ function setupWebSocket() {
 function handleWebSocketMessage(data: any) {
   switch (data.type) {
     case 'drawing':
-      // Dessiner l'élément reçu d'un autre utilisateur
+      // Dessiner l'Ã©lÃ©ment reÃ§u d'un autre utilisateur
       drawElement(data.element)
       break
     case 'cursor':
-      // Mettre à jour la position du curseur d'un collaborateur
+      // Mettre Ã  jour la position du curseur d'un collaborateur
       updateCollaboratorCursor(data.userId, data.position, data.userName, data.color)
       break
     case 'clear':
@@ -512,7 +512,7 @@ function drawArrow(points: Point[]) {
   ctx.value.lineTo(end.x, end.y)
   ctx.value.stroke()
 
-  // Pointe de la flèche
+  // Pointe de la fleche
   const angle = Math.atan2(end.y - start.y, end.x - start.x)
   const arrowLength = 20
   const arrowAngle = Math.PI / 6

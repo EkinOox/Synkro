@@ -8,7 +8,7 @@ export default defineConfig({
     watch: {
       usePolling: true
     },
-    // Configuration pour résoudre les problèmes CORS avec Google OAuth
+    // Configuration pour rÃ©soudre les problÃ¨mes CORS avec Google OAuth
     headers: {
       'Cross-Origin-Opener-Policy': 'unsafe-none',
       'Cross-Origin-Embedder-Policy': 'unsafe-none'

@@ -195,9 +195,9 @@ export const useAuth = (router?: any) => {
       if (response.ok) {
         const data = await response.json()
 
-        // Vérifier que la réponse contient un token
+        // VÃ©rifier que la rÃ©ponse contient un token
         if (data.success && data.token) {
-          // Créer un objet utilisateur basé sur l'email
+          // CrÃ©er un objet utilisateur basÃ© sur l'email
           const user = {
             email: email,
             name: email.split('@')[0], // Utiliser la partie avant @ comme nom
@@ -214,10 +214,10 @@ export const useAuth = (router?: any) => {
           localStorage.setItem('auth_token', data.token)
           localStorage.setItem('auth_user', JSON.stringify(user))
 
-          console.log('? Connexion réussie avec token JWT réel:', data.token.substring(0, 30) + '...')
+          console.log('? Connexion rÃ©ussie avec token JWT rÃ©el:', data.token.substring(0, 30) + '...')
           return true
         } else {
-          throw new Error(data.message || 'Token non reçu du serveur')
+          throw new Error(data.message || 'Token non reÃ§u du serveur')
         }
       } else {
         const errorData = await response.json()

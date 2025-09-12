@@ -5,9 +5,9 @@
         <div class="mb-4">
           <i class="pi pi-lock text-4xl text-blue-500"></i>
         </div>
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Mot de passe oublié</h1>
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Mot de passe oubliÃ©</h1>
         <p class="text-gray-600 dark:text-gray-300">
-          Entrez votre email pour recevoir un lien de réinitialisation
+          Entrez votre email pour recevoir un lien de rÃ©initialisation
         </p>
       </div>
 
@@ -32,20 +32,20 @@
           type="submit"
           :loading="loading"
           class="w-full !py-3"
-          label="Envoyer le lien de réinitialisation"
+          label="Envoyer le lien de rÃ©initialisation"
         />
       </form>
 
-      <!-- Message de succès -->
+      <!-- Message de succÃ¨s -->
       <div v-else class="text-center space-y-6">
         <div class="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
           <i class="pi pi-check-circle text-2xl text-green-500 mb-2"></i>
           <h3 class="text-lg font-semibold text-green-800 dark:text-green-300 mb-2">
-            Email envoyé !
+            Email envoyÃ© !
           </h3>
           <p class="text-green-600 dark:text-green-400 text-sm">
-            Nous avons envoyé un lien de réinitialisation à <strong>{{ email }}</strong>.
-            Vérifiez votre boîte de réception et vos spams.
+            Nous avons envoyÃ© un lien de rÃ©initialisation Ã  <strong>{{ email }}</strong>.
+            VÃ©rifiez votre boÃ®te de rÃ©ception et vos spams.
           </p>
         </div>
 
@@ -60,7 +60,7 @@
           />
 
           <p class="text-sm text-gray-500 dark:text-gray-400">
-            Vous n'avez pas reçu l'email ? Vérifiez vos spams ou
+            Vous n'avez pas reÃ§u l'email ? VÃ©rifiez vos spams ou
             <button
               @click="resetForm"
               class="text-blue-600 hover:text-blue-500 dark:text-blue-400 underline"
@@ -71,18 +71,18 @@
         </div>
       </div>
 
-      <!-- Retour à la connexion -->
+      <!-- Retour Ã  la connexion -->
       <div class="mt-6 text-center">
         <router-link
           to="/login"
           class="text-blue-600 hover:text-blue-500 dark:text-blue-400 font-medium flex items-center justify-center gap-2"
         >
           <i class="pi pi-arrow-left"></i>
-          Retour à la connexion
+          Retour Ã  la connexion
         </router-link>
       </div>
 
-      <!-- Aide supplémentaire -->
+      <!-- Aide supplÃ©mentaire -->
       <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-600">
         <div class="text-center">
           <p class="text-sm text-gray-600 dark:text-gray-300 mb-3">
@@ -142,13 +142,13 @@ const handleForgotPassword = async () => {
     // Simuler l'envoi d'email
     await new Promise(resolve => setTimeout(resolve, 2000))
 
-    // Simulation de la réponse de l'API
-    console.log(`Envoi d'email de réinitialisation à: ${email.value}`)
+    // Simulation de la rÃ©ponse de l'API
+    console.log(`Envoi d'email de rÃ©initialisation Ã : ${email.value}`)
 
     emailSent.value = true
   } catch (err) {
     console.error('Erreur lors de l\'envoi:', err)
-    error.value = 'Une erreur est survenue. Veuillez réessayer.'
+    error.value = 'Une erreur est survenue. Veuillez rÃ©essayer.'
   } finally {
     loading.value = false
   }
@@ -160,7 +160,7 @@ const resendEmail = async () => {
   try {
     // Simuler le renvoi d'email
     await new Promise(resolve => setTimeout(resolve, 1000))
-    console.log(`Renvoi d'email à: ${email.value}`)
+    console.log(`Renvoi d'email Ã : ${email.value}`)
   } catch (err) {
     console.error('Erreur lors du renvoi:', err)
   } finally {
@@ -176,5 +176,5 @@ const resetForm = () => {
 </script>
 
 <style scoped>
-/* Styles personnalisés si nécessaire */
+/* Styles personnalisÃ©s si nÃ©cessaire */
 </style>

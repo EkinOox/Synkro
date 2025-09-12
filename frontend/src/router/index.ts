@@ -61,7 +61,7 @@ const router: any = {
     const path = p.split('?')[0]
     const { def, params } = match(path)
     currentRoute.value = { name:def.name, path, params }
-    document.title = 'Synkro – ' + def.name
+    document.title = 'Synkro - ' + def.name
   },
   install(app:App) {
     app.config.globalProperties.$router = router

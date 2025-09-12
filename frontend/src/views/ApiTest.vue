@@ -5,10 +5,10 @@
         Test API Synkro
       </h1>
 
-      <!-- Test de création de room -->
+      <!-- Test de crÃ©ation de room -->
       <div class="bg-white/60 dark:bg-gray-800/60 rounded-2xl shadow-lg p-6 backdrop-blur-sm mb-8">
         <h2 class="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-200">
-          Créer une Room
+          CrÃ©er une Room
         </h2>
         <div class="flex gap-4 mb-4">
           <input 
@@ -26,7 +26,7 @@
           <Button 
             @click="testCreateRoom" 
             :loading="loading"
-            label="Créer" 
+            label="CrÃ©er" 
             severity="success"
           />
         </div>
@@ -55,7 +55,7 @@
           />
         </div>
         <div v-if="roomsList" class="mt-4 p-4 rounded-lg bg-blue-100 dark:bg-blue-900/20">
-          <h3 class="font-semibold mb-2">Résultat API:</h3>
+          <h3 class="font-semibold mb-2">RÃ©sultat API:</h3>
           <pre>{{ JSON.stringify(roomsList, null, 2) }}</pre>
         </div>
       </div>
@@ -66,9 +66,9 @@
           Authentification (useAuth)
         </h2>
         <div class="text-sm text-gray-600 dark:text-gray-400">
-          <p><strong>Token useAuth:</strong> {{ getToken() ? 'Présent' : 'Aucun' }}</p>
-          <p><strong>Authentifié:</strong> {{ isAuthenticated() ? 'Oui' : 'Non' }}</p>
-          <p><strong>Token API Service:</strong> {{ apiService.getToken() ? 'Configuré' : 'Non configuré' }}</p>
+          <p><strong>Token useAuth:</strong> {{ getToken() ? 'PrÃ©sent' : 'Aucun' }}</p>
+          <p><strong>AuthentifiÃ©:</strong> {{ isAuthenticated() ? 'Oui' : 'Non' }}</p>
+          <p><strong>Token API Service:</strong> {{ apiService.getToken() ? 'ConfigurÃ©' : 'Non configurÃ©' }}</p>
         </div>
         <div class="mt-4 p-3 bg-blue-100 dark:bg-blue-900/20 rounded-lg text-sm">
           <p><strong>Info:</strong> Le service API utilise maintenant automatiquement le token de useAuth.</p>

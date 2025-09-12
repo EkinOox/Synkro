@@ -4,7 +4,7 @@
     <div class="flex items-center justify-between mb-4">
       <h3 class="text-lg font-semibold text-white flex items-center gap-2">
         <i class="pi pi-users text-brand-500"></i>
-        Participants en temps réel
+        Participants en temps rÃ©el
         <span class="text-sm bg-brand-500/20 px-2 py-1 rounded-full">
           {{ totalParticipants }}
         </span>
@@ -19,14 +19,14 @@
 
     <!-- Contenu (collapsible) -->
     <div v-if="!collapsed" class="space-y-4">
-      <!-- Résumé global -->
+      <!-- RÃ©sumÃ© global -->
       <div class="bg-white/5 rounded-lg p-3">
         <div class="flex items-center justify-between text-sm">
           <span class="text-white/70">Total actifs</span>
           <span class="text-brand-400 font-medium">{{ totalParticipants }} participant(s)</span>
         </div>
         <div class="flex items-center justify-between text-sm mt-1">
-          <span class="text-white/70">Composants connectés</span>
+          <span class="text-white/70">Composants connectÃ©s</span>
           <span class="text-green-400 font-medium">{{ connectedComponents }}/5</span>
         </div>
       </div>
@@ -36,7 +36,7 @@
         <!-- TipTap Editor -->
         <ParticipantComponent
           icon="pi-pencil"
-          name="Éditeur collaboratif"
+          name="Ã©diteur collaboratif"
           :participants="editorParticipants"
           :status="editorStatus"
           color="blue"
@@ -63,7 +63,7 @@
         <!-- Call -->
         <ParticipantComponent
           icon="pi-video"
-          name="Appel vidéo"
+          name="Appel vidÃ©o"
           :participants="callParticipants"
           :status="callStatus"
           color="red"
@@ -96,17 +96,17 @@
         </button>
       </div>
 
-      <!-- Détails avancés -->
+      <!-- DÃ©tails avancÃ©s -->
       <div v-if="showDetails" class="bg-black/20 rounded-lg p-3 text-xs space-y-2">
         <div class="text-white/50">Informations techniques :</div>
         <div class="text-white/70">
-          • WebSocket : {{ wsConnected ? '?? Connecté' : '?? Déconnecté' }}
+          WebSocket : {{ wsConnected ? '?? ConnectÃ©' : '?? DÃ©connectÃ©' }}
         </div>
         <div class="text-white/70">
-          • Dernière mise à jour : {{ lastUpdate }}
+          DerniÃ¨re mise Ã  jour : {{ lastUpdate }}
         </div>
         <div class="text-white/70">
-          • Latence moyenne : {{ averageLatency }}ms
+          Latence moyenne : {{ averageLatency }}ms
         </div>
       </div>
     </div>
@@ -136,7 +136,7 @@ const averageLatency = ref(45)
 // Utiliser le statut global de la room
 const { roomStatus } = useRoomStatus()
 
-// Simuler des participants (en attendant d'avoir les vraies données)
+// Simuler des participants (en attendant d'avoir les vraies donnÃ©es)
 const editorParticipants = ref<Participant[]>([
   {
     id: 'user1',
@@ -144,7 +144,7 @@ const editorParticipants = ref<Participant[]>([
     color: '#3b82f6',
     avatar: '/avatars/alice.png',
     lastSeen: Date.now() - 5000,
-    activity: 'Écrit dans le paragraphe 3'
+    activity: 'Ã©crit dans le paragraphe 3'
   }
 ])
 
@@ -179,11 +179,11 @@ const commentsParticipants = ref<Participant[]>([
     color: '#f59e0b',
     avatar: '/avatars/david.png',
     lastSeen: Date.now() - 3000,
-    activity: 'A ajouté un commentaire'
+    activity: 'A ajoutÃ© un commentaire'
   }
 ])
 
-// Statuts des composants (basés sur useRoomStatus)
+// Statuts des composants (basÃ©s sur useRoomStatus)
 const editorStatus = computed(() => roomStatus.value.editor)
 const chatStatus = computed(() => roomStatus.value.chat)
 const whiteboardStatus = computed(() => roomStatus.value.whiteboard)
@@ -207,13 +207,13 @@ const connectedComponents = computed(() => {
   return components.filter(comp => comp.connected).length
 })
 
-// Simulation de mise à jour en temps réel
+// Simulation de mise Ã  jour en temps rÃ©el
 let updateInterval: number | null = null
 
 onMounted(() => {
-  // Simuler des mises à jour en temps réel
+  // Simuler des mises Ã  jour en temps rÃ©el
   updateInterval = setInterval(() => {
-    // Simuler l'activité des participants
+    // Simuler l'activitÃ© des participants
     updateParticipantActivity()
     updateLastUpdate()
     updateLatency()
@@ -227,39 +227,39 @@ onUnmounted(() => {
 })
 
 function updateParticipantActivity() {
-  // Simuler l'activité de l'éditeur
+  // Simuler l'activitÃ© de l'Ã©diteur
   if (editorParticipants.value.length > 0) {
     const activities = [
-      'Écrit dans le titre',
+      'Ã©crit dans le titre',
       'Modifie le paragraphe 2',
-      'Sélectionne du texte',
-      'Ajoute une liste à puces',
+      'SÃ©lectionne du texte',
+      'Ajoute une liste Ã  puces',
       'Formate en gras'
     ]
     editorParticipants.value[0].activity = activities[Math.floor(Math.random() * activities.length)]
     editorParticipants.value[0].lastSeen = Date.now()
   }
 
-  // Simuler l'activité du chat
+  // Simuler l'activitÃ© du chat
   if (chatParticipants.value.length > 0) {
     const activities = [
       'En train de taper...',
       'Vient d\'envoyer un message',
       'Lit les messages',
-      'A réagi avec ??'
+      'A rÃ©agi avec'
     ]
     chatParticipants.value[0].activity = activities[Math.floor(Math.random() * activities.length)]
     chatParticipants.value[0].lastSeen = Date.now()
   }
 
-  // Simuler l'activité du whiteboard
+  // Simuler l'activitÃ© du whiteboard
   if (whiteboardParticipants.value.length > 0) {
     const activities = [
       'Dessine un cercle',
-      'Efface des éléments',
+      'Efface des Ã©lÃ©ments',
       'Change la couleur',
       'Trace une ligne',
-      'Sélectionne l\'outil texte'
+      'SÃ©lectionne l\'outil texte'
     ]
     whiteboardParticipants.value[0].activity = activities[Math.floor(Math.random() * activities.length)]
     whiteboardParticipants.value[0].lastSeen = Date.now()
@@ -285,7 +285,7 @@ function refreshParticipants() {
   
   // Simuler une petite latence
   setTimeout(() => {
-    console.log('? Participants actualisés')
+    console.log('? Participants actualisÃ©s')
   }, 500)
 }
 </script>
@@ -334,7 +334,7 @@ function refreshParticipants() {
   color: #60a5fa;
 }
 
-/* Animation pour les mises à jour */
+/* Animation pour les mises Ã  jour */
 .space-y-3 > * {
   animation: fadeInUp 0.3s ease-out;
 }

@@ -179,7 +179,7 @@ const handleLogin = async () => {
     }
 
     // Redirection différée
-    setTimeout(() => router.push('/'), 600)
+    setTimeout(() => window.location.href = "/", 600)
 
   } catch (error) {
     console.error('❌ Erreur de connexion:', error)

@@ -1,9 +1,9 @@
 <template>
   <div class="flex flex-col gap-4">
-    <!-- État de connexion -->
+    <!-- Ã©tat de connexion -->
     <div v-if="!isConnected" class="flex items-center justify-center py-4 text-white/60">
       <div class="animate-spin rounded-full h-4 w-4 border-2 border-white/20 border-t-white/60 mr-2"></div>
-      <span class="text-sm">{{ isConnecting ? 'Connexion au tableau...' : 'Tableau déconnecté' }}</span>
+      <span class="text-sm">{{ isConnecting ? 'Connexion au tableau...' : 'Tableau dÃ©connectÃ©' }}</span>
     </div>
 
     <!-- Barre d'outils -->
@@ -183,10 +183,10 @@ interface Props {
 
 const props = defineProps<Props>()
 
-// Références DOM
+// RÃ©fÃ©rences DOM
 const canvasRef = ref<HTMLCanvasElement>()
 
-// État du canvas
+// Ã©tat du canvas
 const canvasWidth = ref(800)
 const canvasHeight = ref(400)
 const currentTool = ref('pen')
@@ -209,7 +209,7 @@ const colors = [
   '#000000', // black
 ]
 
-// État de dessin local
+// Ã©tat de dessin local
 let lastX = 0
 let lastY = 0
 let currentPath: Array<{ x: number; y: number }> = []
@@ -237,7 +237,7 @@ const {
 // Statut de collaboration
 const { updateWhiteboardStatus } = useRoomStatus()
 
-// Watcher pour mettre à jour le statut
+// Watcher pour mettre Ã  jour le statut
 watch([isConnected, isConnecting, error, collaborators], () => {
   updateWhiteboardStatus(
     isConnected.value,
@@ -256,7 +256,7 @@ onMounted(async () => {
   }
 })
 
-// Redessiner quand les données changent
+// Redessiner quand les donnÃ©es changent
 watch([paths, shapes], () => {
   redrawCanvas()
 }, { deep: true })
@@ -320,7 +320,7 @@ const redrawCanvas = () => {
   })
 }
 
-// Obtenir les coordonnées relatives au canvas
+// Obtenir les coordonnÃ©es relatives au canvas
 const getCanvasCoordinates = (event: MouseEvent | TouchEvent) => {
   if (!canvasRef.value) return { x: 0, y: 0 }
   
@@ -342,7 +342,7 @@ const getCanvasCoordinates = (event: MouseEvent | TouchEvent) => {
   }
 }
 
-// Commencer à dessiner
+// Commencer Ã  dessiner
 const startDrawing = (event: MouseEvent | TouchEvent) => {
   if (!isConnected.value) return
   
@@ -365,7 +365,7 @@ const draw = (event: MouseEvent | TouchEvent) => {
   if (currentTool.value === 'pen') {
     currentPath.push({ x: coords.x, y: coords.y })
     
-    // Dessiner localement pour la fluidité
+    // Dessiner localement pour la fluiditÃ©
     drawLine(lastX, lastY, coords.x, coords.y)
   }
 
@@ -373,14 +373,14 @@ const draw = (event: MouseEvent | TouchEvent) => {
   lastY = coords.y
 }
 
-// Arrêter de dessiner
+// ArrÃªter de dessiner
 const stopDrawing = () => {
   if (!isDrawing.value) return
   
   isDrawing.value = false
 
   if (currentTool.value === 'pen' && currentPath.length > 1) {
-    // Ajouter le chemin au document partagé
+    // Ajouter le chemin au document partagÃ©
     addPath({
       tool: currentTool.value,
       color: currentColor.value,
@@ -422,10 +422,10 @@ const clearCanvas = () => {
 }
 
 const undo = () => {
-  // Logique d'annulation (simplifiée)
+  // Logique d'annulation (simplifiÃ©e)
   if (paths.value.length > 0) {
-    // Pour une vraie implémentation, il faudrait gérer un historique
-    console.log('Undo pas encore implémenté pour la collaboration')
+    // Pour une vraie implÃ©mentation, il faudrait gÃ©rer un historique
+    console.log('Undo pas encore implÃ©mentÃ© pour la collaboration')
   }
 }
 </script>

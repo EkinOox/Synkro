@@ -9,14 +9,14 @@
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="bg-white/10 rounded-lg p-4">
-            <h3 class="font-medium text-white mb-2">�tat de connexion</h3>
+            <h3 class="font-medium text-white mb-2">état de connexion</h3>
             <div class="flex items-center gap-2">
               <div :class="[
                 'w-3 h-3 rounded-full',
                 isAuthenticated ? 'bg-green-400' : 'bg-red-400'
               ]"></div>
               <span class="text-white">
-                {{ isAuthenticated ? 'Connect�' : 'Non connect�' }}
+                {{ isAuthenticated ? 'Connecté' : 'Non connecté' }}
               </span>
             </div>
           </div>
@@ -42,7 +42,7 @@
                 apiAuthenticated ? 'bg-green-400' : 'bg-red-400'
               ]"></div>
               <span class="text-white">
-                {{ apiAuthenticated ? 'Token configur�' : 'Token manquant' }}
+                {{ apiAuthenticated ? 'Token configuré' : 'Token manquant' }}
               </span>
             </div>
           </div>
@@ -84,7 +84,7 @@
             :disabled="loading"
             class="btn-glass-success"
           >
-            Connexion d�mo
+            Connexion démo
           </button>
           
           <button
@@ -100,14 +100,14 @@
             :disabled="loading"
             class="btn-glass-danger"
           >
-            D�connexion
+            Déconnexion
           </button>
         </div>
       </div>
 
-      <!-- R�sultats des tests -->
+      <!-- Résultats des tests -->
       <div class="glass-panel p-6" v-if="testResults.length > 0">
-        <h2 class="text-xl font-semibold text-white mb-4">R�sultats des tests</h2>
+        <h2 class="text-xl font-semibold text-white mb-4">Résultats des tests</h2>
         
         <div class="space-y-2">
           <div
@@ -134,7 +134,7 @@
           @click="testResults = []"
           class="btn-glass-secondary mt-4"
         >
-          Effacer les r�sultats
+          Effacer les résultats
         </button>
       </div>
     </div>
@@ -161,13 +161,13 @@ const testResults = ref<TestResult[]>([])
 const auth = useAuth()
 const { refreshAfterAuth } = useCollaborationRoom()
 
-// �tats computed
+// états computed
 const isAuthenticated = computed(() => auth.isAuthenticated())
 const user = computed(() => auth.getCurrentUser())
 const token = computed(() => auth.getToken())
 const apiAuthenticated = computed(() => apiService.isAuthenticated())
 
-// Ajouter un r�sultat de test
+// Ajouter un résultat de test
 const addTestResult = (title: string, message: string, success: boolean) => {
   testResults.value.unshift({
     title,
@@ -182,11 +182,11 @@ const testApiConnection = async () => {
   loading.value = true
   
   try {
-    // S'assurer que le token est configur� avant le test
+    // S'assurer que le token est configuré avant le test
     const currentToken = auth.getToken()
     if (currentToken) {
       apiService.setAuthToken(currentToken)
-      console.log('?? Token configur� pour les tests:', currentToken.substring(0, 30) + '...')
+      console.log('?? Token configuré pour les tests:', currentToken.substring(0, 30) + '...')
     } else {
       console.warn('?? Aucun token disponible pour les tests')
     }
@@ -195,17 +195,17 @@ const testApiConnection = async () => {
     const rooms = await apiService.getRooms()
     addTestResult(
       'Test API - Rooms publiques',
-      `${rooms.member?.length || 0} rooms trouv�es`,
+      `${rooms.member?.length || 0} rooms trouvées`,
       true
     )
     
-    // Tester les rooms admin si connect�
+    // Tester les rooms admin si connecté
     if (isAuthenticated.value) {
       try {
         const adminRooms = await apiService.getRoomsAdmin()
         addTestResult(
           'Test API - Rooms admin',
-          `${adminRooms.member?.length || 0} rooms admin trouv�es`,
+          `${adminRooms.member?.length || 0} rooms admin trouvées`,
           true
         )
       } catch (adminError) {
@@ -304,7 +304,7 @@ const refreshToken = async () => {
     await refreshAfterAuth()
     addTestResult(
       'Actualisation du token',
-      'Token et rooms recharg�s avec succ�s',
+      'Token et rooms rechargés avec succès',
       true
     )
   } catch (error) {
@@ -318,30 +318,30 @@ const refreshToken = async () => {
   }
 }
 
-// Connexion r�elle avec les identifiants de la base
+// Connexion réelle avec les identifiants de la base
 const loginReal = async () => {
   loading.value = true
   
   try {
-    // Utiliser les identifiants de la base de donn�es
+    // Utiliser les identifiants de la base de données
     await auth.loginWithCredentials('kyllian.diochon.kd@gmail.com', '18*1999*')
     
-    // S'assurer que le token est imm�diatement configur� dans apiService
+    // S'assurer que le token est immédiatement configuré dans apiService
     const newToken = auth.getToken()
     if (newToken) {
       apiService.setAuthToken(newToken)
-      console.log('?? Token imm�diatement configur� apr�s connexion:', newToken.substring(0, 30) + '...')
+      console.log('Token immédiatement configuré après connexion:', newToken.substring(0, 30) + '...')
     }
     
     await refreshAfterAuth()
     addTestResult(
-      'Connexion r�elle',
-      'Connect� avec les identifiants de la base de donn�es',
+      'Connexion réelle',
+      'Connecté avec les identifiants de la base de données',
       true
     )
   } catch (error) {
     addTestResult(
-      'Connexion r�elle',
+      'Connexion réelle',
       `Erreur: ${error}`,
       false
     )
@@ -350,7 +350,7 @@ const loginReal = async () => {
   }
 }
 
-// Connexion d�mo
+// Connexion démo
 const loginDemo = async () => {
   loading.value = true
   
@@ -358,13 +358,13 @@ const loginDemo = async () => {
     await auth.loginWithGoogleSimple()
     await refreshAfterAuth()
     addTestResult(
-      'Connexion d�mo',
-      'Connect� avec le compte d�mo',
+      'Connexion démo',
+      'Connecté avec le compte démo',
       true
     )
   } catch (error) {
     addTestResult(
-      'Connexion d�mo',
+      'Connexion démo',
       `Erreur: ${error}`,
       false
     )
@@ -373,12 +373,12 @@ const loginDemo = async () => {
   }
 }
 
-// D�connexion
+// Déconnexion
 const logout = () => {
   auth.logout()
   addTestResult(
-    'D�connexion',
-    'D�connect� avec succ�s',
+    'Déconnexion',
+    'Déconnecté avec succès',
     true
   )
 }
