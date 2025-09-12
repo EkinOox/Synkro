@@ -43,7 +43,7 @@ export function useYjsChat(roomId: string, user: ChatUser) {
       isConnecting.value = true
       error.value = null
       
-      // Créer le document Yjs
+      // CrÃ©er le document Yjs
       ydoc = new Y.Doc()
       
       // URL du serveur WebSocket
@@ -52,10 +52,10 @@ export function useYjsChat(roomId: string, user: ChatUser) {
       
       console.log(`?? Connexion Chat: ${url}/${roomId}`)
 
-      // Créer le provider WebSocket
+      // CrÃ©er le provider WebSocket
       provider = new WebsocketProvider(url, `chat-${roomId}`, ydoc)
 
-      // Créer la structure partagée pour les messages
+      // CrÃ©er la structure partagÃ©e pour les messages
       yMessages = ydoc.getArray<ChatMessage>('chat-messages')
 
       // Configurer l'awareness
@@ -68,9 +68,9 @@ export function useYjsChat(roomId: string, user: ChatUser) {
         })
       }
 
-      // Gestionnaires d'événements du provider
+      // Gestionnaires d'Ã©vÃ¨nements du provider
       provider.on('status', (event: any) => {
-        console.log('?? Statut Chat WebSocket:', event.status)
+        console.log('Statut Chat WebSocket:', event.status)
         isConnected.value = event.status === 'connected'
         isConnecting.value = event.status === 'connecting'
 
@@ -78,7 +78,7 @@ export function useYjsChat(roomId: string, user: ChatUser) {
           error.value = 'Connexion perdue'
         } else if (event.status === 'connected') {
           error.value = null
-          // Envoyer un message système de connexion
+          // Envoyer un message systÃ¨me de connexion
           if (yMessages) {
             addSystemMessage(`${user.name} a rejoint le chat`)
           }
@@ -95,13 +95,13 @@ export function useYjsChat(roomId: string, user: ChatUser) {
       messagesObserver = () => {
         if (yMessages) {
           messages.value = yMessages.toArray().sort((a, b) => a.timestamp - b.timestamp)
-          console.log('?? Messages mis à jour:', messages.value.length)
+          console.log('Messages mis Ã  jour:', messages.value.length)
         }
       }
       
       if (yMessages) {
         yMessages.observe(messagesObserver)
-        // Charger les données existantes
+        // Charger les donnÃ©es existantes
         messages.value = yMessages.toArray().sort((a, b) => a.timestamp - b.timestamp)
       }
 
@@ -118,7 +118,7 @@ export function useYjsChat(roomId: string, user: ChatUser) {
             if (state.user && state.user.id !== user.id) {
               users.push(state.user)
               
-              // Vérifier si l'utilisateur est en train de taper
+              // VÃ©rifier si l'utilisateur est en train de taper
               if (state.typing && Date.now() - state.typing < 3000) {
                 typing.push(state.user.name)
               }
@@ -127,17 +127,17 @@ export function useYjsChat(roomId: string, user: ChatUser) {
           
           collaborators.value = users
           typingUsers.value = typing
-          console.log('?? Collaborateurs Chat:', users.length, 'Typing:', typing.length)
+          console.log('Collaborateurs Chat:', users.length, 'Typing:', typing.length)
         }
         
         provider.awareness.on('change', awarenessChangeCallback)
       }
 
       isConnecting.value = false
-      console.log('? Chat collaboratif initialisé')
+      console.log('Chat collaboratif initialisÃ©')
 
     } catch (err) {
-      console.error('? Erreur d\'initialisation Chat:', err)
+      console.error('Erreur d\'initialisation Chat:', err)
       error.value = 'Erreur d\'initialisation'
       isConnecting.value = false
     }
@@ -156,9 +156,9 @@ export function useYjsChat(roomId: string, user: ChatUser) {
     }
 
     yMessages.push([message])
-    console.log('?? Message envoyé:', message.id)
+    console.log('Message envoyÃ©:', message.id)
 
-    // Arrêter l'indicateur de frappe
+    // ArrÃªter l'indicateur de frappe
     setTypingStatus(false)
   }
 
@@ -169,13 +169,13 @@ export function useYjsChat(roomId: string, user: ChatUser) {
       id: Date.now().toString() + Math.random(),
       content,
       userId: 'system',
-      userName: 'Système',
+      userName: 'SystÃ¨me',
       timestamp: Date.now(),
       type: 'system'
     }
 
     yMessages.push([message])
-    console.log('?? Message système:', content)
+    console.log('Message systÃ¨me:', content)
   }
 
   const setTypingStatus = (isTyping: boolean) => {
@@ -192,25 +192,25 @@ export function useYjsChat(roomId: string, user: ChatUser) {
     if (!yMessages) return
 
     yMessages.delete(0, yMessages.length)
-    console.log('??? Messages effacés')
+    console.log('Messages effacÃ©s')
   }
 
   const destroyChat = () => {
-    console.log('??? Destruction du Chat collaboratif')
+    console.log('Destruction du Chat collaboratif')
 
-    // Envoyer un message de déconnexion avant de partir
+    // Envoyer un message de dÃ©connexion avant de partir
     if (yMessages && isConnected.value) {
-      addSystemMessage(`${user.name} a quitté le chat`)
+      addSystemMessage(`${user.name} a quittÃ© le chat`)
     }
     
     if (provider) {
-      // Nettoyer les événements avant la destruction
+      // Nettoyer les Ã©vÃ©nements avant la destruction
       if (provider.awareness && awarenessChangeCallback) {
         try {
           provider.awareness.off('change', awarenessChangeCallback)
           awarenessChangeCallback = null
         } catch (e) {
-          console.warn('?? Erreur lors du nettoyage des événements awareness:', e)
+          console.warn('?? Erreur lors du nettoyage des Ã©vÃ©nements awareness:', e)
         }
       }
       
@@ -256,7 +256,7 @@ export function useYjsChat(roomId: string, user: ChatUser) {
   })
 
   return {
-    // État de la collaboration
+    // Ã©tat de la collaboration
     isConnected,
     isConnecting,
     collaborators,

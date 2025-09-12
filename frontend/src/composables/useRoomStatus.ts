@@ -17,10 +17,10 @@ interface RoomStatusData {
   call: ComponentStatus
 }
 
-// État global partagé pour toute la room
+// Ã©tat global partagÃ© pour toute la room
 const roomStatusState = ref<RoomStatusData>({
   editor: {
-    name: 'Éditeur collaboratif',
+    name: 'Ã©diteur collaboratif',
     connected: false,
     connecting: false,
     error: null,
@@ -62,7 +62,7 @@ const roomStatusState = ref<RoomStatusData>({
 })
 
 export function useRoomStatus() {
-  // État global calculé
+  // Ã©tat global calculÃ©
   const globalStatus = computed(() => {
     const components = Object.values(roomStatusState.value)
     const connectedCount = components.filter(c => c.connected).length
@@ -81,10 +81,10 @@ export function useRoomStatus() {
       message = `Connexion en cours (${connectedCount}/${components.length})`
     } else if (connectedCount === components.length) {
       status = 'connected'
-      message = `Tous les composants connectés`
+      message = `Tous les composants connectÃ©s`
     } else if (connectedCount > 0) {
       status = 'connecting'
-      message = `${connectedCount}/${components.length} composants connectés`
+      message = `${connectedCount}/${components.length} composants connectÃ©s`
     } else {
       status = 'disconnected'
       message = 'Aucune connexion active'
@@ -100,7 +100,7 @@ export function useRoomStatus() {
     }
   })
 
-  // Fonction pour mettre à jour le statut d'un composant
+  // Fonction pour mettre Ã  jour le statut d'un composant
   function updateComponentStatus(
     component: keyof RoomStatusData,
     status: Partial<ComponentStatus>
@@ -113,7 +113,7 @@ export function useRoomStatus() {
     }
   }
 
-  // Fonctions spécifiques pour chaque composant
+  // Fonctions spÃ©cifiques pour chaque composant
   function updateEditorStatus(connected: boolean, connecting: boolean, error: string | null, collaborators: number = 0) {
     updateComponentStatus('editor', { connected, connecting, error, collaborators })
   }
@@ -134,7 +134,7 @@ export function useRoomStatus() {
     updateComponentStatus('call', { connected, connecting, error, collaborators })
   }
 
-  // Réinitialiser tous les statuts
+  // RÃ©initialiser tous les statuts
   function resetAllStatus() {
     Object.keys(roomStatusState.value).forEach(key => {
       const component = key as keyof RoomStatusData
@@ -148,7 +148,7 @@ export function useRoomStatus() {
   }
 
   return {
-    // État
+    // Ã©tat
     roomStatus: roomStatusState,
     globalStatus,
     

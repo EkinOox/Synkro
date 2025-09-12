@@ -10,7 +10,7 @@ interface CollaborationUser {
 }
 
 /**
- * Composable pour obtenir l'utilisateur actuel formaté pour la collaboration
+ * Composable pour obtenir l'utilisateur actuel formatÃ© pour la collaboration
  */
 export function useCollaborationUser(): { user: ComputedRef<CollaborationUser> } {
   const { getCurrentUser, isAuthenticated } = useAuth()
@@ -27,10 +27,10 @@ export function useCollaborationUser(): { user: ComputedRef<CollaborationUser> }
       }
     }
     
-    // Fallback pour utilisateur de développement/test
+    // Fallback pour utilisateur de dÃ©veloppement/test
     return {
       id: `dev-user-${Date.now()}`,
-      name: 'Utilisateur de développement',
+      name: 'Utilisateur de dÃ©veloppement',
       color: '#3b82f6',
       avatar: undefined
     }
@@ -40,12 +40,12 @@ export function useCollaborationUser(): { user: ComputedRef<CollaborationUser> }
 }
 
 /**
- * Génère une couleur consistante basée sur l'email de l'utilisateur
+ * GÃ©nÃ¨re une couleur consistante basÃ©e sur l'email de l'utilisateur
  */
 function generateUserColor(email: string): string {
   if (!email) return '#3b82f6'
   
-  // Créer un hash simple de l'email
+  // CrÃ©er un hash simple de l'email
   let hash = 0
   for (let i = 0; i < email.length; i++) {
     hash = email.charCodeAt(i) + ((hash << 5) - hash)

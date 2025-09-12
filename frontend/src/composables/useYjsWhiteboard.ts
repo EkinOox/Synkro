@@ -55,11 +55,11 @@ export function useYjsWhiteboard(roomId: string, user: WhiteboardUser) {
 
   const initializeWhiteboard = async () => {
     try {
-      console.log('?? Initialisation du Whiteboard collaboratif avec Yjs')
+      console.log('Initialisation du Whiteboard collaboratif avec Yjs')
       isConnecting.value = true
       error.value = null
       
-      // Créer le document Yjs
+      // CrÃ©er le document Yjs
       ydoc = new Y.Doc()
       
       // URL du serveur WebSocket
@@ -68,10 +68,10 @@ export function useYjsWhiteboard(roomId: string, user: WhiteboardUser) {
       
       console.log(`?? Connexion Whiteboard: ${url}/${roomId}`)
 
-      // Créer le provider WebSocket
+      // CrÃ©er le provider WebSocket
       provider = new WebsocketProvider(url, `whiteboard-${roomId}`, ydoc)
 
-      // Créer les structures partagées
+      // CrÃ©er les structures partagÃ©es
       yPaths = ydoc.getArray<DrawingPath>('whiteboard-paths')
       yShapes = ydoc.getArray<WhiteboardShape>('whiteboard-shapes')
 
@@ -84,7 +84,7 @@ export function useYjsWhiteboard(roomId: string, user: WhiteboardUser) {
         })
       }
 
-      // Gestionnaires d'événements du provider
+      // Gestionnaires d'Ã©vÃ¨nements du provider
       provider.on('status', (event: any) => {
         console.log('?? Statut Whiteboard WebSocket:', event.status)
         isConnected.value = event.status === 'connected'
@@ -107,13 +107,13 @@ export function useYjsWhiteboard(roomId: string, user: WhiteboardUser) {
       pathsObserver = () => {
         if (yPaths) {
           paths.value = yPaths.toArray()
-          console.log('?? Chemins mis à jour:', paths.value.length)
+          console.log('Chemins mis Ã  jour:', paths.value.length)
         }
       }
       
       if (yPaths) {
         yPaths.observe(pathsObserver)
-        // Charger les données existantes
+        // Charger les donnÃ©es existantes
         paths.value = yPaths.toArray()
       }
 
@@ -121,13 +121,13 @@ export function useYjsWhiteboard(roomId: string, user: WhiteboardUser) {
       shapesObserver = () => {
         if (yShapes) {
           shapes.value = yShapes.toArray()
-          console.log('?? Formes mises à jour:', shapes.value.length)
+          console.log('?? Formes mises Ã  jour:', shapes.value.length)
         }
       }
       
       if (yShapes) {
         yShapes.observe(shapesObserver)
-        // Charger les données existantes
+        // Charger les donnÃ©es existantes
         shapes.value = yShapes.toArray()
       }
 
@@ -146,14 +146,14 @@ export function useYjsWhiteboard(roomId: string, user: WhiteboardUser) {
           })
           
           collaborators.value = users
-          console.log('?? Collaborateurs Whiteboard:', users.length)
+          console.log('Collaborateurs Whiteboard:', users.length)
         }
         
         provider.awareness.on('change', awarenessChangeCallback)
       }
 
       isConnecting.value = false
-      console.log('? Whiteboard collaboratif initialisé')
+      console.log('Whiteboard collaboratif initialisÃ©')
 
     } catch (err) {
       console.error('? Erreur d\'initialisation Whiteboard:', err)
@@ -173,7 +173,7 @@ export function useYjsWhiteboard(roomId: string, user: WhiteboardUser) {
     }
 
     yPaths.push([newPath])
-    console.log('?? Nouveau chemin ajouté:', newPath.id)
+    console.log('?? Nouveau chemin ajoutÃ©:', newPath.id)
   }
 
   const addShape = (shape: Omit<WhiteboardShape, 'id' | 'userId' | 'timestamp'>) => {
@@ -187,7 +187,7 @@ export function useYjsWhiteboard(roomId: string, user: WhiteboardUser) {
     }
 
     yShapes.push([newShape])
-    console.log('?? Nouvelle forme ajoutée:', newShape.id)
+    console.log('?? Nouvelle forme ajoutÃ©e:', newShape.id)
   }
 
   const clearWhiteboard = () => {
@@ -197,7 +197,7 @@ export function useYjsWhiteboard(roomId: string, user: WhiteboardUser) {
     yPaths.delete(0, yPaths.length)
     yShapes.delete(0, yShapes.length)
     
-    console.log('??? Whiteboard effacé')
+    console.log('Whiteboard effacÃ©')
   }
 
   const removePath = (pathId: string) => {
@@ -206,7 +206,7 @@ export function useYjsWhiteboard(roomId: string, user: WhiteboardUser) {
     const index = paths.value.findIndex(p => p.id === pathId)
     if (index !== -1) {
       yPaths.delete(index, 1)
-      console.log('??? Chemin supprimé:', pathId)
+      console.log('??? Chemin supprimÃ©:', pathId)
     }
   }
 
@@ -216,21 +216,20 @@ export function useYjsWhiteboard(roomId: string, user: WhiteboardUser) {
     const index = shapes.value.findIndex(s => s.id === shapeId)
     if (index !== -1) {
       yShapes.delete(index, 1)
-      console.log('??? Forme supprimée:', shapeId)
+      console.log('Forme supprimÃ©e:', shapeId)
     }
   }
-
   const destroyWhiteboard = () => {
-    console.log('??? Destruction du Whiteboard collaboratif')
+    console.log('Destruction du Whiteboard collaboratif')
     
     if (provider) {
-      // Nettoyer les événements avant la destruction
+      // Nettoyer les Ã©vÃ¨nements avant la destruction
       if (provider.awareness && awarenessChangeCallback) {
         try {
           provider.awareness.off('change', awarenessChangeCallback)
           awarenessChangeCallback = null
         } catch (e) {
-          console.warn('?? Erreur lors du nettoyage des événements awareness:', e)
+          console.warn('?? Erreur lors du nettoyage des Ã©vÃ¨nements awareness:', e)
         }
       }
       
@@ -286,13 +285,13 @@ export function useYjsWhiteboard(roomId: string, user: WhiteboardUser) {
   })
 
   return {
-    // État de la collaboration
+    // Ã©tat de la collaboration
     isConnected,
     isConnecting,
     collaborators,
     error,
     
-    // Données du whiteboard
+    // DonnÃ©es du whiteboard
     paths,
     shapes,
     

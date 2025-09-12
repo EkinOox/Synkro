@@ -8,7 +8,7 @@
       <!-- Informations de connexion -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div class="glass-panel p-4 rounded-xl">
-          <h3 class="text-white font-semibold mb-2">État du serveur</h3>
+          <h3 class="text-white font-semibold mb-2">Ã©tat du serveur</h3>
           <div class="space-y-2">
             <div class="flex items-center gap-2">
               <div :class="['w-3 h-3 rounded-full', serverStatus === 'connected' ? 'bg-green-400' : serverStatus === 'connecting' ? 'bg-yellow-400' : 'bg-red-400']"></div>
@@ -50,7 +50,7 @@
               </div>
             </div>
             <span class="text-white/80 text-sm ml-2">
-              {{ collaborators.length }} connecté{{ collaborators.length !== 1 ? 's' : '' }}
+              {{ collaborators.length }} connectÃ©{{ collaborators.length !== 1 ? 's' : '' }}
             </span>
           </div>
         </div>
@@ -58,16 +58,16 @@
 
       <!-- Grille de tests -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <!-- Éditeur TipTap collaboratif -->
+        <!-- Ã©diteur TipTap collaboratif -->
         <div class="space-y-4">
-          <h2 class="text-2xl font-semibold text-white">?? Éditeur TipTap</h2>
+          <h2 class="text-2xl font-semibold text-white">Ã©diteur TipTap</h2>
           <TipTapEditorYjs 
             :room-id="'test-room'" 
             :user="testUser"
             ref="tiptapEditor"
           />
           <div class="text-sm text-white/60">
-            Testez la collaboration en temps réel avec plusieurs onglets
+            Testez la collaboration en temps rÃ©el avec plusieurs onglets
           </div>
         </div>
 
@@ -116,13 +116,13 @@
             class="btn-glass-danger"
             :disabled="testing"
           >
-            Vider données
+            Vider donnÃ©es
           </button>
         </div>
 
-        <!-- Résultats des tests -->
+        <!-- RÃ©sultats des tests -->
         <div v-if="testResults.length > 0" class="mt-6 space-y-2">
-          <h4 class="text-white font-semibold">Résultats des tests :</h4>
+          <h4 class="text-white font-semibold">RÃ©sultats des tests :</h4>
           <div class="space-y-1 max-h-32 overflow-y-auto">
             <div
               v-for="(result, index) in testResults"
@@ -140,21 +140,21 @@
         <h3 class="text-xl font-semibold text-white mb-4">?? Instructions de test</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-white/80">
           <div>
-            <h4 class="font-semibold text-white mb-2">Test de l'éditeur :</h4>
+            <h4 class="font-semibold text-white mb-2">Test de l'Ã©diteur :</h4>
             <ol class="list-decimal list-inside space-y-1 text-sm">
               <li>Ouvrez plusieurs onglets sur cette page</li>
-              <li>Tapez du texte dans l'éditeur</li>
+              <li>Tapez du texte dans l'Ã©diteur</li>
               <li>Utilisez les outils de formatage</li>
-              <li>Vérifiez la synchronisation en temps réel</li>
+              <li>VÃ©rifiez la synchronisation en temps rÃ©el</li>
             </ol>
           </div>
           <div>
             <h4 class="font-semibold text-white mb-2">Test des commentaires :</h4>
             <ol class="list-decimal list-inside space-y-1 text-sm">
-              <li>Ajoutez des commentaires de différents types</li>
-              <li>Marquez-les comme résolus</li>
+              <li>Ajoutez des commentaires de diffÃ©rents types</li>
+              <li>Marquez-les comme rÃ©solus</li>
               <li>Testez les filtres</li>
-              <li>Vérifiez la synchronisation entre onglets</li>
+              <li>VÃ©rifiez la synchronisation entre onglets</li>
             </ol>
           </div>
         </div>
@@ -172,13 +172,13 @@ import { useCollaborationUser } from '@/composables/useCollaborationUser'
 // Utilisateur pour la collaboration (utilise l'auth ou fallback)
 const { user: testUser } = useCollaborationUser()
 
-// État global
+// Ã©tat global
 const serverStatus = ref<'connected' | 'connecting' | 'disconnected'>('disconnected')
 const collaborators = ref<any[]>([])
 const testing = ref(false)
 const testResults = ref<Array<{test: string, success: boolean, message: string}>>([])
 
-// Références aux composants
+// RÃ©fÃ©rences aux composants
 const tiptapEditor = ref()
 const commentBoard = ref()
 
@@ -201,7 +201,7 @@ const testYjsConnection = async () => {
         testResults.value.unshift({
           test: 'Connexion Yjs',
           success: true,
-          message: 'Connexion WebSocket établie avec succès'
+          message: 'Connexion WebSocket Ã©tablie avec succÃ¨s'
         })
         ws.close()
         resolve(true)
@@ -251,7 +251,7 @@ const testWhiteboardConnection = async () => {
         testResults.value.unshift({
           test: 'Connexion Whiteboard',
           success: true,
-          message: 'Connexion WebSocket whiteboard établie'
+          message: 'Connexion WebSocket whiteboard Ã©tablie'
         })
         
         ws.close()
@@ -279,15 +279,15 @@ const testWhiteboardConnection = async () => {
 const simulateCollaboration = () => {
   testing.value = true
   
-  // Simuler l'ajout de texte dans l'éditeur
+  // Simuler l'ajout de texte dans l'Ã©diteur
   if (tiptapEditor.value?.editor) {
-    const randomText = `Texte ajouté à ${new Date().toLocaleTimeString()}\n`
+    const randomText = `Texte ajoutÃ© Ã  ${new Date().toLocaleTimeString()}\n`
     tiptapEditor.value.editor.commands.insertContent(randomText)
     
     testResults.value.unshift({
       test: 'Simulation collaboration',
       success: true,
-      message: 'Texte ajouté dans l\'éditeur collaboratif'
+      message: 'Texte ajoutÃ© dans l\'Ã©diteur collaboratif'
     })
   }
   
@@ -297,7 +297,7 @@ const simulateCollaboration = () => {
   }, 1000)
 }
 
-// Vider toutes les données
+// Vider toutes les donnÃ©es
 const clearAllData = () => {
   testing.value = true
   
@@ -308,13 +308,13 @@ const clearAllData = () => {
   testResults.value.unshift({
     test: 'Nettoyage',
     success: true,
-    message: 'Données de test supprimées'
+    message: 'DonnÃ©es de test supprimÃ©es'
   })
   
   testing.value = false
 }
 
-// Surveiller l'état des composants
+// Surveiller l'Ã©tat des composants
 const updateStatus = () => {
   if (tiptapEditor.value) {
     serverStatus.value = tiptapEditor.value.isConnected ? 'connected' : 
@@ -324,7 +324,7 @@ const updateStatus = () => {
 }
 
 onMounted(() => {
-  // Mettre à jour le statut régulièrement
+  // Mettre Ã  jour le statut rÃ©guliÃ¨rement
   const statusInterval = setInterval(updateStatus, 1000)
   
   onUnmounted(() => {
@@ -334,12 +334,12 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Styles spécifiques pour la page de test */
+/* Styles spÃ©cifiques pour la page de test */
 .collaboration-test {
   min-height: 100vh;
 }
 
-/* Améliorer la scrollbar pour les résultats de tests */
+/* AmÃ©liorer la scrollbar pour les rÃ©sultats de tests */
 .max-h-32::-webkit-scrollbar {
   width: 4px;
 }

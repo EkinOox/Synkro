@@ -3,7 +3,7 @@ import type { DrawingElement, WhiteboardState } from '../components/WhiteBoard'
 import { WhiteboardUtils, HistoryManager, CollaborationManager } from '../components/WhiteBoard'
 
 export const createWhiteboardStore = () => {
-  // État principal
+  // Ã©tat principal
   const elements = ref<DrawingElement[]>([])
   const currentTool = ref('pen')
   const currentColor = ref('#000000')
@@ -16,12 +16,12 @@ export const createWhiteboardStore = () => {
   const historyManager = new HistoryManager()
   const collaborationManager = new CollaborationManager()
 
-  // État de collaboration
+  // Ã©tat de collaboration
   const isCollaborating = ref(false)
   const roomId = ref<string | null>(null)
   const collaborators = ref<any[]>([])
 
-  // Paramètres avancés
+  // ParamÃ¨tres avancÃ©s
   const brushOpacity = ref(100)
   const brushHardness = ref(80)
   const pressureSensitive = ref(false)
@@ -87,7 +87,7 @@ export const createWhiteboardStore = () => {
     }
   }
 
-  // Outils et paramètres
+  // Outils et paramÃ¨tres
   const setTool = (tool: string) => {
     currentTool.value = tool
   }
@@ -109,7 +109,7 @@ export const createWhiteboardStore = () => {
     panY.value = y
   }
 
-  // Paramètres avancés
+  // ParamÃ¨tres avancÃ©s
   const updateBrushSettings = (settings: {
     opacity?: number
     hardness?: number
@@ -139,7 +139,7 @@ export const createWhiteboardStore = () => {
       isCollaborating.value = true
       roomId.value = newRoomId
 
-      // Écouter les événements de collaboration
+      // Ã©couter les Ã©vÃ¨nements de collaboration
       collaborationManager.on('element:add', (element: DrawingElement) => {
         elements.value.push(element)
       })
@@ -204,7 +204,7 @@ export const createWhiteboardStore = () => {
 
   const exportAsImage = (canvas: HTMLCanvasElement, format: 'png' | 'jpeg' | 'svg' = 'png'): string => {
     if (format === 'svg') {
-      // Génerer du SVG basé sur les éléments
+      // GÃ©nÃ©rer du SVG basÃ© sur les Ã©lÃ©ments
       return generateSVG()
     }
     return canvas.toDataURL(`image/${format}`)
@@ -256,7 +256,7 @@ export const createWhiteboardStore = () => {
 
   // Templates
   const loadTemplate = (templateId: string) => {
-    // Charger des modèles prédéfinis
+    // Charger des modÃ¨les prÃ©dÃ©finis
     const templates: Record<string, DrawingElement[]> = {
       'wireframe': [],
       'flowchart': [],
@@ -284,7 +284,7 @@ export const createWhiteboardStore = () => {
   }
 
   return {
-    // État
+    // Ã©tat
     elements,
     currentTool,
     currentColor,

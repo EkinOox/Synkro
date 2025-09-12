@@ -31,7 +31,7 @@
           :key="collaborator.id"
           class="flex items-center gap-3 p-2 rounded-lg bg-gray-50 dark:bg-gray-700/50 transition-all hover:bg-gray-100 dark:hover:bg-gray-700"
         >
-          <!-- Avatar avec couleur personnalisée -->
+          <!-- Avatar avec couleur personnalisÃ©e -->
           <div
             class="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-semibold"
             :style="{ backgroundColor: collaborator.color }"
@@ -53,7 +53,7 @@
               <i :class="collaborator.isActive ? 'pi pi-circle-fill text-green-500' : 'pi pi-circle text-gray-400'"></i>
               <span>{{ collaborator.isActive ? 'Actif' : 'Inactif' }}</span>
               <span v-if="collaborator.currentTool" class="ml-2">
-                • {{ getToolName(collaborator.currentTool) }}
+               {{ getToolName(collaborator.currentTool) }}
               </span>
             </div>
           </div>
@@ -172,7 +172,7 @@
       <div class="flex flex-col items-center gap-4">
         <div ref="qrCodeContainer" class="bg-white p-4 rounded-lg"></div>
         <p class="text-sm text-gray-600 text-center">
-          Scannez ce QR Code pour accéder au tableau partagé
+          Scannez ce QR Code pour accÃ©der au tableau partagÃ©
         </p>
         <Button
           @click="downloadQRCode"
@@ -181,7 +181,7 @@
           outlined
         >
           <i class="pi pi-download mr-2"></i>
-          Télécharger le QR Code
+          TÃ©lÃ©charger le QR Code
         </Button>
       </div>
     </Dialog>
@@ -212,10 +212,10 @@ interface Cursor {
   y: number
 }
 
-// Props et émissions
+// Props et Ã©missions
 const emit = defineEmits(['followUser', 'cursorMove'])
 
-// État de la connexion
+// Ã©tat de la connexion
 const isConnected = ref(false)
 const connectionError = ref<string | null>(null)
 const reconnectAttempts = ref(0)
@@ -242,7 +242,7 @@ const showQRModal = ref(false)
 const qrCodeContainer = ref<HTMLDivElement>()
 const inviteLink = ref<HTMLInputElement>()
 
-// États calculés
+// Ã©tats calculÃ©s
 const connectionStatusClass = computed(() => {
   if (isConnected.value) {
     return 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800'
@@ -260,12 +260,12 @@ const statusDotClass = computed(() => {
 })
 
 const connectionStatusText = computed(() => {
-  if (isConnected.value) return 'Connecté'
+  if (isConnected.value) return 'ConnectÃ©'
   if (connectionError.value) return 'Erreur de connexion'
   return 'Connexion...'
 })
 
-// Méthodes de collaboration
+// MÃ©thodes de collaboration
 const followUser = (userId: string) => {
   if (followingUserId.value === userId) {
     followingUserId.value = null
@@ -280,21 +280,21 @@ const getToolName = (tool: string): string => {
     'pen': 'Pinceau',
     'rectangle': 'Rectangle',
     'circle': 'Cercle',
-    'arrow': 'Flèche',
+    'arrow': 'FlÃªche',
     'line': 'Ligne',
     'text': 'Texte',
     'eraser': 'Gomme',
-    'select': 'Sélection'
+    'select': 'SÃ©lection'
   }
   return toolNames[tool] || tool
 }
 
-// Méthodes de partage
+// MÃ©thodes de partage
 const copyShareLink = async () => {
   try {
     await navigator.clipboard.writeText(shareLink.value)
-    // Afficher un toast de succès
-    console.log('Lien copié dans le presse-papier')
+    // Afficher un toast de succÃ¨s
+    console.log('Lien copiÃ© dans le presse-papier')
   } catch (error) {
     console.error('Erreur lors de la copie:', error)
     // Fallback pour les navigateurs plus anciens
@@ -306,7 +306,7 @@ const copyShareLink = async () => {
 const shareByEmail = () => {
   const subject = encodeURIComponent('Rejoignez-moi sur Synkro Whiteboard')
   const body = encodeURIComponent(
-    `Bonjour,\n\nJe vous invite à collaborer sur mon tableau blanc Synkro.\n\nCliquez sur ce lien pour nous rejoindre: ${shareLink.value}\n\nÀ bientôt !`
+    `Bonjour,\n\nJe vous invite Ã  collaborer sur mon tableau blanc Synkro.\n\nCliquez sur ce lien pour nous rejoindre: ${shareLink.value}\n\nÃ€ bientÃ´t !`
   )
   const mailtoLink = `mailto:?subject=${subject}&body=${body}`
   window.open(mailtoLink)
@@ -314,8 +314,8 @@ const shareByEmail = () => {
 
 const generateQRCode = () => {
   showQRModal.value = true
-  // Ici on utiliserait une bibliothèque QR Code comme qrcode.js
-  // Pour la démo, on simule la génération
+  // Ici on utiliserait une bibliothÃ©que QR Code comme qrcode.js
+  // Pour la dÃ©mo, on simule la gÃ©nÃ©ration
   setTimeout(() => {
     if (qrCodeContainer.value) {
       qrCodeContainer.value.innerHTML = `
@@ -331,8 +331,8 @@ const generateQRCode = () => {
 }
 
 const downloadQRCode = () => {
-  // Logique pour télécharger le QR Code
-  console.log('Téléchargement du QR Code...')
+  // Logique pour tÃ©lÃ©charger le QR Code
+  console.log('TÃ©lÃ©chargement du QR Code...')
 }
 
 // Gestion de la connexion
@@ -376,7 +376,7 @@ const removeCollaborator = (userId: string) => {
   }
 }
 
-// Mettre à jour la position du curseur d'un autre utilisateur
+// Mettre Ã  jour la position du curseur d'un autre utilisateur
 const updateOtherCursor = (cursor: Cursor) => {
   const existingIndex = otherCursors.value.findIndex(c => c.userId === cursor.userId)
   if (existingIndex > -1) {
@@ -388,7 +388,7 @@ const updateOtherCursor = (cursor: Cursor) => {
 
 // Initialiser la connexion
 onMounted(() => {
-  // Simuler la connexion après 1 seconde
+  // Simuler la connexion aprÃ¨s 1 seconde
   setTimeout(() => {
     isConnected.value = true
   }, 1000)
@@ -399,7 +399,7 @@ onUnmounted(() => {
   // Fermer les connexions WebSocket, etc.
 })
 
-// Exposer les méthodes pour le composant parent
+// Exposer les mÃ©thodes pour le composant parent
 defineExpose({
   addCollaborator,
   removeCollaborator,

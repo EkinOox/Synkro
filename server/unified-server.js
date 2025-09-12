@@ -327,7 +327,7 @@ const PORT = process.env.PORT || 3001;
 const HOST = process.env.HOST || '0.0.0.0';
 
 server.listen(PORT, HOST, () => {
-  console.log(`�� Serveur unifié Synkro démarré sur ${HOST}:${PORT}`);
+  console.log(`Serveur unifié Synkro démarré sur ${HOST}:${PORT}`);
   console.log(`📝 Collaboration Yjs: ws://localhost:${PORT}/yjs/ROOM_ID`);
   console.log(`🎨 Whiteboard: ws://localhost:${PORT}/whiteboard`);
 });

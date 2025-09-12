@@ -47,7 +47,7 @@ app.directive('tooltip', Tooltip)
 const auth = useAuth()
 auth.initAuth()
 
-// Configuration d'authentification de développement uniquement si pas d'auth existante
+// Configuration d'authentification de dÃ©veloppement uniquement si pas d'auth existante
 if (!auth.isAuthenticated()) {
   const devToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3MjYwNTU4ODMsImV4cCI6MTc1NzU5MTg4Mywicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoia3lsbGlhbi5kaW9jaG9uLmtkQGdtYWlsLmNvbSJ9.example_new_token'
   const devUser = {
@@ -57,16 +57,16 @@ if (!auth.isAuthenticated()) {
     sub: 'jwt-user'
   }
 
-  console.log('?? Utilisation du token de développement - pas d\'authentification trouvée')
-  
-  // Configurer l'authentification pour le développement uniquement
+  console.log('Utilisation du token de dÃ©veloppement - pas d\'authentification trouvÃ©e')
+
+  // Configurer l'authentification pour le dÃ©veloppement uniquement
   localStorage.setItem('auth_token', devToken)
   localStorage.setItem('auth_user', JSON.stringify(devUser))
-  
-  // Réinitialiser après avoir ajouté le token de dev
+
+  // RÃ©initialiser aprÃ¨s avoir ajoutÃ© le token de dev
   auth.initAuth()
 } else {
-  console.log('? Authentification existante trouvée:', auth.getCurrentUser()?.name)
+  console.log('? Authentification existante trouvÃ©e:', auth.getCurrentUser()?.name)
 }
 
 app.mount('#app')

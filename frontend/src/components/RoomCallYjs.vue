@@ -1,12 +1,12 @@
 <template>
   <div class="flex flex-col gap-4">
-    <!-- État de connexion -->
+    <!-- Ã©tat de connexion -->
     <div v-if="!isConnected" class="flex items-center justify-center py-4 text-white/60">
       <div class="animate-spin rounded-full h-4 w-4 border-2 border-white/20 border-t-white/60 mr-2"></div>
-      <span class="text-sm">{{ isConnecting ? 'Connexion au système d\'appel...' : 'Système d\'appel déconnecté' }}</span>
+      <span class="text-sm">{{ isConnecting ? 'Connexion au systÃ¨me d\'appel...' : 'SystÃ¨me d\'appel dÃ©connectÃ©' }}</span>
     </div>
 
-    <!-- Contrôles d'appel (quand pas en appel) -->
+    <!-- ContrÃ´les d'appel (quand pas en appel) -->
     <div v-else-if="!inCall" class="glass-panel p-4">
       <div class="flex gap-3 items-center justify-center">
         <button @click="startAudioCall" class="btn-glass-success flex-1">
@@ -15,7 +15,7 @@
         </button>
         <button @click="startVideoCall" class="btn-glass-primary flex-1">
           <i class="pi pi-video mr-2"></i>
-          Appel vidéo
+          Appel vidÃ©o
         </button>
       </div>
       
@@ -41,7 +41,7 @@
 
     <!-- Interface d'appel actif -->
     <div v-else class="glass-panel p-4">
-      <!-- Vidéo locale (aperçu) -->
+      <!-- VidÃ©o locale (aperÃ§u) -->
       <div v-if="localStream" class="mb-4">
         <div class="relative w-48 h-36 mx-auto rounded-lg overflow-hidden bg-gray-800">
           <video
@@ -63,11 +63,11 @@
         </div>
       </div>
 
-      <!-- Vidéos des participants -->
+      <!-- VidÃ©os des participants -->
       <div v-if="participants.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
         <div v-for="participant in participants" :key="participant.id" class="relative">
           <div class="w-full h-32 bg-gray-800 rounded-lg flex items-center justify-center text-white">
-            <!-- Ici on afficherait la vraie vidéo du participant -->
+            <!-- Ici on afficherait la vraie vidÃ©o du participant -->
             <div class="text-center">
               <div class="w-12 h-12 rounded-full bg-brand-500 flex items-center justify-center text-xl font-bold mb-2 mx-auto">
                 {{ participant.name.charAt(0).toUpperCase() }}
@@ -95,7 +95,7 @@
         <p>En attente d'autres participants...</p>
       </div>
 
-      <!-- Contrôles pendant l'appel -->
+      <!-- ContrÃ´les pendant l'appel -->
       <div class="flex justify-center gap-3">
         <button 
           @click="toggleAudio"
@@ -109,7 +109,7 @@
           v-if="isVideoCall"
           @click="toggleVideo"
           :class="videoEnabled ? 'btn-glass-success' : 'btn-glass-danger'"
-          :title="videoEnabled ? 'Couper la caméra' : 'Activer la caméra'"
+          :title="videoEnabled ? 'Couper la camÃ©ra' : 'Activer la camÃ©ra'"
         >
           <i :class="videoEnabled ? 'pi pi-video' : 'pi pi-eye-slash'"></i>
         </button>
@@ -126,10 +126,10 @@
       <!-- Informations de l'appel -->
       <div class="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
         <div class="flex items-center justify-center gap-4">
-          <span>{{ isVideoCall ? 'Appel vidéo' : 'Appel audio' }}</span>
-          <span>•</span>
+          <span>{{ isVideoCall ? 'Appel vidÃ©o' : 'Appel audio' }}</span>
+          <span>â€¢</span>
           <span>{{ participants.length + 1 }} participant(s)</span>
-          <span>•</span>
+          <span>â€¢</span>
           <span>{{ callDuration }}</span>
         </div>
       </div>
@@ -166,10 +166,10 @@ interface Props {
 
 const props = defineProps<Props>()
 
-// Références DOM
+// RÃ©fÃ©rences DOM
 const localVideoRef = ref<HTMLVideoElement>()
 
-// État local
+// Ã©tat local
 const callStartTime = ref<number | null>(null)
 const callDurationInterval = ref<number | null>(null)
 
@@ -198,7 +198,7 @@ const {
 // Statut de collaboration
 const { updateCallStatus } = useRoomStatus()
 
-// Watcher pour mettre à jour le statut
+// Watcher pour mettre Ã  jour le statut
 watch([isConnected, isConnecting, error, participants], () => {
   updateCallStatus(
     isConnected.value,
@@ -208,24 +208,24 @@ watch([isConnected, isConnecting, error, participants], () => {
   )
 }, { immediate: true })
 
-// Initialiser le système d'appel au montage
+// Initialiser le systÃ¨me d'appel au montage
 onMounted(async () => {
   await initializeCall()
 })
 
-// Mettre à jour la vidéo locale quand le stream change
+// Mettre Ã  jour la vidÃ©o locale quand le stream change
 watch(localStream, (newStream) => {
   if (localVideoRef.value && newStream) {
     localVideoRef.value.srcObject = newStream
   }
 })
 
-// Gérer la durée de l'appel
+// GÃ©rer la durÃ©e de l'appel
 watch(inCall, (isInCall) => {
   if (isInCall) {
     callStartTime.value = Date.now()
     callDurationInterval.value = setInterval(() => {
-      // Force la réactivité pour mettre à jour la durée
+      // Force la rÃ©activitÃ© pour mettre Ã  jour la durÃ©e
     }, 1000)
   } else {
     callStartTime.value = null
@@ -236,14 +236,14 @@ watch(inCall, (isInCall) => {
   }
 })
 
-// Nettoyer l'interval à la destruction
+// Nettoyer l'interval Ã  la destruction
 onUnmounted(() => {
   if (callDurationInterval.value) {
     clearInterval(callDurationInterval.value)
   }
 })
 
-// Calculer la durée de l'appel
+// Calculer la durÃ©e de l'appel
 const callDuration = computed(() => {
   if (!callStartTime.value) return '00:00'
   

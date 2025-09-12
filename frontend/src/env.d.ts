@@ -6,7 +6,7 @@ declare module '*.vue' {
   export default component
 }
 
-// Déclarations d'environnement
+// DÃ©clarations d'environnement
 interface ImportMetaEnv {
   readonly VITE_APP_TITLE: string
   readonly VITE_API_URL: string
@@ -17,7 +17,7 @@ interface ImportMeta {
   readonly env: ImportMetaEnv
 }
 
-// Extension des métadonnées de route
+// Extension des mÃ©tadonnÃ©es de route
 declare module 'vue-router' {
   interface RouteMeta {
     title?: string

@@ -71,9 +71,9 @@ class ApiService {
   setAuthToken(token: string | null) {
     this.authToken = token
     if (token) {
-      console.log('?? ApiService: Token configuré:', token.substring(0, 50) + '...')
+      console.log('ApiService: Token configurÃ©:', token.substring(0, 50) + '...')
     } else {
-      console.log('?? ApiService: Token supprimé')
+      console.log('ApiService: Token supprimÃ©')
     }
   }
 
@@ -92,16 +92,16 @@ class ApiService {
       ...options,
     }
 
-    // Utiliser le token injecté ou celui du localStorage (fallback)
+    // Utiliser le token injectÃ© ou celui du localStorage (fallback)
     const token = this.authToken || localStorage.getItem('auth_token')
     if (token) {
       config.headers = {
         ...config.headers,
         'Authorization': `Bearer ${token}`,
       }
-      console.log(`?? Token utilisé pour ${endpoint}:`, token.substring(0, 50) + '...')
+      console.log(`Token utilisÃ© pour ${endpoint}:`, token.substring(0, 50) + '...')
     } else {
-      console.warn(`?? Aucun token disponible pour ${endpoint}`)
+      console.warn(`Aucun token disponible pour ${endpoint}`)
     }
 
     try {
@@ -125,7 +125,7 @@ class ApiService {
     }
   }
 
-  // Créer une nouvelle room/doc
+  // CrÃ©er une nouvelle room/doc
   async createRoom(data: DocCreateRequest): Promise<DocCreateResponse> {
     return this.request<DocCreateResponse>('/doc_creates', {
       method: 'POST',
@@ -133,23 +133,23 @@ class ApiService {
     })
   }
 
-  // Récupérer la liste des rooms publiques
+  // RÃ©cupÃ©rer la liste des rooms publiques
   async getRooms(page: number = 1): Promise<DocListResponse> {
     try {
       return await this.request<DocListResponse>(`/doc_lists?page=${page}`)
     } catch (error) {
-      // Fallback : retourner des données de test si l'API n'est pas accessible
-      console.warn('API non accessible, utilisation de données de test')
+      // Fallback : retourner des donnÃ©es de test si l'API n'est pas accessible
+      console.warn('API non accessible, utilisation de donnÃ©es de test')
       return this.getMockRooms(page)
     }
   }
 
-  // Récupérer la liste des rooms (admin)
+  // RÃ©cupÃ©rer la liste des rooms (admin)
   async getRoomsAdmin(page: number = 1): Promise<DocListResponse> {
     return this.request<DocListResponse>(`/doc_list_admins?page=${page}`)
   }
 
-  // Données de test pour le développement
+  // DonnÃ©es de test pour le dÃ©veloppement
   private getMockRooms(page: number = 1): DocListResponse {
     return {
       member: [
@@ -157,21 +157,21 @@ class ApiService {
           '@id': '/api/docs/1',
           '@type': 'Doc',
           id: 1,
-          name: 'Room de démonstration',
+          name: 'Room de dÃ©monstration',
           password: ''
         },
         {
           '@id': '/api/docs/2',
           '@type': 'Doc',
           id: 2,
-          name: 'Réunion privée',
+          name: 'RÃ©union privÃ©e',
           password: 'secret123'
         },
         {
           '@id': '/api/docs/3',
           '@type': 'Doc',
           id: 3,
-          name: 'Brainstorming équipe',
+          name: 'Brainstorming Ã©quipe',
           password: ''
         }
       ],
@@ -188,7 +188,7 @@ class ApiService {
   // Authentification simple avec email/mot de passe
   async login(email: string, password: string): Promise<{ token: string; user: any }> {
     try {
-      // Temporairement désactiver l'auth pour cette requête
+      // Temporairement dÃ©sactiver l'auth pour cette requÃªte
       const currentToken = this.authToken
       this.authToken = null
       
@@ -204,7 +204,7 @@ class ApiService {
         return response
       }
       
-      throw new Error('Token non reçu du serveur')
+      throw new Error('Token non reÃ§u du serveur')
     } catch (error) {
       console.error('Erreur de connexion:', error)
       throw error
@@ -214,7 +214,7 @@ class ApiService {
   // Inscription simple
   async register(email: string, password: string, name: string): Promise<{ token: string; user: any }> {
     try {
-      // Temporairement désactiver l'auth pour cette requête
+      // Temporairement dÃ©sactiver l'auth pour cette requÃªte
       const currentToken = this.authToken
       this.authToken = null
       
@@ -230,24 +230,24 @@ class ApiService {
         return response
       }
       
-      throw new Error('Token non reçu du serveur')
+      throw new Error('Token non reÃ§u du serveur')
     } catch (error) {
       console.error('Erreur d\'inscription:', error)
       throw error
     }
   }
 
-  // Déconnexion
+  // DÃ©connexion
   logout(): void {
     this.authToken = null
   }
 
-  // Vérifier si l'utilisateur est connecté
+  // VÃ©rifier si l'utilisateur est connectÃ©
   isAuthenticated(): boolean {
     return !!(this.authToken || localStorage.getItem('auth_token'))
   }
 
-  // Récupérer le token JWT
+  // RÃ©cupÃ©rer le token JWT
   getToken(): string | null {
     return this.authToken || localStorage.getItem('auth_token')
   }
