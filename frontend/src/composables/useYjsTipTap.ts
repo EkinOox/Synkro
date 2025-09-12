@@ -48,14 +48,24 @@ export function useYjsTipTap(roomId: string, user: TipTapUser, element?: HTMLEle
       // Créer le provider WebSocket (il ajoute automatiquement le roomId)
       provider = new WebsocketProvider(url, roomId, ydoc)
 
-      // Configurer l'awareness après la création
+      // Configurer l'awareness après la création avec nettoyage
       if (provider.awareness) {
-        provider.awareness.setLocalStateField('user', {
-          id: user.id,
-          name: user.name,
-          color: user.color,
-          avatar: user.avatar
-        })
+        try {
+          // Nettoyer l'état local au cas où il y aurait des données corrompues
+          provider.awareness.setLocalState(null)
+          
+          // Configurer l'utilisateur local
+          provider.awareness.setLocalStateField('user', {
+            id: user.id,
+            name: user.name,
+            color: user.color,
+            avatar: user.avatar
+          })
+          
+          console.log('✅ Awareness TipTap configurée proprement')
+        } catch (awarenessErr) {
+          console.warn('⚠️ Erreur lors de la configuration de l\'awareness:', awarenessErr)
+        }
       }
 
       // Gestionnaires d'événements
@@ -77,26 +87,43 @@ export function useYjsTipTap(roomId: string, user: TipTapUser, element?: HTMLEle
         isConnecting.value = false
       })
 
-      // Suivre les collaborateurs
+      // Suivre les collaborateurs avec gestion d'erreur renforcée
       if (provider.awareness) {
         awarenessChangeCallback = () => {
-          // Vérifier que le provider et awareness existent toujours
-          if (!provider || !provider.awareness) {
-            console.warn('⚠️ Provider ou awareness non disponible lors du changement')
-            return
-          }
-          
-          const states = provider.awareness.getStates()
-          const users: TipTapUser[] = []
-          
-          states.forEach((state: any) => {
-            if (state.user && state.user.id !== user.id) {
-              users.push(state.user)
+          try {
+            // Vérifier que le provider et awareness existent toujours
+            if (!provider || !provider.awareness) {
+              console.warn('⚠️ Provider ou awareness non disponible lors du changement')
+              return
             }
-          })
-          
-          collaborators.value = users
-          console.log('👥 Collaborateurs TipTap:', users.length)
+            
+            const states = provider.awareness.getStates()
+            const users: TipTapUser[] = []
+            
+            states.forEach((state: any, clientId: number) => {
+              try {
+                // Vérifier que l'état est valide et complet
+                if (state && typeof state === 'object' && state.user && 
+                    typeof state.user === 'object' && state.user.id && 
+                    state.user.id !== user.id) {
+                  users.push({
+                    id: state.user.id,
+                    name: state.user.name || 'Utilisateur inconnu',
+                    color: state.user.color || '#888888'
+                  })
+                }
+              } catch (stateErr) {
+                console.warn(`⚠️ État d'awareness invalide pour le client ${clientId}:`, stateErr)
+              }
+            })
+            
+            collaborators.value = users
+            console.log('👥 Collaborateurs TipTap:', users.length)
+          } catch (err) {
+            console.warn('⚠️ Erreur lors du traitement des changements d\'awareness:', err)
+            // En cas d'erreur, garder la liste actuelle ou la vider
+            collaborators.value = []
+          }
         }
         
         provider.awareness.on('change', awarenessChangeCallback)
@@ -123,6 +150,22 @@ export function useYjsTipTap(roomId: string, user: TipTapUser, element?: HTMLEle
               name: user.name,
               color: user.color,
             },
+            // Ajouter une gestion d'erreur pour les curseurs
+            onUpdate: (users) => {
+              try {
+                // Filtrer les utilisateurs avec des données valides
+                const validUsers = users.filter(u => u && u.clientId != null)
+                collaborators.value = validUsers.map(u => ({
+                  id: u.clientId?.toString() || 'unknown',
+                  name: u.name || 'Utilisateur inconnu',
+                  color: u.color || '#888888'
+                }))
+              } catch (err) {
+                console.warn('⚠️ Erreur lors de la mise à jour des curseurs:', err)
+                // En cas d'erreur, vider la liste des collaborateurs
+                collaborators.value = []
+              }
+            }
           }),
         ],
         content: '',
@@ -132,10 +175,36 @@ export function useYjsTipTap(roomId: string, user: TipTapUser, element?: HTMLEle
           },
         },
         onUpdate: ({ editor }) => {
-          if (provider && provider.awareness) {
-            provider.awareness.setLocalStateField('cursor', {
-              selection: editor.state.selection
-            })
+          try {
+            if (provider && provider.awareness) {
+              // Éviter de définir des curseurs invalides
+              const selection = editor.state.selection
+              if (selection && selection.from !== undefined && selection.to !== undefined) {
+                provider.awareness.setLocalStateField('cursor', {
+                  selection: {
+                    from: selection.from,
+                    to: selection.to,
+                    anchor: selection.anchor,
+                    head: selection.head
+                  }
+                })
+              }
+            }
+          } catch (err) {
+            console.warn('⚠️ Erreur lors de la mise à jour du curseur:', err)
+          }
+        },
+        // Ajouter une gestion d'erreur globale pour TipTap
+        onTransaction: ({ transaction }) => {
+          try {
+            // Vérifier que la transaction est valide
+            if (!transaction || !transaction.doc) {
+              console.warn('⚠️ Transaction TipTap invalide détectée')
+              return false
+            }
+          } catch (err) {
+            console.warn('⚠️ Erreur lors du traitement de la transaction TipTap:', err)
+            return false
           }
         },
       })
