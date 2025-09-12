@@ -89,18 +89,18 @@ export function useCollaborationRoom() {
         return
       }
 
-      // Essayer d'abord les rooms admin si connecté avec un vrai token
+      // Essayer d'abord les rooms publiques (qui montrent toutes les rooms)
       try {
-        console.log('🔐 Tentative d\'accès aux rooms admin...')
-        response = await apiService.getRoomsAdmin()
-        console.log('✅ Rooms admin chargées avec succès')
-      } catch (adminError) {
-        console.warn('⚠️ Erreur rooms admin, fallback sur rooms publiques:', adminError)
+        console.log('� Tentative d\'accès aux rooms publiques...')
+        response = await apiService.getRooms()
+        console.log('✅ Rooms publiques chargées avec succès')
+      } catch (publicError) {
+        console.warn('⚠️ Erreur rooms publiques, fallback sur rooms admin:', publicError)
         try {
-          response = await apiService.getRooms()
-          console.log('✅ Rooms publiques chargées avec succès')
-        } catch (publicError) {
-          console.error('❌ Erreur aussi sur rooms publiques:', publicError)
+          response = await apiService.getRoomsAdmin()
+          console.log('✅ Rooms admin chargées avec succès')
+        } catch (adminError) {
+          console.error('❌ Erreur aussi sur rooms admin:', adminError)
           createDemoRooms()
           return
         }

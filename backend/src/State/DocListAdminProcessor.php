@@ -22,7 +22,8 @@ class DocListAdminProcessor implements ProviderInterface
             return [];
         }
 
-        $docs = $this->em->getRepository(Doc::class)->findBy(['admin' => $user]);
+        // Retourner TOUTES les rooms pour tous les utilisateurs
+        $docs = $this->em->getRepository(Doc::class)->findAll();
         foreach ($docs as $doc) {
             yield new DocListAdminOutput(
                 $doc->getId(),
