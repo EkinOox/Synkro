@@ -87,17 +87,19 @@ export function useYjsCollaboration(roomId: string, user: CollaborationUser) {
       // Suivre les utilisateurs connectés via awareness
       if (provider.awareness) {
         provider.awareness.on('change', () => {
-          const states = provider!.awareness.getStates()
-          const users: CollaborationUser[] = []
-          
-          states.forEach((state: any) => {
-            if (state.user && state.user.id !== user.id) {
-              users.push(state.user)
-            }
-          })
-          
-          collaborators.value = users
-          console.log('👥 Collaborateurs connectés:', users.length)
+          if (provider?.awareness) {
+            const states = provider.awareness.getStates()
+            const users: CollaborationUser[] = []
+            
+            states.forEach((state: any) => {
+              if (state.user && state.user.id !== user.id) {
+                users.push(state.user)
+              }
+            })
+            
+            collaborators.value = users
+            console.log('👥 Collaborateurs connectés:', users.length)
+          }
         })
       }
 
