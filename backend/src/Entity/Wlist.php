@@ -15,43 +15,39 @@ class Wlist
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?int $DocId = null;
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'wlists')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?user $user = null;
 
-    #[ORM\Column]
-    private ?int $UserId = null;
-
-    #[ORM\ManyToOne(inversedBy: 'wlists')]
-    private ?user $userId = null;
-
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?doc $docId = null;
+    #[ORM\ManyToOne(targetEntity: Doc::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?doc $doc = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getDocId(): ?int
+    public function getDocId(): ?Doc
     {
-        return $this->DocId;
+        return $this->doc;
     }
 
-    public function setDocId(int $DocId): static
+    public function setDocId(?doc $doc): static
     {
-        $this->DocId = $DocId;
+        $this->doc = $doc;
 
         return $this;
     }
 
-    public function getUserId(): ?int
+    public function getUserId(): ?User
     {
-        return $this->UserId;
+        return $this->user;
     }
 
-    public function setUserId(int $UserId): static
+    public function setUserId(?User $user): static
     {
-        $this->UserId = $UserId;
+        $this->user = $user;
 
         return $this;
     }
