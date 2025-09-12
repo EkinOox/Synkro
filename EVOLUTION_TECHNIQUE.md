@@ -3,7 +3,7 @@ _Évolution du projet de collaboration temps réel_
 
 ## 📋 Résumé Exécutif
 
-Ce document retrace l'évolution complète du projet **Synkro**, une plateforme collaborative moderne développée avec l'assistance de **GitHub Copilot**. Le projet a évolué à travers plusieurs phases techniques majeures, de la résolution de problèmes d'encodage UTF-8 jusqu'à l'implémentation d'une architecture collaborative avancée avec **Yjs (CRDT)**.
+Ce document retrace l'évolution complète du projet **Synkro**, une plateforme collaborative moderne développée par deux étudiants. Le projet a évolué à travers plusieurs phases techniques majeures, de la résolution de problèmes d'encodage UTF-8 jusqu'à l'implémentation d'une architecture collaborative avancée avec **Yjs (CRDT)**.
 
 ---
 
