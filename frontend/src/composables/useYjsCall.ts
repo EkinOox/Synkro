@@ -24,6 +24,32 @@ interface SignalingMessage {
   timestamp: number
 }
 
+// Fonction utilitaire pour vérifier la compatibilité des appels
+const checkMediaDevicesSupport = (): { supported: boolean; error?: string } => {
+  if (!navigator.mediaDevices) {
+    return {
+      supported: false,
+      error: 'L\'API MediaDevices n\'est pas supportée par ce navigateur.'
+    }
+  }
+
+  if (!navigator.mediaDevices.getUserMedia) {
+    return {
+      supported: false,
+      error: 'getUserMedia n\'est pas disponible. Assurez-vous d\'utiliser HTTPS ou localhost.'
+    }
+  }
+
+  if (!window.RTCPeerConnection) {
+    return {
+      supported: false,
+      error: 'WebRTC n\'est pas supporté par ce navigateur.'
+    }
+  }
+
+  return { supported: true }
+}
+
 export function useYjsCall(roomId: string, user: CallUser) {
   const isConnected = ref(false)
   const isConnecting = ref(false)
@@ -155,6 +181,12 @@ export function useYjsCall(roomId: string, user: CallUser) {
   const startCall = async (withVideo: boolean = false) => {
     try {
       console.log(`Démarrage appel ${withVideo ? 'vidéo' : 'audio'}`)
+
+      // Vérifier la compatibilité du navigateur
+      const compatibility = checkMediaDevicesSupport()
+      if (!compatibility.supported) {
+        throw new Error(compatibility.error)
+      }
 
       // Demander l'accès aux médias
       const constraints = {
@@ -421,6 +453,17 @@ export function useYjsCall(roomId: string, user: CallUser) {
     error.value = null
   }
 
+  // Fonction pour vérifier la compatibilité
+  const isCallSupported = () => {
+    return checkMediaDevicesSupport().supported
+  }
+
+  // Fonction pour obtenir l'erreur de compatibilité
+  const getCompatibilityError = () => {
+    const result = checkMediaDevicesSupport()
+    return result.supported ? null : result.error
+  }
+
   // Hook de nettoyage
   onUnmounted(() => {
     destroyCall()
@@ -439,6 +482,10 @@ export function useYjsCall(roomId: string, user: CallUser) {
     localStream,
     audioEnabled,
     videoEnabled,
+    
+    // Vérification de compatibilité
+    isCallSupported,
+    getCompatibilityError,
     
     // Actions
     initializeCall,

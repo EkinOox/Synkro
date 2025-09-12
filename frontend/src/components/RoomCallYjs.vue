@@ -184,6 +184,8 @@ const {
   localStream,
   audioEnabled,
   videoEnabled,
+  isCallSupported,
+  getCompatibilityError,
   initializeCall,
   startCall,
   endCall,
@@ -256,10 +258,18 @@ const callDuration = computed(() => {
 
 // Actions d'appel
 const startAudioCall = () => {
+  if (!isCallSupported()) {
+    error.value = getCompatibilityError() || 'Appels non supportés par ce navigateur'
+    return
+  }
   startCall(false)
 }
 
 const startVideoCall = () => {
+  if (!isCallSupported()) {
+    error.value = getCompatibilityError() || 'Appels non supportés par ce navigateur'
+    return
+  }
   startCall(true)
 }
 </script>
