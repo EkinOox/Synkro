@@ -33,35 +33,35 @@ export function useCollaborationRoom() {
 
   // Utiliser le token d'authentification existant
   const auth = useAuth()
-  
+
   // Configurer le service API avec le token
   const initializeApiService = () => {
     try {
-      // Initialiser l'authentification si pas dÃ©jÃ  fait
+      // Initialiser l'authentification si pas déjà fait
       auth.initAuth()
-      
+
       const token = auth.getToken()
-      if (token && token !== 'google-demo-token') { // Ã‰viter les tokens de dÃ©mo
+      if (token && token !== 'google-demo-token') { // Éviter les tokens de démo
         apiService.setAuthToken(token)
-        console.log('âœ… Token JWT rÃ©el configurÃ© pour l\'API:', token.substring(0, 20) + '...')
+        console.log('? Token JWT réel configuré pour l\'API:', token.substring(0, 20) + '...')
         return true
       } else {
-        console.log('âš ï¸ Aucun token JWT rÃ©el disponible - mode dÃ©connectÃ©')
-        apiService.setAuthToken(null) // S'assurer qu'il n'y a pas de token obsolÃ¨te
+        console.log('?? Aucun token JWT réel disponible - mode déconnecté')
+        apiService.setAuthToken(null) // S'assurer qu'il n'y a pas de token obsolète
         return false
       }
     } catch (err) {
-      console.warn('âŒ Erreur lors de la rÃ©cupÃ©ration du token:', err)
+      console.warn('? Erreur lors de la récupération du token:', err)
       return false
     }
   }
 
-  // VÃ©rifier l'authentification de maniÃ¨re sÃ»re
+  // Vérifier l'authentification de manière sûre
   const checkAuthentication = () => {
     try {
       return auth.isAuthenticated()
     } catch (err) {
-      console.warn('Erreur lors de la vÃ©rification d\'authentification:', err)
+      console.warn('Erreur lors de la vérification d\'authentification:', err)
       return false
     }
   }
@@ -76,56 +76,56 @@ export function useCollaborationRoom() {
     try {
       loading.value = true
       error.value = ''
-      
+
       // Reconfigurer le token avant chaque appel
       const hasValidToken = initializeApiService()
-      
+
       let response
 
-      // Si pas d'authentification JWT rÃ©elle, utiliser les donnÃ©es de test
+      // Si pas d'authentification JWT réelle, utiliser les données de test
       if (!hasValidToken) {
-        console.log('ðŸ’¡ Pas de token JWT rÃ©el, utilisation des donnÃ©es de test')
+        console.log('?? Pas de token JWT réel, utilisation des données de test')
         createDemoRooms()
         return
       }
 
       // Essayer d'abord les rooms publiques (qui montrent toutes les rooms)
       try {
-        console.log('ï¿½ Tentative d\'accÃ¨s aux rooms publiques...')
+        console.log(' Tentative d\'accès aux rooms publiques...')
         response = await apiService.getRooms()
-        console.log('âœ… Rooms publiques chargÃ©es avec succÃ¨s')
+        console.log('? Rooms publiques chargées avec succès')
       } catch (publicError) {
-        console.warn('âš ï¸ Erreur rooms publiques, fallback sur rooms admin:', publicError)
+        console.warn('?? Erreur rooms publiques, fallback sur rooms admin:', publicError)
         try {
           response = await apiService.getRoomsAdmin()
-          console.log('âœ… Rooms admin chargÃ©es avec succÃ¨s')
+          console.log('? Rooms admin chargées avec succès')
         } catch (adminError) {
-          console.error('âŒ Erreur aussi sur rooms admin:', adminError)
+          console.error('? Erreur aussi sur rooms admin:', adminError)
           createDemoRooms()
           return
         }
       }
 
-      // VÃ©rifier que la rÃ©ponse est valide
+      // Vérifier que la réponse est valide
       if (!response) {
-        console.warn('Aucune rÃ©ponse de l\'API')
+        console.warn('Aucune réponse de l\'API')
         createDemoRooms()
         return
       }
 
-      // GÃ©rer la structure Hydra/JSON-LD : soit response.member soit response directement
+      // Gérer la structure Hydra/JSON-LD : soit response.member soit response directement
       let memberArray = []
       if (response.member && Array.isArray(response.member)) {
         memberArray = response.member
       } else if (Array.isArray(response)) {
         memberArray = response
       } else {
-        console.warn('Structure de rÃ©ponse inattendue:', response)
+        console.warn('Structure de réponse inattendue:', response)
         createDemoRooms()
         return
       }
 
-      // Convertir les donnÃ©es API en format local
+      // Convertir les données API en format local
       rooms.value = memberArray.map((item: DocListItem) => {
         const ownerId = item.adminId ? item.adminId.toString() : currentUserId.value
         return {
@@ -135,12 +135,12 @@ export function useCollaborationRoom() {
           ownerName: item.adminId === 1 ? 'Kyllian Diochon' : 'Utilisateur inconnu',
           locked: false,
           users: [
-            { 
-              id: ownerId, 
-              name: item.adminId === 1 ? 'Kyllian Diochon' : 'Utilisateur', 
-              color: randomColor(), 
-              role: 'owner' as const, 
-              active: true 
+            {
+              id: ownerId,
+              name: item.adminId === 1 ? 'Kyllian Diochon' : 'Utilisateur',
+              color: randomColor(),
+              role: 'owner' as const,
+              active: true
             }
           ],
           bannedUserIds: [],
@@ -149,14 +149,14 @@ export function useCollaborationRoom() {
         }
       })
 
-      console.log(`${rooms.value.length} rooms chargÃ©es avec succÃ¨s`)
+      console.log(`${rooms.value.length} rooms chargées avec succès`)
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Erreur lors du chargement des rooms'
       error.value = errorMessage
       console.error('Erreur chargement rooms:', err)
 
-      // En cas d'erreur totale, crÃ©er quelques rooms de dÃ©monstration
-      console.log('CrÃ©ation de rooms de dÃ©monstration suite Ã  une erreur...')
+      // En cas d'erreur totale, créer quelques rooms de démonstration
+      console.log('Création de rooms de démonstration suite à une erreur...')
       createDemoRooms()
     } finally {
       loading.value = false
@@ -167,17 +167,17 @@ export function useCollaborationRoom() {
     rooms.value = [
       {
         id: '1',
-        name: 'Room de dÃ©monstration',
+        name: 'Room de démonstration',
         ownerId: currentUserId.value,
         ownerName: 'Vous',
         locked: false,
         users: [
-          { 
-            id: currentUserId.value, 
-            name: 'Vous', 
-            color: randomColor(), 
-            role: 'owner', 
-            active: true 
+          {
+            id: currentUserId.value,
+            name: 'Vous',
+            color: randomColor(),
+            role: 'owner',
+            active: true
           }
         ],
         bannedUserIds: [],
@@ -186,17 +186,17 @@ export function useCollaborationRoom() {
       },
       {
         id: '2',
-        name: 'RÃ©union Ã‰quipe',
+        name: 'Réunion Équipe',
         ownerId: 'other-user',
-        ownerName: 'CollÃ¨gue',
+        ownerName: 'Collègue',
         locked: false,
         users: [
-          { 
-            id: 'other-user', 
-            name: 'CollÃ¨gue', 
-            color: randomColor(), 
-            role: 'owner', 
-            active: true 
+          {
+            id: 'other-user',
+            name: 'Collègue',
+            color: randomColor(),
+            role: 'owner',
+            active: true
           }
         ],
         bannedUserIds: [],
@@ -211,11 +211,11 @@ export function useCollaborationRoom() {
       loading.value = true
       error.value = ''
 
-      // VÃ©rifier l'authentification
+      // Vérifier l'authentification
       if (!checkAuthentication()) {
-        console.warn('Pas d\'authentification, crÃ©ation de room locale uniquement')
+        console.warn('Pas d\'authentification, création de room locale uniquement')
 
-        // CrÃ©er une room locale temporaire
+        // Créer une room locale temporaire
         const localRoom: RoomState = {
           id: 'local-' + Date.now(),
           name: name.trim(),
@@ -223,12 +223,12 @@ export function useCollaborationRoom() {
           ownerName: 'Vous',
           locked: false,
           users: [
-            { 
-              id: currentUserId.value, 
-              name: 'Vous', 
-              color: randomColor(), 
-              role: 'owner', 
-              active: true 
+            {
+              id: currentUserId.value,
+              name: 'Vous',
+              color: randomColor(),
+              role: 'owner',
+              active: true
             }
           ],
           bannedUserIds: [],
@@ -238,20 +238,20 @@ export function useCollaborationRoom() {
 
         rooms.value.unshift(localRoom)
         room.value = localRoom
-        
-        error.value = 'Room crÃ©Ã©e en local. Connectez-vous pour la sauvegarder sur le serveur.'
+
+        error.value = 'Room créée en local. Connectez-vous pour la sauvegarder sur le serveur.'
         return
       }
 
-      // Tenter la crÃ©ation via l'API
+      // Tenter la création via l'API
       const response = await apiService.createRoom({
         name: name.trim(),
-        text: 'Nouvelle room collaborative', // Description par dÃ©faut
+        text: 'Nouvelle room collaborative', // Description par défaut
         password: password?.trim() || ''
       })
 
       if (response.success) {
-        // CrÃ©er l'objet room local
+        // Créer l'objet room local
         const newRoom: RoomState = {
           id: response.docId.toString(),
           name,
@@ -259,12 +259,12 @@ export function useCollaborationRoom() {
           ownerName: 'Kyllian Diochon',
           locked: false,
           users: [
-            { 
-              id: currentUserId.value, 
-              name: 'Kyllian Diochon', 
-              color: randomColor(), 
-              role: 'owner', 
-              active: true 
+            {
+              id: currentUserId.value,
+              name: 'Kyllian Diochon',
+              color: randomColor(),
+              role: 'owner',
+              active: true
             }
           ],
           bannedUserIds: [],
@@ -275,16 +275,16 @@ export function useCollaborationRoom() {
         rooms.value.unshift(newRoom)
         room.value = newRoom
 
-        console.log('Room crÃ©Ã©e sur le serveur:', response.message)
+        console.log('Room créée sur le serveur:', response.message)
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erreur lors de la crÃ©ation de la room'
+      const errorMessage = err instanceof Error ? err.message : 'Erreur lors de la création de la room'
       error.value = errorMessage
-      console.error('Erreur crÃ©ation room:', err)
-      
-      // Si erreur d'authentification, proposer de crÃ©er localement
+      console.error('Erreur création room:', err)
+
+      // Si erreur d'authentification, proposer de créer localement
       if (errorMessage.includes('JWT') || errorMessage.includes('401')) {
-        error.value = 'Authentification requise. Connectez-vous pour crÃ©er des rooms sur le serveur.'
+        error.value = 'Authentification requise. Connectez-vous pour créer des rooms sur le serveur.'
       }
     } finally {
       loading.value = false
@@ -293,28 +293,28 @@ export function useCollaborationRoom() {
 
   function joinRoom(existing: RoomState, providedPassword?: string) {
     if (!existing) return
-    
+
     const uid = currentUserId.value
     if (existing.bannedUserIds.includes(uid)) {
-      error.value = 'Vous Ãªtes banni de cette room'
+      error.value = 'Vous êtes banni de cette room'
       return
     }
-    
+
     if (existing.password && existing.password !== providedPassword) {
       error.value = 'Mot de passe incorrect'
       return
     }
-    
+
     if (!existing.users.find(u => u.id === uid)) {
-      existing.users.push({ 
-        id: uid, 
-        name: `Utilisateur-${existing.users.length + 1}`, 
-        color: randomColor(), 
-        role: 'writer', 
-        active: true 
+      existing.users.push({
+        id: uid,
+        name: `Utilisateur-${existing.users.length + 1}`,
+        color: randomColor(),
+        role: 'writer',
+        active: true
       })
     }
-    
+
     room.value = existing
     error.value = ''
   }
@@ -340,29 +340,29 @@ export function useCollaborationRoom() {
     room.value.bannedUserIds = room.value.bannedUserIds.filter(id => id !== userId)
   }
 
-  // Charger une room spÃ©cifique par ID
+  // Charger une room spécifique par ID
   async function loadRoomById(roomId: string) {
     try {
       loading.value = true
       error.value = ''
 
-      // D'abord chercher dans les rooms dÃ©jÃ  chargÃ©es
+      // D'abord chercher dans les rooms déjà chargées
       const existingRoom = rooms.value.find(r => r.id === roomId)
       if (existingRoom) {
         room.value = existingRoom
-        console.log('Room trouvÃ©e dans le cache local:', existingRoom.name)
+        console.log('Room trouvée dans le cache local:', existingRoom.name)
         return
       }
 
-      // Si pas trouvÃ©e localement, charger toutes les rooms puis chercher
+      // Si pas trouvée localement, charger toutes les rooms puis chercher
       await loadRooms()
-      
+
       const foundRoom = rooms.value.find(r => r.id === roomId)
       if (foundRoom) {
         room.value = foundRoom
-        console.log('Room trouvÃ©e aprÃ¨s rechargement:', foundRoom.name)
+        console.log('Room trouvée après rechargement:', foundRoom.name)
       } else {
-        throw new Error(`Room avec l'ID ${roomId} non trouvÃ©e`)
+        throw new Error(`Room avec l'ID ${roomId} non trouvée`)
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Erreur lors du chargement de la room'
@@ -391,9 +391,9 @@ export function useCollaborationRoom() {
     return list
   })
 
-  // Recharger les rooms aprÃ¨s connexion
+  // Recharger les rooms après connexion
   const refreshAfterAuth = async () => {
-    console.log('ðŸ”„ Rechargement des rooms aprÃ¨s authentification...')
+    console.log('?? Rechargement des rooms après authentification...')
     initializeApiService()
     await loadRooms()
   }

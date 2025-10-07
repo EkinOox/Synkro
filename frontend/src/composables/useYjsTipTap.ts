@@ -26,34 +26,34 @@ export function useYjsTipTap(roomId: string, user: TipTapUser, element?: HTMLEle
   // Yjs objects
   let ydoc: Y.Doc | null = null
   let provider: WebsocketProvider | null = null
-  
+
   // Stocker les callbacks pour pouvoir les nettoyer
   let awarenessChangeCallback: (() => void) | null = null
 
   const initializeEditor = async (targetElement?: HTMLElement) => {
     try {
-      console.log('ðŸ“ Initialisation de l\'Ã©diteur TipTap avec Yjs')
+      console.log('?? Initialisation de l\'éditeur TipTap avec Yjs')
       isConnecting.value = true
       error.value = null
-      
-      // CrÃ©er le document Yjs
+
+      // Créer le document Yjs
       ydoc = new Y.Doc()
-      
+
       // URL du serveur WebSocket
       const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:3001'
       const url = `${wsUrl}/yjs`
-      
-      console.log(`ðŸ”— Connexion TipTap: ${url}/${roomId}`)
 
-      // CrÃ©er le provider WebSocket (il ajoute automatiquement le roomId)
+      console.log(`?? Connexion TipTap: ${url}/${roomId}`)
+
+      // Créer le provider WebSocket (il ajoute automatiquement le roomId)
       provider = new WebsocketProvider(url, roomId, ydoc)
 
-      // Configurer l'awareness aprÃ¨s la crÃ©ation avec nettoyage
+      // Configurer l'awareness après la création avec nettoyage
       if (provider.awareness) {
         try {
-          // Nettoyer l'Ã©tat local au cas oÃ¹ il y aurait des donnÃ©es corrompues
+          // Nettoyer l'état local au cas où il y aurait des données corrompues
           provider.awareness.setLocalState(null)
-          
+
           // Configurer l'utilisateur local
           provider.awareness.setLocalStateField('user', {
             id: user.id,
@@ -61,16 +61,16 @@ export function useYjsTipTap(roomId: string, user: TipTapUser, element?: HTMLEle
             color: user.color,
             avatar: user.avatar
           })
-          
-          console.log('âœ… Awareness TipTap configurÃ©e proprement')
+
+          console.log('? Awareness TipTap configurée proprement')
         } catch (awarenessErr) {
-          console.warn('âš ï¸ Erreur lors de la configuration de l\'awareness:', awarenessErr)
+          console.warn('?? Erreur lors de la configuration de l\'awareness:', awarenessErr)
         }
       }
 
-      // Gestionnaires d'Ã©vÃ©nements
+      // Gestionnaires d'événements
       provider.on('status', (event: any) => {
-        console.log('ðŸ“¡ Statut TipTap WebSocket:', event.status)
+        console.log('?? Statut TipTap WebSocket:', event.status)
         isConnected.value = event.status === 'connected'
         isConnecting.value = event.status === 'connecting'
 
@@ -82,29 +82,29 @@ export function useYjsTipTap(roomId: string, user: TipTapUser, element?: HTMLEle
       })
 
       provider.on('connection-error', (event: any) => {
-        console.error('âŒ Erreur de connexion TipTap:', event)
+        console.error('? Erreur de connexion TipTap:', event)
         error.value = 'Impossible de se connecter'
         isConnecting.value = false
       })
 
-      // Suivre les collaborateurs avec gestion d'erreur renforcÃ©e
+      // Suivre les collaborateurs avec gestion d'erreur renforcée
       if (provider.awareness) {
         awarenessChangeCallback = () => {
           try {
-            // VÃ©rifier que le provider et awareness existent toujours
+            // Vérifier que le provider et awareness existent toujours
             if (!provider || !provider.awareness) {
-              console.warn('âš ï¸ Provider ou awareness non disponible lors du changement')
+              console.warn('?? Provider ou awareness non disponible lors du changement')
               return
             }
-            
+
             const states = provider.awareness.getStates()
             const users: TipTapUser[] = []
-            
+
             states.forEach((state: any, clientId: number) => {
               try {
-                // VÃ©rifier que l'Ã©tat est valide et complet
-                if (state && typeof state === 'object' && state.user && 
-                    typeof state.user === 'object' && state.user.id && 
+                // Vérifier que l'état est valide et complet
+                if (state && typeof state === 'object' && state.user &&
+                    typeof state.user === 'object' && state.user.id &&
                     state.user.id !== user.id) {
                   users.push({
                     id: state.user.id,
@@ -113,28 +113,28 @@ export function useYjsTipTap(roomId: string, user: TipTapUser, element?: HTMLEle
                   })
                 }
               } catch (stateErr) {
-                console.warn(`âš ï¸ Ã‰tat d'awareness invalide pour le client ${clientId}:`, stateErr)
+                console.warn(`?? État d'awareness invalide pour le client ${clientId}:`, stateErr)
               }
             })
-            
+
             collaborators.value = users
-            console.log('ðŸ‘¥ Collaborateurs TipTap:', users.length)
+            console.log('?? Collaborateurs TipTap:', users.length)
           } catch (err) {
-            console.warn('âš ï¸ Erreur lors du traitement des changements d\'awareness:', err)
+            console.warn('?? Erreur lors du traitement des changements d\'awareness:', err)
             // En cas d'erreur, garder la liste actuelle ou la vider
             collaborators.value = []
           }
         }
-        
+
         provider.awareness.on('change', awarenessChangeCallback)
       }
 
-      // CrÃ©er l'Ã©diteur avec collaboration
+      // Créer l'éditeur avec collaboration
       editor.value = new Editor({
-        element: targetElement || element, // Utiliser l'Ã©lÃ©ment fourni ou celui du composable
+        element: targetElement || element, // Utiliser l'élément fourni ou celui du composable
         extensions: [
           StarterKit.configure({
-            history: false, // DÃ©sactiver l'historique (gÃ©rÃ© par Yjs)
+            history: false, // Désactiver l'historique (géré par Yjs)
           }),
           Underline,
           TextAlign.configure({
@@ -153,7 +153,7 @@ export function useYjsTipTap(roomId: string, user: TipTapUser, element?: HTMLEle
             // Ajouter une gestion d'erreur pour les curseurs
             onUpdate: (users) => {
               try {
-                // Filtrer les utilisateurs avec des donnÃ©es valides
+                // Filtrer les utilisateurs avec des données valides
                 const validUsers = users.filter(u => u && u.clientId != null)
                 collaborators.value = validUsers.map(u => ({
                   id: u.clientId?.toString() || 'unknown',
@@ -161,7 +161,7 @@ export function useYjsTipTap(roomId: string, user: TipTapUser, element?: HTMLEle
                   color: u.color || '#888888'
                 }))
               } catch (err) {
-                console.warn('âš ï¸ Erreur lors de la mise Ã  jour des curseurs:', err)
+                console.warn('?? Erreur lors de la mise à jour des curseurs:', err)
                 // En cas d'erreur, vider la liste des collaborateurs
                 collaborators.value = []
               }
@@ -177,7 +177,7 @@ export function useYjsTipTap(roomId: string, user: TipTapUser, element?: HTMLEle
         onUpdate: ({ editor }) => {
           try {
             if (provider && provider.awareness) {
-              // Ã‰viter de dÃ©finir des curseurs invalides
+              // Éviter de définir des curseurs invalides
               const selection = editor.state.selection
               if (selection && selection.from !== undefined && selection.to !== undefined) {
                 provider.awareness.setLocalStateField('cursor', {
@@ -191,19 +191,19 @@ export function useYjsTipTap(roomId: string, user: TipTapUser, element?: HTMLEle
               }
             }
           } catch (err) {
-            console.warn('âš ï¸ Erreur lors de la mise Ã  jour du curseur:', err)
+            console.warn('?? Erreur lors de la mise à jour du curseur:', err)
           }
         },
         // Ajouter une gestion d'erreur globale pour TipTap
         onTransaction: ({ transaction }) => {
           try {
-            // VÃ©rifier que la transaction est valide
+            // Vérifier que la transaction est valide
             if (!transaction || !transaction.doc) {
-              console.warn('âš ï¸ Transaction TipTap invalide dÃ©tectÃ©e')
+              console.warn('?? Transaction TipTap invalide détectée')
               return false
             }
           } catch (err) {
-            console.warn('âš ï¸ Erreur lors du traitement de la transaction TipTap:', err)
+            console.warn('?? Erreur lors du traitement de la transaction TipTap:', err)
             return false
           }
         },
@@ -211,10 +211,10 @@ export function useYjsTipTap(roomId: string, user: TipTapUser, element?: HTMLEle
 
       isReady.value = true
       isConnecting.value = false
-      console.log('âœ… Ã‰diteur TipTap collaboratif initialisÃ©')
+      console.log('? Éditeur TipTap collaboratif initialisé')
 
     } catch (err) {
-      console.error('âŒ Erreur d\'initialisation TipTap:', err)
+      console.error('? Erreur d\'initialisation TipTap:', err)
       error.value = 'Erreur d\'initialisation'
       isConnecting.value = false
     }
@@ -222,39 +222,39 @@ export function useYjsTipTap(roomId: string, user: TipTapUser, element?: HTMLEle
 
   const destroyEditor = () => {
     if (editor.value) {
-      console.log('ðŸ—‘ï¸ Destruction de l\'Ã©diteur TipTap')
+      console.log('??? Destruction de l\'éditeur TipTap')
       editor.value.destroy()
       editor.value = null
     }
-    
+
     if (provider) {
-      // Nettoyer les Ã©vÃ©nements avant la destruction
+      // Nettoyer les événements avant la destruction
       if (provider.awareness && awarenessChangeCallback) {
         try {
           provider.awareness.off('change', awarenessChangeCallback)
           awarenessChangeCallback = null
         } catch (e) {
-          console.warn('âš ï¸ Erreur lors du nettoyage des Ã©vÃ©nements awareness:', e)
+          console.warn('?? Erreur lors du nettoyage des événements awareness:', e)
         }
       }
-      
+
       try {
         provider.destroy()
       } catch (e) {
-        console.warn('âš ï¸ Erreur lors de la destruction du provider:', e)
+        console.warn('?? Erreur lors de la destruction du provider:', e)
       }
       provider = null
     }
-    
+
     if (ydoc) {
       try {
         ydoc.destroy()
       } catch (e) {
-        console.warn('âš ï¸ Erreur lors de la destruction du document:', e)
+        console.warn('?? Erreur lors de la destruction du document:', e)
       }
       ydoc = null
     }
-    
+
     isReady.value = false
     isConnected.value = false
     isConnecting.value = false
@@ -286,7 +286,7 @@ export function useYjsTipTap(roomId: string, user: TipTapUser, element?: HTMLEle
     editor.value?.chain().focus().clearContent().run()
   }
 
-  // Ã‰tat des boutons (actif/inactif)
+  // État des boutons (actif/inactif)
   const isActive = (format: string, options?: any) => {
     return editor.value?.isActive(format, options) || false
   }
@@ -299,29 +299,29 @@ export function useYjsTipTap(roomId: string, user: TipTapUser, element?: HTMLEle
     destroyEditor()
   })
 
-  // Watcher pour reconnecter si nÃ©cessaire
+  // Watcher pour reconnecter si nécessaire
   watch(isConnected, (connected) => {
     if (!connected && editor.value) {
-      console.log('ðŸ”„ Connexion perdue, tentative de reconnexion...')
-      // Logique de reconnexion peut Ãªtre ajoutÃ©e ici
+      console.log('?? Connexion perdue, tentative de reconnexion...')
+      // Logique de reconnexion peut être ajoutée ici
     }
   })
 
   return {
-    // Ã‰diteur
+    // Éditeur
     editor,
     isReady,
-    
-    // Ã‰tat de la collaboration
+
+    // État de la collaboration
     isConnected,
     isConnecting,
     collaborators,
     error,
-    
+
     // Actions
     initializeEditor,
     destroyEditor,
-    
+
     // Formatage
     toggleBold,
     toggleItalic,
@@ -334,8 +334,8 @@ export function useYjsTipTap(roomId: string, user: TipTapUser, element?: HTMLEle
     undo,
     redo,
     clearContent,
-    
-    // Ã‰tat
+
+    // État
     isActive,
     canUndo,
     canRedo
